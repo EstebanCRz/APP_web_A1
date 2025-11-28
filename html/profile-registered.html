@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Événements auxquels je suis inscrit">
+    <title>AmiGo - Mes Inscriptions</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>AmiGo</h1>
+        <div>
+            <select class="language-selector" aria-label="Changer la langue">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="../index.html">Accueil</a></li>
+            <li><a href="events-list.html">Événements</a></li>
+            <li><a href="profile.html">Mon Profil</a></li>
+            <li><a href="login.html">Déconnexion</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="container">
+            <h2>Événements auxquels je suis inscrit ✓</h2>
+            
+            <div style="margin: 1rem 0;">
+                <a href="profile.html" class="btn btn-secondary">← Retour au profil</a>
+            </div>
+
+            <!-- TODO: Charger les événements inscrits depuis MySQL (table event_participants) -->
+            <div class="grid">
+                <div class="event-card">
+                    <div class="event-banner" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                    <div class="event-info">
+                        <h4 class="event-title">Match de Football</h4>
+                        <p class="event-details">📅 28/11/2025 - 15h00</p>
+                        <p class="event-details">📍 Lyon, France</p>
+                        <p class="event-details">💰 Gratuit</p>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <a href="event-details.html" class="btn btn-primary">Voir</a>
+                            <button class="btn btn-danger">Se désinscrire</button>
+                            <!-- TODO: Retirer de la table event_participants avec PHP -->
+                            <!-- TODO: Si l'événement était payant, gérer le remboursement -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="event-card">
+                    <div class="event-banner" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);"></div>
+                    <div class="event-info">
+                        <h4 class="event-title">Atelier Cuisine</h4>
+                        <p class="event-details">📅 05/12/2025 - 18h00</p>
+                        <p class="event-details">📍 Bordeaux, France</p>
+                        <p class="event-details">💰 15€ - Payé</p>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <a href="event-details.html" class="btn btn-primary">Voir</a>
+                            <button class="btn btn-danger">Se désinscrire</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <ul class="footer-links">
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="cgu.html">CGU</a></li>
+            <li><a href="mentions-legales.html">Mentions légales</a></li>
+        </ul>
+        <p>&copy; 2025 AmiGo - Tous droits réservés</p>
+    </footer>
+</body>
+</html>

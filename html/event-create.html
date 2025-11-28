@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Créer un événement">
+    <title>AmiGo - Créer un événement</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>AmiGo</h1>
+        <div>
+            <select class="language-selector" aria-label="Changer la langue">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="../index.html">Accueil</a></li>
+            <li><a href="events-list.html">Événements</a></li>
+            <li><a href="profile.html">Mon Profil</a></li>
+            <li><a href="login.html">Connexion</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="container">
+            <h2>Créer un événement</h2>
+            <!-- TODO: Si mode édition, charger les données existantes depuis MySQL -->
+            <!-- TODO: Vérifier que l'utilisateur est connecté (session PHP) -->
+            
+            <form action="#" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="event-name">Nom de l'événement *</label>
+                    <input type="text" id="event-name" name="event_name" required aria-required="true">
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Catégorie *</label>
+                    <!-- TODO: Charger les catégories depuis MySQL -->
+                    <select id="category" name="category" required aria-required="true">
+                        <option value="">Sélectionner une catégorie</option>
+                        <option value="sport">Sport</option>
+                        <option value="concert">Concert</option>
+                        <option value="culture">Culture</option>
+                        <option value="food">Gastronomie</option>
+                        <option value="outdoor">Plein air</option>
+                        <option value="gaming">Jeux</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description *</label>
+                    <textarea id="description" name="description" required aria-required="true" rows="6"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Date et heure *</label>
+                    <input type="datetime-local" id="date" name="date" required aria-required="true">
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Lieu *</label>
+                    <input type="text" id="location" name="location" placeholder="Adresse complète" required aria-required="true">
+                </div>
+
+                <div class="form-group">
+                    <label for="places">Nombre de places *</label>
+                    <input type="number" id="places" name="places" min="1" required aria-required="true">
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Prix (€)</label>
+                    <input type="number" id="price" name="price" min="0" step="0.01" placeholder="0 pour gratuit">
+                </div>
+
+                <div class="form-group">
+                    <label for="visibility">Visibilité *</label>
+                    <select id="visibility" name="visibility" required aria-required="true">
+                        <option value="public">Public - Visible par tous</option>
+                        <option value="private">Privé - Sur invitation uniquement</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="banner">Bannière de l'événement</label>
+                    <input type="file" id="banner" name="banner" accept="image/*">
+                    <!-- TODO: Traiter l'upload d'image avec PHP et stocker le chemin dans MySQL -->
+                    <small>Format recommandé : 1200x400px, JPG ou PNG</small>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success">Créer l'événement</button>
+                    <a href="profile.html" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+
+            <!-- TODO: En mode édition, ajouter un bouton "Supprimer l'événement" -->
+            <!-- TODO: Enregistrer l'événement dans MySQL avec l'ID du créateur -->
+        </div>
+    </main>
+
+    <footer>
+        <ul class="footer-links">
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="cgu.html">CGU</a></li>
+            <li><a href="mentions-legales.html">Mentions légales</a></li>
+        </ul>
+        <p>&copy; 2025 AmiGo - Tous droits réservés</p>
+    </footer>
+</body>
+</html>

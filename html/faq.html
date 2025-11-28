@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Foire aux questions">
+    <title>AmiGo - FAQ</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>AmiGo</h1>
+        <div>
+            <select class="language-selector" aria-label="Changer la langue">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="../index.html">Accueil</a></li>
+            <li><a href="events-list.html">Événements</a></li>
+            <li><a href="login.html">Connexion</a></li>
+            <li><a href="register.html">Inscription</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="container">
+            <h2>Foire Aux Questions (FAQ)</h2>
+            
+            <!-- TODO: Charger les questions depuis MySQL et permettre la gestion par les admins -->
+            
+            <section class="card">
+                <div class="card-header">Compte</div>
+                <div class="card-content">
+                    <h4>Comment créer un compte ?</h4>
+                    <p>Cliquez sur "S'inscrire" en haut de la page, remplissez le formulaire avec votre email, mot de passe et informations de profil. Acceptez les CGU et cliquez sur "Créer mon profil".</p>
+
+                    <h4>J'ai oublié mon mot de passe, que faire ?</h4>
+                    <p>Sur la page de connexion, cliquez sur "Mot de passe oublié ?". Entrez votre email et suivez les instructions pour réinitialiser votre mot de passe.</p>
+
+                    <h4>Comment modifier mon profil ?</h4>
+                    <p>Connectez-vous, allez sur "Mon Profil", puis cliquez sur "Éditer le profil". Vous pourrez modifier votre pseudo, photo, description et email.</p>
+
+                    <h4>Comment supprimer mon compte ?</h4>
+                    <p>Allez dans "Paramètres du compte" depuis votre profil, puis dans la zone de danger, cliquez sur "Supprimer mon compte". Cette action est irréversible.</p>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">Événements</div>
+                <div class="card-content">
+                    <h4>Comment créer un événement ?</h4>
+                    <p>Connectez-vous, allez sur "Mon Profil", puis "Événements créés" et cliquez sur "Créer un nouvel événement". Remplissez le formulaire avec les détails de votre événement.</p>
+
+                    <h4>Quelle est la différence entre un événement public et privé ?</h4>
+                    <p>Un événement public est visible par tous et n'importe qui peut s'y inscrire. Un événement privé n'est accessible que sur invitation.</p>
+
+                    <h4>Comment m'inscrire à un événement ?</h4>
+                    <p>Sur la page de l'événement, cliquez sur "S'inscrire". Si l'événement est payant, vous serez redirigé vers la page de paiement.</p>
+
+                    <h4>Que se passe-t-il si un événement est complet ?</h4>
+                    <p>Vous pouvez rejoindre la liste d'attente. Si une place se libère, vous serez notifié par email.</p>
+
+                    <h4>Comment modifier ou supprimer mon événement ?</h4>
+                    <p>Allez sur "Mon Profil" > "Événements créés", puis cliquez sur "Modifier" ou "Supprimer" sur l'événement concerné.</p>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">Paiements</div>
+                <div class="card-content">
+                    <h4>Quels moyens de paiement sont acceptés ?</h4>
+                    <p>Nous acceptons les cartes bancaires (Visa, Mastercard), PayPal et Apple Pay.</p>
+
+                    <h4>Le paiement est-il sécurisé ?</h4>
+                    <p>Oui, toutes les transactions sont cryptées et sécurisées. Nous ne stockons jamais vos informations bancaires.</p>
+
+                    <h4>Puis-je être remboursé si je me désinscris ?</h4>
+                    <p>Cela dépend de la politique de l'organisateur de l'événement. Certains événements peuvent proposer un remboursement partiel ou total selon le délai d'annulation.</p>
+
+                    <h4>Je n'ai pas reçu ma confirmation de paiement</h4>
+                    <p>Vérifiez vos spams. Si vous ne trouvez toujours pas l'email, contactez-nous via le formulaire de contact.</p>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">Confidentialité</div>
+                <div class="card-content">
+                    <h4>Mes informations personnelles sont-elles protégées ?</h4>
+                    <p>Oui, nous respectons votre vie privée. Consultez nos <a href="mentions-legales.html">Mentions légales</a> et notre politique de confidentialité pour plus d'informations.</p>
+
+                    <h4>Puis-je rendre mon profil privé ?</h4>
+                    <p>Oui, dans "Paramètres du compte", vous pouvez choisir de rendre votre profil privé ou public.</p>
+
+                    <h4>Comment signaler un contenu inapproprié ?</h4>
+                    <p>Sur chaque événement ou profil, vous trouverez un bouton "Signaler". Notre équipe de modération examinera votre signalement rapidement.</p>
+                </div>
+            </section>
+
+            <section style="margin-top: 2rem; text-align: center;">
+                <p>Vous n'avez pas trouvé la réponse à votre question ?</p>
+                <a href="contact.html" class="btn btn-primary">Contactez-nous</a>
+                <a href="../index.html" class="btn btn-secondary">Retour à l'accueil</a>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <ul class="footer-links">
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="cgu.html">CGU</a></li>
+            <li><a href="mentions-legales.html">Mentions légales</a></li>
+        </ul>
+        <p>&copy; 2025 AmiGo - Tous droits réservés</p>
+    </footer>
+</body>
+</html>

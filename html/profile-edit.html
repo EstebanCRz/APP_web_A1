@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Éditer mon profil">
+    <title>AmiGo - Éditer le profil</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>AmiGo</h1>
+        <div>
+            <select class="language-selector" aria-label="Changer la langue">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="../index.html">Accueil</a></li>
+            <li><a href="events-list.html">Événements</a></li>
+            <li><a href="profile.html">Mon Profil</a></li>
+            <li><a href="login.html">Déconnexion</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="container">
+            <h2>Éditer mon profil</h2>
+            
+            <!-- TODO: Charger les données existantes depuis MySQL -->
+            <!-- TODO: Enregistrer les modifications dans MySQL avec PHP -->
+            <form action="#" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="pseudo">Pseudo *</label>
+                    <input type="text" id="pseudo" name="pseudo" value="JeanDupont" required aria-required="true">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" value="jean.dupont@example.com" required aria-required="true">
+                </div>
+
+                <div class="form-group">
+                    <label for="profile-pic">Photo de profil</label>
+                    <input type="file" id="profile-pic" name="profile_pic" accept="image/*">
+                    <!-- TODO: Traiter l'upload d'image avec PHP -->
+                    <small>Actuel : photo_profil.jpg</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="5">Passionné de musique et de sport. Toujours partant pour de nouvelles aventures !</textarea>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success">Enregistrer les modifications</button>
+                    <a href="profile.html" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+
+            <!-- Section pour changer le mot de passe -->
+            <section style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid #ddd;">
+                <h3>Changer le mot de passe</h3>
+                <!-- TODO: Vérifier l'ancien mot de passe et enregistrer le nouveau avec PHP (hashé) -->
+                <form action="#" method="post">
+                    <div class="form-group">
+                        <label for="current-password">Mot de passe actuel *</label>
+                        <input type="password" id="current-password" name="current_password" required aria-required="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new-password">Nouveau mot de passe *</label>
+                        <input type="password" id="new-password" name="new_password" required aria-required="true" minlength="8">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm-password">Confirmer le nouveau mot de passe *</label>
+                        <input type="password" id="confirm-password" name="confirm_password" required aria-required="true">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <ul class="footer-links">
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="cgu.html">CGU</a></li>
+            <li><a href="mentions-legales.html">Mentions légales</a></li>
+        </ul>
+        <p>&copy; 2025 AmiGo - Tous droits réservés</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contactez-nous">
+    <title>AmiGo - Contact</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>AmiGo</h1>
+        <div>
+            <select class="language-selector" aria-label="Changer la langue">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="../index.html">Accueil</a></li>
+            <li><a href="events-list.html">Événements</a></li>
+            <li><a href="login.html">Connexion</a></li>
+            <li><a href="register.html">Inscription</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="container">
+            <h2>Contactez-nous</h2>
+            
+            <p>Vous avez une question, une suggestion ou un problème ? N'hésitez pas à nous contacter, notre équipe vous répondra dans les plus brefs délais.</p>
+
+            <!-- Formulaire de contact -->
+            <section>
+                <h3>Formulaire de contact</h3>
+                <!-- TODO: Traiter l'envoi du formulaire avec PHP et envoyer un email -->
+                <form action="#" method="post">
+                    <div class="form-group">
+                        <label for="name">Nom / Prénom *</label>
+                        <input type="text" id="name" name="name" required aria-required="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required aria-required="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">Sujet *</label>
+                        <select id="subject" name="subject" required aria-required="true">
+                            <option value="">Sélectionner un sujet</option>
+                            <option value="question">Question générale</option>
+                            <option value="technique">Problème technique</option>
+                            <option value="event">Question sur un événement</option>
+                            <option value="payment">Problème de paiement</option>
+                            <option value="account">Problème de compte</option>
+                            <option value="report">Signalement</option>
+                            <option value="other">Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" rows="8" required aria-required="true"></textarea>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="send-copy" name="send_copy">
+                        <label for="send-copy">M'envoyer une copie de ce message</label>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary">Envoyer</button>
+                        <a href="../index.html" class="btn btn-secondary">Retour à l'accueil</a>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Coordonnées directes -->
+            <section style="margin-top: 3rem;">
+                <h3>Coordonnées</h3>
+                <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                    <div class="card">
+                        <div class="card-header">📧 Email</div>
+                        <div class="card-content">
+                            <p><a href="mailto:contact@amigo.fr">contact@amigo.fr</a></p>
+                            <p>Support technique : <a href="mailto:support@amigo.fr">support@amigo.fr</a></p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">📞 Téléphone</div>
+                        <div class="card-content">
+                            <p>+33 1 23 45 67 89</p>
+                            <p><small>Du lundi au vendredi<br>9h00 - 18h00</small></p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">📍 Adresse</div>
+                        <div class="card-content">
+                            <p>AmiGo SAS<br>
+                            123 Avenue de la République<br>
+                            75011 Paris<br>
+                            France</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Carte (placeholder) -->
+            <section style="margin-top: 2rem;">
+                <h3>Localisation</h3>
+                <div style="width: 100%; height: 400px; background: #e9ecef; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666;">
+                    <!-- TODO: Intégrer Google Maps ou autre service de carte -->
+                    <p>📍 Carte interactive (Google Maps)</p>
+                </div>
+            </section>
+
+            <!-- Horaires d'ouverture -->
+            <section style="margin-top: 2rem;">
+                <h3>Horaires du support</h3>
+                <div class="card">
+                    <div class="card-content">
+                        <p><strong>Lundi - Vendredi :</strong> 9h00 - 18h00</p>
+                        <p><strong>Samedi - Dimanche :</strong> Fermé</p>
+                        <p><small>Les demandes reçues en dehors de ces horaires seront traitées le jour ouvrable suivant.</small></p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <ul class="footer-links">
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="cgu.html">CGU</a></li>
+            <li><a href="mentions-legales.html">Mentions légales</a></li>
+        </ul>
+        <p>&copy; 2025 AmiGo - Tous droits réservés</p>
+    </footer>
+</body>
+</html>

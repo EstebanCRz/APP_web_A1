@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Détails de l'événement">
+    <title>AmiGo - Détails de l'événement</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>AmiGo</h1>
+        <div>
+            <select class="language-selector" aria-label="Changer la langue">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="../index.html">Accueil</a></li>
+            <li><a href="events-list.html">Événements</a></li>
+            <li><a href="profile.html">Mon Profil</a></li>
+            <li><a href="login.html">Connexion</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="container">
+            <!-- TODO: Charger les détails de l'événement depuis MySQL avec l'ID en paramètre -->
+            
+            <!-- Bannière de l'événement -->
+            <div style="width: 100%; height: 300px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; margin-bottom: 2rem;"></div>
+
+            <h2>Concert Rock en plein air</h2>
+
+            <!-- Informations principales -->
+            <div class="card">
+                <div class="card-content">
+                    <p><strong>📅 Date :</strong> 25 novembre 2025 - 20h00</p>
+                    <p><strong>📍 Lieu :</strong> Paris, France</p>
+                    <p><strong>👥 Places :</strong> 50/100 places disponibles</p>
+                    <p><strong>🏷️ Type :</strong> Public</p>
+                    <p><strong>📂 Catégorie :</strong> Concert</p>
+                    <p><strong>💰 Prix :</strong> 25€</p>
+                    <p><strong>👤 Créateur :</strong> <a href="profile-other.html">JeanDupont</a></p>
+                    <!-- TODO: Afficher le créateur seulement pour les participants -->
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="card">
+                <div class="card-header">Description</div>
+                <div class="card-content">
+                    <p>Venez profiter d'une soirée rock inoubliable en plein air ! Concert live avec plusieurs groupes locaux. Ambiance garantie, nourriture et boissons sur place.</p>
+                    <p>Au programme : 3 groupes de rock alternatif, food trucks, et une ambiance conviviale pour rencontrer de nouvelles personnes passionnées de musique !</p>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <!-- TODO: Afficher différents boutons selon le statut de l'utilisateur (créateur, participant, visiteur) -->
+            <section style="margin: 2rem 0;">
+                <h3>Actions</h3>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <!-- Pour les visiteurs non inscrits -->
+                    <a href="payment.html" class="btn btn-success">S'inscrire (25€)</a>
+                    <button class="btn btn-secondary">Ajouter aux favoris ⭐</button>
+                    
+                    <!-- Pour les participants (à afficher conditionnellement) -->
+                    <!-- <button class="btn btn-danger">Se désinscrire</button> -->
+                    <!-- <button class="btn btn-secondary">Retirer des favoris ⭐</button> -->
+                    
+                    <!-- Liste d'attente si complet -->
+                    <!-- <button class="btn btn-secondary">Rejoindre la liste d'attente</button> -->
+                    <!-- <button class="btn btn-danger">Quitter la liste d'attente</button> -->
+                    
+                    <!-- Pour le créateur (à afficher conditionnellement) -->
+                    <!-- <a href="event-edit.html" class="btn btn-primary">Modifier l'événement</a> -->
+                    <!-- <button class="btn btn-danger">Supprimer l'événement</button> -->
+                    <!-- <button class="btn btn-secondary">Rendre privé</button> -->
+                    
+                    <button class="btn btn-danger">Signaler l'événement 🚩</button>
+                </div>
+            </section>
+
+            <!-- Forum public -->
+            <section>
+                <h3>Forum public</h3>
+                <div class="card">
+                    <!-- TODO: Charger les messages du forum depuis MySQL -->
+                    <div style="border-bottom: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem;">
+                        <p><strong><a href="profile-other.html">Sophie123</a></strong> - Il y a 2 heures</p>
+                        <p>Super événement ! J'ai hâte d'y être !</p>
+                    </div>
+                    <div style="border-bottom: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem;">
+                        <p><strong><a href="profile-other.html">Marc_Rock</a></strong> - Il y a 5 heures</p>
+                        <p>Quelqu'un sait qui sont les groupes qui vont jouer ?</p>
+                    </div>
+                    <div style="padding: 1rem;">
+                        <p><strong><a href="profile-other.html">JeanDupont</a></strong> (Créateur) - Il y a 1 jour</p>
+                        <p>Bienvenue à tous ! N'hésitez pas à poser vos questions ici.</p>
+                    </div>
+                </div>
+
+                <!-- Formulaire pour poster un message -->
+                <!-- TODO: Traiter l'envoi du message avec PHP -->
+                <form action="#" method="post">
+                    <div class="form-group">
+                        <label for="message">Poster un message</label>
+                        <textarea id="message" name="message" placeholder="Votre message..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Envoyer</button>
+                </form>
+            </section>
+
+            <!-- Chat privé (visible seulement pour les inscrits) -->
+            <!-- TODO: Afficher conditionnellement selon si l'utilisateur est inscrit -->
+            <section style="margin-top: 2rem;">
+                <h3>Chat privé (participants uniquement)</h3>
+                <div class="card" style="background: #f8f9fa;">
+                    <p style="color: #666;"><em>Vous devez être inscrit à l'événement pour accéder au chat privé.</em></p>
+                    <!-- TODO: Si inscrit, afficher le chat avec WebSocket ou AJAX pour temps réel -->
+                </div>
+            </section>
+
+            <!-- Événements similaires -->
+            <section style="margin-top: 2rem;">
+                <h3>Événements similaires</h3>
+                <!-- TODO: Charger des événements similaires depuis MySQL -->
+                <div class="grid">
+                    <div class="event-card">
+                        <div class="event-banner" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                        <div class="event-info">
+                            <h4 class="event-title">Concert Jazz</h4>
+                            <p class="event-details">📅 28/11/2025 - 21h00</p>
+                            <p class="event-details">📍 Lyon, France</p>
+                            <a href="event-details.html" class="btn btn-primary">Voir plus</a>
+                        </div>
+                    </div>
+
+                    <div class="event-card">
+                        <div class="event-banner" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                        <div class="event-info">
+                            <h4 class="event-title">Festival Électro</h4>
+                            <p class="event-details">📅 05/12/2025 - 18h00</p>
+                            <p class="event-details">📍 Marseille, France</p>
+                            <a href="event-details.html" class="btn btn-primary">Voir plus</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <ul class="footer-links">
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="cgu.html">CGU</a></li>
+            <li><a href="mentions-legales.html">Mentions légales</a></li>
+        </ul>
+        <p>&copy; 2025 AmiGo - Tous droits réservés</p>
+    </footer>
+</body>
+</html>
