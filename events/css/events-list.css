@@ -136,7 +136,7 @@
 	outline-offset: 2px;
 }
 .event-card .card-media {
-	height: 200px;
+	height: 80px;
 	background-size: cover;
 	background-position: center;
 	display: flex;
@@ -144,6 +144,7 @@
 	justify-content: flex-start;
 	padding: 0.75rem;
 	position: relative;
+	border-radius: 12px 12px 0 0;
 }
 .badge { 
 	background: rgba(255, 255, 255, 0.95); 
