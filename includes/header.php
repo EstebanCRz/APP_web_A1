@@ -23,20 +23,25 @@
 </head>
 <body>
     <header>
-        <h1><a href="<?php echo $prefix; ?>index.php">AmiGo</a></h1>
-        <nav>
-            <ul>
-                <li><a href="<?php echo $prefix; ?>index.php">Accueil</a></li>
-                <li><a href="<?php echo $prefix; ?>events/events-list.php">Événements</a></li>
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <li><a href="<?php echo $prefix; ?>profile/profile.php">Profil</a></li>
-                    <li><a href="<?php echo $prefix; ?>events/event-create.php">Créer un événement</a></li>
-                    <li><a href="<?php echo $prefix; ?>auth/login.php?logout=1">Déconnexion</a></li>
-                <?php else: ?>
-                    <li><a href="<?php echo $prefix; ?>auth/login.php">Connexion</a></li>
-                    <li><a href="<?php echo $prefix; ?>auth/register.php">Inscription</a></li>
-                <?php endif; ?>
-            </ul>
-        </nav>
+        <div class="header-inner">
+            <h1><a href="<?php echo $prefix; ?>index.php">AmiGo</a></h1>
+
+            <nav>
+                <ul>
+                    <li><a href="<?php echo $prefix; ?>index.php">Accueil</a></li>
+                    <li><a href="<?php echo $prefix; ?>events/events-list.php">Événements</a></li>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <li><a href="<?php echo $prefix; ?>profile/profile.php">Profil</a></li>
+                        <li><a href="<?php echo $prefix; ?>events/event-create.php">Créer un événement</a></li>
+                        <li><a href="<?php echo $prefix; ?>auth/login.php?logout=1">Déconnexion</a></li>
+                    <?php else: ?>
+                        <li><a href="<?php echo $prefix; ?>auth/login.php">Connexion</a></li>
+                        <li><a href="<?php echo $prefix; ?>auth/register.php">Inscription</a></li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
+
+            <!-- Global header search removed (moved to events page) -->
+        </div>
     </header>
     <main>

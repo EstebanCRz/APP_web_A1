@@ -1,9 +1,10 @@
 /* Header styles */
 header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* use global palette defined in style.css */
+    background: linear-gradient(135deg, var(--accent-fresh) 0%, var(--accent-trust) 100%);
     color: white;
     padding: 1.5rem 2rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 header h1 {
@@ -22,7 +23,7 @@ header h1 a:hover {
 }
 
 header nav {
-    margin-top: 1rem;
+    margin-top: 0;
 }
 
 header nav ul {
@@ -44,12 +45,13 @@ header nav ul li a {
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: 5px;
-    transition: background-color 0.3s;
+    transition: background-color 0.18s, color 0.18s;
 }
 
 header nav ul li a:hover,
 header nav ul li a.active {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #fff;
 }
 
 .language-selector {
@@ -59,6 +61,24 @@ header nav ul li a.active {
     background-color: rgba(255, 255, 255, 0.1);
     color: white;
     cursor: pointer;
+}
+
+/* Header inner layout */
+.header-inner { display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+
+/* Global header search */
+.header-search { display: none !important; }
+.header-search input[type="search"] { display: none !important; }
+.header-search .search-btn { display: none !important; }
+
+/* Ensure nav list doesn't render as a heavy bar */
+header nav ul { background: transparent; padding: 0; }
+header nav ul li a { background: transparent; }
+
+@media (max-width: 768px) {
+    .header-inner { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+    .header-search { justify-content: flex-end; }
+    .header-search input[type="search"] { min-width: 140px; }
 }
 
 @media (max-width: 768px) {

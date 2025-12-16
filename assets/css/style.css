@@ -13,9 +13,22 @@ body {
     background-color: #f4f4f4;
 }
 
+/* Palette variables (AmiGo) */
+:root {
+    --accent-fresh: #55D5E0; /* fraîcheur */
+    --accent-trust: #335F8A; /* confiance */
+    --accent-structure: #2F4558; /* structure */
+    --accent-warm: #F6B12D; /* chaleur */
+    --accent-energetic: #F26619; /* passion */
+
+    --muted-color: #666;
+    --card-bg: #ffffff;
+    --border-color: #e6e6e6;
+}
+
 /* Header */
 header {
-    background: #333;
+    background: linear-gradient(135deg, var(--accent-fresh) 0%, var(--accent-trust) 100%);
     color: #fff;
     padding: 1rem 2rem;
     display: flex;
@@ -38,8 +51,8 @@ header h1 {
 
 /* Navigation */
 nav {
-    background: #555;
-    padding: 1rem 2rem;
+    background: transparent;
+    padding: 0;
 }
 
 nav ul {
@@ -87,12 +100,12 @@ main {
 }
 
 .btn-primary {
-    background: #007bff;
+    background: var(--accent-trust);
     color: #fff;
 }
 
 .btn-primary:hover {
-    background: #0056b3;
+    background: var(--accent-structure);
 }
 
 .btn-secondary {
@@ -254,7 +267,7 @@ footer {
 .stat-number {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #007bff;
+    color: var(--accent-fresh);
 }
 
 .stat-label {
@@ -279,7 +292,7 @@ footer {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    background: #ddd;
+    background: linear-gradient(135deg, var(--accent-fresh) 0%, var(--accent-trust) 100%);
 }
 
 .event-info {
@@ -349,6 +362,6 @@ button:focus,
 input:focus,
 select:focus,
 textarea:focus {
-    outline: 2px solid #007bff;
+    outline: 2px solid var(--accent-fresh);
     outline-offset: 2px;
 }

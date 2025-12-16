@@ -20,11 +20,14 @@ include '../includes/header.php';
 ?>
 
 <div class="container">
-    <div class="event-header" style="background: <?php echo $event['gradient']; ?>;">
-        <h2><?php echo htmlspecialchars($event['title']); ?></h2>
+    <div class="event-header">
+        <div class="event-header-inner">
+            <h2><?php echo htmlspecialchars($event['title']); ?></h2>
+            <p class="event-sub"><?php echo htmlspecialchars($event['location']); ?> — <?php echo htmlspecialchars($event['date']); ?> à <?php echo htmlspecialchars($event['time']); ?></p>
+        </div>
     </div>
     <div class="event-details-container">
-        <div class="event-main-info">
+        <div class="event-main-info card">
             <div class="info-section">
                 <h3> Date et heure</h3>
                 <p><?php echo $event['date']; ?> à <?php echo $event['time']; ?></p>
@@ -51,15 +54,19 @@ include '../includes/header.php';
                 <p><?php echo htmlspecialchars($event['organizer']); ?></p>
             </div>
         </div>
-        <div class="event-actions">
+        <aside class="event-actions card">
             <?php if (isset($_SESSION['user_id'])): ?>
                 <button class="btn btn-primary btn-block">S'inscrire</button>
-                <button class="btn btn-secondary btn-block">Favoris</button>
+                <button class="btn btn-secondary btn-block">Ajouter aux favoris</button>
             <?php else: ?>
-                <p>Connectez-vous pour participer</p>
+                <p class="muted">Connectez-vous pour participer</p>
                 <a href="../auth/login.php" class="btn btn-primary btn-block">Connexion</a>
             <?php endif; ?>
-        </div>
+            <div class="action-meta">
+                <p><strong>Places :</strong> <?php echo $event['places_taken']; ?> / <?php echo $event['places']; ?></p>
+                <p><strong>Prix :</strong> <?php echo htmlspecialchars($event['price']); ?></p>
+            </div>
+        </aside>
     </div>
     <a href="events-list.php"> Retour</a>
 </div>

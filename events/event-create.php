@@ -1,114 +1,160 @@
 <?php
-// Démarrer la session
+declare(strict_types=1);
 session_start();
+header('Content-Type: text/html; charset=UTF-8');
 
-// Configuration de la page
-$pageTitle = "AmiGo - Accueil";
-$pageDescription = "AmiGo - Plateforme de rencontre et d'événements";
+$pageTitle = "Créer une activité - AmiGo";
+$pageDescription = "Créez et partagez une nouvelle activité avec la communauté";
+$assetsDepth = 1;
+$customCSS = "css/event-create.css";
+
+// Handle form submission
+$success = false;
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $title = trim((string) ($_POST['title'] ?? ''));
+    $description = trim((string) ($_POST['description'] ?? ''));
+    $category = trim((string) ($_POST['category'] ?? ''));
+    $location = trim((string) ($_POST['location'] ?? ''));
+    $date = trim((string) ($_POST['date'] ?? ''));
+    $time = trim((string) ($_POST['time'] ?? ''));
+    $capacity = trim((string) ($_POST['capacity'] ?? ''));
+    $image = trim((string) ($_POST['image'] ?? ''));
+
+    // Validation
+    if (empty($title) || empty($description) || empty($category) || empty($location) || empty($date) || empty($time) || empty($capacity)) {
+        $error = 'Tous les champs obligatoires doivent être remplis.';
+    } elseif ((int)$capacity < 1) {
+        $error = 'La capacité doit être supérieure à 0.';
+    } else {
+        // TODO: Save to database
+        $success = true;
+    }
+}
+
+include '../includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="<?php echo htmlspecialchars($pageDescription); ?>">
-    <title><?php echo htmlspecialchars($pageTitle); ?></title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-</head>
-<body>
-    <header>
-        <h1>AmiGo</h1>
-        <div>
-            <!-- TODO: Implémenter la sélection de langue avec PHP/Session -->
-            <select class="language-selector" aria-label="Changer la langue">
-                <option value="fr">Français</option>
-                <option value="en">English</option>
-                <option value="es">Español</option>
-            </select>
+
+<div class="container">
+    <div class="form-container">
+        <div class="form-header">
+            <h1>Créer une nouvelle activité</h1>
+            <p class="form-subtitle">Partagez votre idée d'activité avec la communauté</p>
         </div>
-    </header>
 
-    <nav>
-        <ul>
-            <li><a href="index.php">Accueil</a></li>
-            <li><a href="../events/events-list.php">Événements</a></li>
-            <li><a href="../auth/login.php">Connexion</a></li>
-            <li><a href="../auth/register.php">Inscription</a></li>
-        </ul>
-    </nav>
+        <?php if ($success): ?>
+            <div class="alert alert-success">
+                Votre activité a été créée avec succès ! <a href="events-list.php">Voir la liste des événements</a>
+            </div>
+        <?php endif; ?>
 
-    <main>
-        <div class="container">
-            <section>
-                <h2>Bienvenue sur AmiGo</h2>
-                <p>Découvrez et participez à des événements proches de vous. Rencontrez de nouvelles personnes et partagez des moments inoubliables !</p>
-                
-                <div style="margin: 2rem 0;">
-                    <a href="../auth/register.php" class="btn btn-primary">S'inscrire</a>
-                    <a href="../auth/login.php" class="btn btn-secondary">Se connecter</a>
+        <?php if (!empty($error)): ?>
+            <div class="alert alert-error">
+                <?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" class="event-form">
+            <div class="form-group">
+                <label for="title">Titre de l'activité <span class="required">*</span></label>
+                <input 
+                    type="text" 
+                    id="title" 
+                    name="title" 
+                    placeholder="ex: Sortie Running au Parc"
+                    value="<?php echo htmlspecialchars($_POST['title'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description <span class="required">*</span></label>
+                <textarea 
+                    id="description" 
+                    name="description" 
+                    placeholder="Décrivez votre activité..."
+                    rows="4"
+                    required
+                ><?php echo htmlspecialchars($_POST['description'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Catégorie <span class="required">*</span></label>
+                <select id="category" name="category" required>
+                    <option value="">Sélectionner une catégorie</option>
+                    <option value="Musique" <?php echo ($_POST['category'] ?? '') === 'Musique' ? 'selected' : ''; ?>>Musique</option>
+                    <option value="Sport" <?php echo ($_POST['category'] ?? '') === 'Sport' ? 'selected' : ''; ?>>Sport</option>
+                    <option value="Cinéma" <?php echo ($_POST['category'] ?? '') === 'Cinéma' ? 'selected' : ''; ?>>Cinéma</option>
+                    <option value="Autres" <?php echo ($_POST['category'] ?? '') === 'Autres' ? 'selected' : ''; ?>>Autres</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Lieu <span class="required">*</span></label>
+                <input 
+                    type="text" 
+                    id="location" 
+                    name="location" 
+                    placeholder="ex: Parc Monceau, Paris"
+                    value="<?php echo htmlspecialchars($_POST['location'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                    required
+                >
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="date">Date <span class="required">*</span></label>
+                    <input 
+                        type="date" 
+                        id="date" 
+                        name="date" 
+                        value="<?php echo htmlspecialchars($_POST['date'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                        required
+                    >
                 </div>
-            </section>
-
-            <section>
-                <h3>Événements tendance</h3>
-                <!-- TODO: Charger les événements depuis la base de données avec PHP -->
-                <div class="grid">
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Concert Rock en plein air</h4>
-                            <p class="event-details">📅 25/11/2025 - 20h00</p>
-                            <p class="event-details">📍 Paris, France</p>
-                            <p class="event-details">👥 50 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Match de Football</h4>
-                            <p class="event-details">📅 28/11/2025 - 15h00</p>
-                            <p class="event-details">📍 Lyon, France</p>
-                            <p class="event-details">👥 20 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Soirée Cinéma</h4>
-                            <p class="event-details">📅 30/11/2025 - 19h30</p>
-                            <p class="event-details">📍 Marseille, France</p>
-                            <p class="event-details">👥 30 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="time">Heure <span class="required">*</span></label>
+                    <input 
+                        type="time" 
+                        id="time" 
+                        name="time" 
+                        value="<?php echo htmlspecialchars($_POST['time'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                        required
+                    >
                 </div>
-            </section>
+            </div>
 
-            <section>
-                <h3>Rechercher un événement</h3>
-                <form action="events-list.php" method="get">
-                    <!-- TODO: Implémenter la recherche avec PHP/MySQL -->
-                    <div class="form-group">
-                        <input type="text" name="search" placeholder="Rechercher par mots-clés..." aria-label="Rechercher un événement">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Rechercher</button>
-                </form>
-            </section>
-        </div>
-    </main>
+            <div class="form-group">
+                <label for="capacity">Capacité maximale <span class="required">*</span></label>
+                <input 
+                    type="number" 
+                    id="capacity" 
+                    name="capacity" 
+                    placeholder="ex: 12"
+                    min="1"
+                    value="<?php echo htmlspecialchars($_POST['capacity'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                    required
+                >
+            </div>
 
-    <footer>
-        <ul class="footer-links">
-            <li><a href="../pages/contact.php">Contact</a></li>
-            <li><a href="../pages/faq.php">FAQ</a></li>
-            <li><a href="../pages/cgu.php">CGU</a></li>
-            <li><a href="../pages/mentions-legales.php">Mentions légales</a></li>
-        </ul>
-        <p>&copy; 2025 AmiGo - Tous droits réservés</p>
-    </footer>
-</body>
-</html>
+            <div class="form-group">
+                <label for="image">URL de l'image <span class="optional">(optionnel)</span></label>
+                <input 
+                    type="url" 
+                    id="image" 
+                    name="image" 
+                    placeholder="https://..."
+                    value="<?php echo htmlspecialchars($_POST['image'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                >
+            </div>
+
+            <div class="form-actions">
+                <a href="events-list.php" class="btn btn-secondary">Annuler</a>
+                <button type="submit" class="btn btn-primary btn-lg">Créer l'activité</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<?php include '../includes/footer.php'; ?>

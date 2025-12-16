@@ -1,4 +1,37 @@
-/* Styles spécifiques pour event-details */
+/* event-details styles â€” nicer layout using AmiGo palette */
+
+.event-header {
+  background: linear-gradient(135deg, var(--accent-fresh) 0%, var(--accent-trust) 100%);
+  color: #fff;
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+}
+.event-header-inner { max-width: 1100px; margin: 0 auto; }
+.event-header h2 { margin: 0 0 0.35rem; font-size: 1.6rem; }
+.event-sub { margin: 0; opacity: 0.95; font-size: 0.95rem; }
+
+.event-details-container { display: grid; grid-template-columns: 1fr 320px; gap: 1.25rem; align-items: start; max-width: 1100px; margin: 0 auto; }
+.event-main-info.card { padding: 1.25rem; }
+.event-main-info .info-section { margin-bottom: 1rem; }
+.event-main-info .info-section h3 { margin-bottom: 0.25rem; color: var(--accent-structure); }
+.event-main-info p { color: #333; line-height: 1.5; }
+
+.event-actions.card { padding: 1rem; background: #fff; border: 1px solid var(--border-color); }
+.event-actions .muted { color: var(--muted-color); margin-bottom: 0.75rem; }
+.event-actions .action-meta { margin-top: 1rem; color: var(--muted-color); font-size: 0.95rem; }
+
+.btn-block { display: block; width: 100%; text-align: center; margin-bottom: 0.6rem; }
+
+/* Responsive */
+@media (max-width: 920px) {
+  .event-details-container { grid-template-columns: 1fr; }
+  .event-header { padding-left: 1rem; padding-right: 1rem; }
+}
+
+/* Small visual polish */
+.event-details-container a { color: var(--accent-trust); }
+/* Styles spï¿½cifiques pour event-details */
 
 @import 'style.css';
 

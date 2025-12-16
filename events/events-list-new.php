@@ -1,4 +1,5 @@
-﻿<?php
+<?php
+declare(strict_types=1);
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
 
@@ -8,9 +9,14 @@ $assetsDepth = 1;
 $customCSS = "css/events-list.css";
 
 $events = [
-    ['id' => 1, 'category' => 'Musique', 'title' => 'Concert Rock en plein air', 'date' => '25/11/2025', 'time' => '20h00', 'location' => 'Paris, France', 'places' => 50, 'taken' => 12, 'organizer' => 'Camille', 'excerpt' => 'Soirée rock en plein air avec groupes locaux.', 'image' => 'https://picsum.photos/id/1067/800/600', 'subscribed' => false],
-    ['id' => 2, 'category' => 'Sport', 'title' => 'Match de Football', 'date' => '28/11/2025', 'time' => '15h00', 'location' => 'Lyon, France', 'places' => 20, 'taken' => 8, 'organizer' => 'Mathis', 'excerpt' => 'Match amical ouvert à tous niveaux.', 'image' => 'https://picsum.photos/id/1011/800/600', 'subscribed' => true],
-    ['id' => 3, 'category' => 'Cinéma', 'title' => 'Soirée Cinéma', 'date' => '30/11/2025', 'time' => '19h30', 'location' => 'Marseille, France', 'places' => 30, 'taken' => 5, 'organizer' => 'Zoé', 'excerpt' => 'Projection en plein air d’un film culte.', 'image' => 'https://picsum.photos/id/1043/800/600', 'subscribed' => false],
+    ['id' => 1, 'category' => 'Sport', 'title' => 'Sortie Running au Parc', 'date' => '25/11/2025', 'time' => '09h00', 'location' => 'Parc Monceau, Paris', 'places' => 50, 'taken' => 7, 'organizer' => 'Camille', 'excerpt' => 'Rejoignez-nous pour un footing convivial de 5km, tous niveaux bienvenus !', 'image' => 'https://picsum.photos/id/1067/800/600', 'subscribed' => false],
+    ['id' => 2, 'category' => 'Art', 'title' => 'Balade Photo au Bord de l\'Eau', 'date' => '28/11/2025', 'time' => '18h00', 'location' => 'Bordeaux', 'places' => 20, 'taken' => 12, 'organizer' => 'Zoé', 'excerpt' => 'Découvrons les meilleurs spots photo au coucher du soleil, débutants bienvenus.', 'image' => 'https://picsum.photos/id/1011/800/600', 'subscribed' => true],
+    ['id' => 3, 'category' => 'Bien-être', 'title' => 'Initiation Yoga Vinyasa', 'date' => '30/11/2025', 'time' => '18h00', 'location' => 'Marseille', 'places' => 30, 'taken' => 4, 'organizer' => 'Nora', 'excerpt' => 'Séance détente et respiration, pensez à apporter votre tapis de yoga.', 'image' => 'https://picsum.photos/id/1043/800/600', 'subscribed' => false],
+    ['id' => 4, 'category' => 'Jeux', 'title' => 'Soirée Jeux de Société', 'date' => '27/11/2025', 'time' => '20h00', 'location' => 'Toulouse', 'places' => 20, 'taken' => 16, 'organizer' => 'Mathis', 'excerpt' => 'Ambiance conviviale, venez avec vos jeux préférés, boissons partagées.', 'image' => 'https://picsum.photos/id/1045/800/600', 'subscribed' => false],
+    ['id' => 5, 'category' => 'Nature', 'title' => 'Randonnée en Forêt', 'date' => '29/11/2025', 'time' => '18h00', 'location' => 'Chamonix', 'places' => 15, 'taken' => 6, 'organizer' => 'Romain', 'excerpt' => 'Parcours de 10km, prévoir chaussures de marche et eau. Belle vue garantie !', 'image' => 'https://picsum.photos/id/1022/800/600', 'subscribed' => false],
+    ['id' => 6, 'category' => 'Musique', 'title' => 'Concert Jazz Improvisé', 'date' => '30/11/2025', 'time' => '18h00', 'location' => 'Nice', 'places' => 25, 'taken' => 18, 'organizer' => 'Sophie', 'excerpt' => 'Soirée musicale décontractée au son du jazz, apéro inclus.', 'image' => 'https://picsum.photos/id/1039/800/600', 'subscribed' => false],
+    ['id' => 7, 'category' => 'Nature', 'title' => 'Picnic d\'Été en Montagne', 'date' => '31/11/2025', 'time' => '12h00', 'location' => 'Annecy', 'places' => 35, 'taken' => 22, 'organizer' => 'Luc', 'excerpt' => 'Partageons un moment convivial avec vue panoramique sur les Alpes.', 'image' => 'https://picsum.photos/id/1056/800/600', 'subscribed' => false],
+    ['id' => 8, 'category' => 'Sport', 'title' => 'Cours de Badminton', 'date' => '26/11/2025', 'time' => '19h00', 'location' => 'Lyon', 'places' => 12, 'taken' => 9, 'organizer' => 'Alex', 'excerpt' => 'Entraînement récréatif tous niveaux avec moniteur bénévole.', 'image' => 'https://picsum.photos/id/1064/800/600', 'subscribed' => false],
 ];
 
 // simple search and filters
@@ -75,6 +81,7 @@ include '../includes/header.php';
         <h2>Tous les événements</h2>
         <a href="event-create.php" class="btn btn-primary">Créer une activité</a>
     </div>
+
     <div class="search-section">
         <form method="GET" class="search-form">
             <input type="search" name="search" placeholder="Chercher (mot-clé, ville, organisateur)" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>">
@@ -87,9 +94,12 @@ include '../includes/header.php';
             <h3>Catégorie</h3>
             <div class="filter-chips">
                 <a href="?<?php echo http_build_query(['search' => $search, 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === '') ? 'active' : ''; ?>">Tous</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Musique', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Musique') ? 'active' : ''; ?>">Musique</a>
                 <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Sport', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Sport') ? 'active' : ''; ?>">Sport</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Cinéma', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Cinéma') ? 'active' : ''; ?>">Cinéma</a>
+                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Art', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Art') ? 'active' : ''; ?>">Art</a>
+                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Bien-être', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Bien-être') ? 'active' : ''; ?>">Bien-être</a>
+                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Jeux', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Jeux') ? 'active' : ''; ?>">Jeux</a>
+                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Nature', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Nature') ? 'active' : ''; ?>">Nature</a>
+                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Musique', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Musique') ? 'active' : ''; ?>">Musique</a>
             </div>
         </div>
 
@@ -141,9 +151,9 @@ include '../includes/header.php';
                         <p class="card-excerpt"><?php echo $excerpt; ?></p>
 
                         <div class="card-meta">
-                            <span class="meta-item"><?php echo $location; ?></span>
-                            <span class="meta-sep">•</span>
-                            <span class="meta-item"><?php echo $date; ?> <?php echo $time; ?></span>
+                            <span class="meta-item">📍 <?php echo $location; ?></span>
+                            <span class="meta-item">📅 <?php echo $date; ?> <?php echo $time; ?></span>
+                            <span class="meta-item">👤 <?php echo $organizer; ?></span>
                         </div>
 
                         <div class="card-footer">
