@@ -5,7 +5,7 @@ header('Content-Type: text/html; charset=UTF-8');
 $pageTitle = "Liste des événements - AmiGo";
 $pageDescription = "Découvrez tous les événements disponibles";
 $assetsDepth = 1;
-$customCSS = "css/events-list.css";
+$customCSS = "../assets/css/index.css";
 
 $events = [
     ['id' => 1, 'title' => 'Concert Rock en plein air', 'date' => '25/11/2025', 'time' => '20h00', 'location' => 'Paris, France', 'places' => 50, 'gradient' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'],

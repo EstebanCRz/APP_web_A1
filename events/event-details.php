@@ -14,7 +14,7 @@ $event = [
 $pageTitle = htmlspecialchars($event['title']) . " - AmiGo";
 $pageDescription = "Détails de l'événement";
 $assetsDepth = 1;
-$customCSS = "css/event-details.css";
+$customCSS = "../assets/css/index.css";
 
 include '../includes/header.php';
 ?>

@@ -1,68 +1,53 @@
 <?php
-// Démarrer la session
 session_start();
+header('Content-Type: text/html; charset=UTF-8');
 
-// Configuration de la page
-$pageTitle = "AmiGo - Accueil";
-$pageDescription = "AmiGo - Plateforme de rencontre et d'événements";
+$pageTitle = "Mot de passe oublié - AmiGo";
+$pageDescription = "Réinitialisez votre mot de passe AmiGo";
+$assetsDepth = 1;
+$customCSS = "../assets/css/index.css";
+
+$success = false;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'] ?? '';
+    
+    if (!empty($email)) {
+        // TODO: Envoyer l'email de réinitialisation
+        $success = true;
+    }
+}
+
+include '../includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="<?php echo htmlspecialchars($pageDescription); ?>">
-    <title><?php echo htmlspecialchars($pageTitle); ?></title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-</head>
-<body>
-    <header>
-        <h1>AmiGo</h1>
-        <div>
-            <!-- TODO: Implémenter la sélection de langue avec PHP/Session -->
-            <select class="language-selector" aria-label="Changer la langue">
-                <option value="fr">Français</option>
-                <option value="en">English</option>
-                <option value="es">Español</option>
-            </select>
-        </div>
-    </header>
 
-    <nav>
-        <ul>
-            <li><a href="index.php">Accueil</a></li>
-            <li><a href="../events/events-list.php">Événements</a></li>
-            <li><a href="../auth/login.php">Connexion</a></li>
-            <li><a href="../auth/register.php">Inscription</a></li>
-        </ul>
-    </nav>
-
-    <main>
-        <div class="container">
-            <section>
-                <h2>Bienvenue sur AmiGo</h2>
-                <p>Découvrez et participez à des événements proches de vous. Rencontrez de nouvelles personnes et partagez des moments inoubliables !</p>
-                
-                <div style="margin: 2rem 0;">
-                    <a href="../auth/register.php" class="btn btn-primary">S'inscrire</a>
-                    <a href="../auth/login.php" class="btn btn-secondary">Se connecter</a>
+<div class="container">
+    <div class="form-container">
+        <h2>Mot de passe oublié</h2>
+        
+        <?php if ($success): ?>
+            <div class="alert alert-success">
+                Un email de réinitialisation a été envoyé à votre adresse email.
+            </div>
+        <?php else: ?>
+            <p>Entrez votre adresse email pour recevoir un lien de réinitialisation.</p>
+            
+            <form method="POST" action="">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="votre@email.com">
                 </div>
-            </section>
+                
+                <button type="submit" class="btn btn-primary btn-block">Envoyer le lien</button>
+            </form>
+        <?php endif; ?>
+        
+        <div class="form-links">
+            <p><a href="login.php">Retour à la connexion</a></p>
+        </div>
+    </div>
+</div>
 
-            <section>
-                <h3>Événements tendance</h3>
-                <!-- TODO: Charger les événements depuis la base de données avec PHP -->
-                <div class="grid">
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Concert Rock en plein air</h4>
-                            <p class="event-details">📅 25/11/2025 - 20h00</p>
-                            <p class="event-details">📍 Paris, France</p>
-                            <p class="event-details">👥 50 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
-                    </div>
+<?php include '../includes/footer.php'; ?>
 
                     <div class="event-card">
                         <div class="event-banner" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>

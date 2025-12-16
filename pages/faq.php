@@ -5,7 +5,7 @@ header('Content-Type: text/html; charset=UTF-8');
 $pageTitle = "FAQ - AmiGo";
 $pageDescription = "Questions fréquemment posées";
 $assetsDepth = 1;
-$customCSS = "css/faq.css";
+$customCSS = "../assets/css/index.css";
 
 $faqs = [
     ['question' => 'Comment créer un compte ?', 'answer' => 'Cliquez sur "Inscription" en haut de la page et remplissez le formulaire avec vos informations.'],

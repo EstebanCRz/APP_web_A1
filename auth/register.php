@@ -5,7 +5,7 @@ header('Content-Type: text/html; charset=UTF-8');
 $pageTitle = "Inscription - AmiGo";
 $pageDescription = "Créez votre compte AmiGo";
 $assetsDepth = 1;
-$customCSS = "css/register.css";
+$customCSS = "../assets/css/index.css";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
