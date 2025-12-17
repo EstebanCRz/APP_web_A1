@@ -1,8 +1,8 @@
-﻿<?php
+﻿<?php 
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
 
-$pageTitle = "Mentions Légales - AmiGo";
+$pageTitle = "Mentions légales - AmiGo";
 $pageDescription = "Mentions légales de la plateforme AmiGo";
 $assetsDepth = 1;
 $customCSS = "../assets/css/index.css";
@@ -10,56 +10,88 @@ $customCSS = "../assets/css/index.css";
 include '../includes/header.php';
 ?>
 
-<div class="container">
-    <h2>Mentions Légales</h2>
-    
-    <section>
-        <h3>1. Éditeur du site</h3>
+<main class="legal-container">
+    <header class="legal-header">
+        <h1>Mentions légales</h1>
+        <p>
+            Conformément aux dispositions légales en vigueur, vous trouverez ci-dessous
+            les informations relatives à l’éditeur et à l’exploitation du site AmiGo.
+        </p>
+    </header>
+
+    <section class="legal-section">
+        <h2>1. Éditeur du site</h2>
         <p><strong>Nom :</strong> AmiGo</p>
-        <p><strong>Forme juridique :</strong> [À compléter]</p>
-        <p><strong>Siège social :</strong> 123 Rue de Paris, 75001 Paris, France</p>
+        <p><strong>Forme juridique :</strong> Projet étudiant (à but non commercial)</p>
+        <p><strong>Siège social :</strong> 123 rue de Paris, 75001 Paris, France</p>
         <p><strong>Email :</strong> contact@amigo.fr</p>
         <p><strong>Téléphone :</strong> +33 1 23 45 67 89</p>
     </section>
-    
-    <section>
-        <h3>2. Directeur de publication</h3>
-        <p><strong>Nom :</strong> [À compléter]</p>
-        <p><strong>Email :</strong> contact@amigo.fr</p>
+
+    <section class="legal-section">
+        <h2>2. Directeur de la publication</h2>
+        <p>
+            <strong>Responsable de la publication :</strong> Équipe AmiGo  
+        </p>
+        <p>
+            <strong>Contact :</strong> contact@amigo.fr
+        </p>
     </section>
-    
-    <section>
-        <h3>3. Hébergeur</h3>
-        <p><strong>Nom :</strong> [Nom de l'hébergeur]</p>
-        <p><strong>Adresse :</strong> [Adresse de l'hébergeur]</p>
-        <p><strong>Téléphone :</strong> [Téléphone de l'hébergeur]</p>
+
+    <section class="legal-section">
+        <h2>3. Hébergement</h2>
+        <p><strong>Hébergeur :</strong> [Nom de l’hébergeur]</p>
+        <p><strong>Adresse :</strong> [Adresse de l’hébergeur]</p>
+        <p><strong>Téléphone :</strong> [Numéro de téléphone]</p>
     </section>
-    
-    <section>
-        <h3>4. Propriété intellectuelle</h3>
-        <p>L'ensemble du contenu de ce site (textes, images, vidéos) est protégé par le droit d'auteur. Toute reproduction, même partielle, est interdite sans autorisation préalable.</p>
+
+    <section class="legal-section">
+        <h2>4. Propriété intellectuelle</h2>
+        <p>
+            L’ensemble des contenus présents sur le site AmiGo (textes, images,
+            éléments graphiques, logo) est protégé par le droit de la propriété
+            intellectuelle. Toute reproduction, représentation ou diffusion, même
+            partielle, est interdite sans autorisation préalable.
+        </p>
     </section>
-    
-    <section>
-        <h3>5. Données personnelles</h3>
-        <p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles.</p>
-        <p>Pour exercer ces droits, contactez-nous à : contact@amigo.fr</p>
+
+    <section class="legal-section">
+        <h2>5. Données personnelles</h2>
+        <p>
+            Les données personnelles collectées sur le site sont traitées conformément
+            au Règlement Général sur la Protection des Données (RGPD).
+        </p>
+        <p>
+            Vous disposez d’un droit d’accès, de rectification et de suppression de vos
+            données. Pour exercer ces droits, vous pouvez nous contacter à l’adresse :
+            <strong>contact@amigo.fr</strong>.
+        </p>
     </section>
-    
-    <section>
-        <h3>6. Cookies</h3>
-        <p>Ce site utilise des cookies pour améliorer l'expérience utilisateur. En continuant votre navigation, vous acceptez l'utilisation de ces cookies.</p>
+
+    <section class="legal-section">
+        <h2>6. Cookies</h2>
+        <p>
+            Le site AmiGo utilise des cookies afin d’améliorer l’expérience utilisateur
+            et de mesurer l’audience. En poursuivant votre navigation sur le site,
+            vous acceptez l’utilisation de ces cookies.
+        </p>
     </section>
-    
-    <section>
-        <h3>7. Liens externes</h3>
-        <p>AmiGo n'est pas responsable du contenu des sites externes vers lesquels des liens peuvent pointer.</p>
+
+    <section class="legal-section">
+        <h2>7. Liens externes</h2>
+        <p>
+            Le site AmiGo peut contenir des liens vers des sites externes. AmiGo ne
+            saurait être tenu responsable du contenu ou du fonctionnement de ces sites.
+        </p>
     </section>
-    
-    <section>
-        <h3>8. Contact</h3>
-        <p>Pour toute question concernant ces mentions légales, contactez-nous via notre <a href="contact.php">page de contact</a>.</p>
+
+    <section class="legal-section">
+        <h2>8. Contact</h2>
+        <p>
+            Pour toute question relative aux présentes mentions légales, vous pouvez
+            nous contacter via la <a href="contact.php">page de contact</a>.
+        </p>
     </section>
-</div>
+</main>
 
 <?php include '../includes/footer.php'; ?>
