@@ -5,7 +5,7 @@ header('Content-Type: text/html; charset=UTF-8');
 $pageTitle = "FAQ - AmiGo";
 $pageDescription = "Questions fréquemment posées";
 $assetsDepth = 1;
-$customCSS = "css/faq.css";
+$customCSS = "../assets/css/index.css";
 
 $faqs = [
     [

@@ -13,19 +13,6 @@ body {
     background-color: #f4f4f4;
 }
 
-/* Header */
-header {
-    background: #333;
-    color: #fff;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-header h1 {
-    font-size: 1.5rem;
-}
 
 .language-selector {
     background: #fff;
@@ -36,28 +23,7 @@ header h1 {
     cursor: pointer;
 }
 
-/* Navigation */
-nav {
-    background: #555;
-    padding: 1rem 2rem;
-}
 
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 2rem;
-}
-
-nav a {
-    color: #fff;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-}
-
-nav a:hover {
-    background: #666;
-    border-radius: 5px;
-}
 
 /* Main Content */
 main {
