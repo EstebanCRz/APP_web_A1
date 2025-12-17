@@ -21,37 +21,25 @@
 </head>
 <body>
     <header>
-        <div class="header-container">
-            <div class="logo">
-                <a href="<?php echo $prefix; ?>index.php">
-                    <span class="logo-icon">A</span>
-                    <span class="logo-text">AmiGo</span>
-                </a>
-            </div>
+        <div class="header-inner">
+            <h1><a href="<?php echo $prefix; ?>index.php">AmiGo</a></h1>
+
             <nav>
                 <ul>
-                    <li><a href="<?php echo $prefix; ?>index.php" class="nav-link active">Accueil</a></li>
-                    <li><a href="<?php echo $prefix; ?>events/events-list.php" class="nav-link">Activités</a></li>
-                    <li><a href="<?php echo $prefix; ?>pages/faq.php" class="nav-link">FAQ</a></li>
+                    <li><a href="<?php echo $prefix; ?>index.php">Accueil</a></li>
+                    <li><a href="<?php echo $prefix; ?>events/events-list.php">Événements</a></li>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <li><a href="<?php echo $prefix; ?>profile/profile.php">Profil</a></li>
+                        <li><a href="<?php echo $prefix; ?>events/event-create.php">Créer un événement</a></li>
+                        <li><a href="<?php echo $prefix; ?>auth/login.php?logout=1">Déconnexion</a></li>
+                    <?php else: ?>
+                        <li><a href="<?php echo $prefix; ?>auth/login.php">Connexion</a></li>
+                        <li><a href="<?php echo $prefix; ?>auth/register.php">Inscription</a></li>
+                    <?php endif; ?>
                 </ul>
             </nav>
-            <div class="user-profile">
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <div class="profile-dropdown">
-                        <button class="profile-btn">
-                            <img src="<?php echo $prefix; ?>assets/images/default-avatar.png" alt="Profil" class="profile-avatar">
-                            <span class="profile-name"><?php echo isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'Utilisateur'; ?></span>
-                        </button>
-                        <div class="dropdown-content">
-                            <a href="<?php echo $prefix; ?>profile/profile.php">Mon Profil</a>
-                            <a href="<?php echo $prefix; ?>events/event-create.php">Créer un événement</a>
-                            <a href="<?php echo $prefix; ?>auth/login.php?logout=1">Déconnexion</a>
-                        </div>
-                    </div>
-                <?php else: ?>
-                    <a href="<?php echo $prefix; ?>auth/login.php" class="btn-login">Connexion</a>
-                <?php endif; ?>
-            </div>
+
+            <!-- Global header search removed (moved to events page) -->
         </div>
     </header>
     <main>
