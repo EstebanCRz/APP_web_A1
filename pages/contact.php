@@ -5,7 +5,7 @@ header('Content-Type: text/html; charset=UTF-8');
 $pageTitle = "Contact - AmiGo";
 $pageDescription = "Contactez l'équipe AmiGo";
 $assetsDepth = 1;
-$customCSS = "css/contact.css";
+$customCSS = "../assets/css/index.css";
 
 include '../includes/header.php';
 ?>

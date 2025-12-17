@@ -1,4 +1,16 @@
-/* Header styles */
+/* Reset de base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #FFF5E8;
+}
+
+/* Header */
 header {
     /* use global palette defined in style.css */
     background: linear-gradient(135deg, var(--accent-fresh) 0%, var(--accent-trust) 100%);
@@ -7,41 +19,64 @@ header {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
-header h1 {
-    margin: 0;
-    font-size: 2rem;
-    font-weight: 700;
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-header h1 a {
-    color: white;
+/* Logo à gauche */
+.logo a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     text-decoration: none;
 }
 
-header h1 a:hover {
-    opacity: 0.9;
+.logo-icon {
+    background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 header nav {
     margin-top: 0;
 }
 
-header nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+/* Navigation au centre */
+nav {
+    flex: 1;
     display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
+    justify-content: center;
 }
 
-header nav ul li {
-    display: inline;
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 15px;
+    align-items: center;
 }
 
-header nav ul li a {
-    color: white;
+nav ul li {
+    margin: 0;
+}
+
+.nav-link {
+    display: inline-block;
+    padding: 10px 28px;
     text-decoration: none;
+    color: #666;
+    font-size: 15px;
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: 5px;
@@ -54,13 +89,36 @@ header nav ul li a.active {
     color: #fff;
 }
 
-.language-selector {
-    padding: 0.5rem;
-    border-radius: 5px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background-color: rgba(255, 255, 255, 0.1);
+/* Bouton actif (Accueil) */
+.nav-link.active {
+    background-color: #00BCD4;
     color: white;
+}
+
+.nav-link.active:hover {
+    background-color: #00ACC1;
+}
+
+/* Profil utilisateur à droite */
+.user-profile {
+    display: flex;
+    align-items: center;
+}
+
+.profile-dropdown {
+    position: relative;
+}
+
+.profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
     cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
 }
 
 /* Header inner layout */
@@ -82,16 +140,45 @@ header nav ul li a { background: transparent; }
 }
 
 @media (max-width: 768px) {
-    header {
-        padding: 1rem;
+    .header-container {
+        padding: 0 20px;
+        flex-wrap: wrap;
     }
 
-    header h1 {
-        font-size: 1.5rem;
+    nav {
+        order: 3;
+        width: 100%;
+        margin-top: 15px;
     }
 
-    header nav ul {
-        gap: 1rem;
-        font-size: 0.9rem;
+    nav ul {
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .nav-link {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .profile-name {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-text {
+        font-size: 18px;
+    }
+
+    .logo-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+
+    .nav-link {
+        padding: 6px 12px;
+        font-size: 13px;
     }
 }

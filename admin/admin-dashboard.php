@@ -1,33 +1,13 @@
 <?php
-// Démarrer la session
 session_start();
+header('Content-Type: text/html; charset=UTF-8');
 
-// Configuration de la page
-$pageTitle = "AmiGo - Accueil";
-$pageDescription = "AmiGo - Plateforme de rencontre et d'événements";
-?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="<?php echo htmlspecialchars($pageDescription); ?>">
-    <title><?php echo htmlspecialchars($pageTitle); ?></title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/header.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-    <link rel="stylesheet" href="css/admin-dashboard.css">
-</head>
-<body>
-    <header>
-        <h1>AmiGo</h1>
-        <div>
-            <!-- TODO: Implémenter la sélection de langue avec PHP/Session -->
-            <select class="language-selector" aria-label="Changer la langue">
-                <option value="fr">Français</option>
-                <option value="en">English</option>
-                <option value="es">Español</option>
+$pageTitle = "Tableau de bord Admin - AmiGo";
+$pageDescription = "Administration de la plateforme AmiGo";
+$assetsDepth = 1;
+$customCSS = "../assets/css/index.css";
+
+include '../includes/header.php';
             </select>
         </div>
     </header>

@@ -55,22 +55,6 @@ nav {
     padding: 0;
 }
 
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 2rem;
-}
-
-nav a {
-    color: #fff;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-}
-
-nav a:hover {
-    background: #666;
-    border-radius: 5px;
-}
 
 /* Main Content */
 main {

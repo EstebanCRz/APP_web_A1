@@ -13,9 +13,7 @@
     $prefix = str_repeat('../', $depth);
     ?>
     
-    <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/style.css">
     <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/header.css">
-    <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/footer.css">
     
     <?php if (isset($customCSS)): ?>
         <link rel="stylesheet" href="<?php echo $customCSS; ?>">

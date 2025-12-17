@@ -5,7 +5,7 @@ header('Content-Type: text/html; charset=UTF-8');
 $pageTitle = "Connexion - AmiGo";
 $pageDescription = "Connectez-vous à votre compte AmiGo";
 $assetsDepth = 1;
-$customCSS = "css/login.css";
+$customCSS = "../assets/css/index.css";
 
 // Traiter le formulaire de connexion
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
