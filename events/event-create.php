@@ -6,7 +6,10 @@ header('Content-Type: text/html; charset=UTF-8');
 $pageTitle = "Créer une activité - AmiGo";
 $pageDescription = "Créez et partagez une nouvelle activité avec la communauté";
 $assetsDepth = 1;
-$customCSS = "css/event-create.css";
+$customCSS = [
+    "../assets/css/style.css",
+    "css/event-create.css"
+];
 
 // Handle form submission
 $success = false;

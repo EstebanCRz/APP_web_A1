@@ -12,7 +12,10 @@ $activities = [
 
 $pageTitle = "AmiGo - Partage d'activités";
 $assetsDepth = 0;
-$customCSS = "assets/css/index.css";
+$customCSS = [
+    "assets/css/style.css",
+    "assets/css/index.css"
+];
 
 include 'includes/header.php';
 ?>
@@ -21,44 +24,66 @@ include 'includes/header.php';
     <section class="hero-section">
         <div class="hero-content">
             <h1>Partage d'activités entre particuliers</h1>
-            <input type="text" id="searchBar" placeholder="Chercher une activité (mot-clé, ville...)">
+            <p>Découvrez, créez et rejoignez des activités près de chez vous : sport, cuisine, art, musique, nature...</p>
+            
+            <input type="text" id="searchBar" placeholder="Chercher une activité (mot-clé, ville, organisateur)">
             
             <div class="filter-tags">
                 <button class="filter-btn active" data-filter="all">Tous</button>
                 <button class="filter-btn" data-filter="Sport">Sport</button>
+                <button class="filter-btn" data-filter="Cuisine">Cuisine</button>
                 <button class="filter-btn" data-filter="Art">Art</button>
-                <button class="filter-btn" data-filter="Bien-être">Bien-être</button>
+                <button class="filter-btn" data-filter="Musique">Musique</button>
                 <button class="filter-btn" data-filter="Jeux">Jeux</button>
+                <button class="filter-btn" data-filter="Nature">Nature</button>
+                <button class="filter-btn" data-filter="Bien-être">Bien-être</button>
+            </div>
+            
+            <div class="hero-badges">
+                <span class="hero-badge badge-local">Communauté locale</span>
+                <span class="hero-badge badge-convivial">Convivial</span>
+                <span class="hero-badge badge-gratuit">Gratuit</span>
             </div>
         </div>
         
         <div class="hero-grid">
-            <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=300" alt="">
-            <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300" alt="">
-            <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300" alt="">
+            <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=400" alt="Running">
+            <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400" alt="Nature">
+            <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400" alt="Yoga">
+            <img src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=400" alt="Music">
+            <img src="https://images.unsplash.com/photo-1511876484798-816e2c24f1c3?w=400" alt="Games">
         </div>
     </section>
 
-    <section>
-        <h2>Activités récentes</h2>
-        <div class="activities-grid" id="activitiesContainer">
-            <?php foreach ($activities as $act): ?>
-                <div class="activity-item" data-type="<?php echo $act['type']; ?>">
-                    <div class="card-img" style="background-image: url('<?php echo $act['img']; ?>');">
-                        <span class="badge" style="background: <?php echo $act['color']; ?>;"><?php echo $act['type']; ?></span>
+    <div class="section-header">
+        <div>
+            <h2>Activités récentes</h2>
+            <p>Les dernières propositions de la communauté</p>
+        </div>
+        <a href="events/events-list.php" class="voir-tout">Voir tout</a>
+    </div>
+    
+    <div class="activities-grid" id="activitiesContainer">
+        <?php foreach ($activities as $act): ?>
+            <div class="activity-item" data-type="<?php echo htmlspecialchars($act['type'], ENT_QUOTES, 'UTF-8'); ?>">
+                <div class="card-img" style="background-image: url('<?php echo htmlspecialchars($act['img'], ENT_QUOTES, 'UTF-8'); ?>');">
+                    <span class="badge" style="background: <?php echo htmlspecialchars($act['color'], ENT_QUOTES, 'UTF-8'); ?>;"><?php echo htmlspecialchars($act['type'], ENT_QUOTES, 'UTF-8'); ?></span>
+                </div>
+                <div class="card-body">
+                    <h4><?php echo htmlspecialchars($act['title'], ENT_QUOTES, 'UTF-8'); ?></h4>
+                    <div class="card-meta">
+                        <span class="info">📍 <?php echo htmlspecialchars($act['loc'], ENT_QUOTES, 'UTF-8'); ?></span>
+                        <span class="info">📅 <?php echo htmlspecialchars($act['date'], ENT_QUOTES, 'UTF-8'); ?></span>
+                        <span class="info">👤 <?php echo htmlspecialchars($act['user'], ENT_QUOTES, 'UTF-8'); ?></span>
                     </div>
-                    <div class="card-body">
-                        <h4><?php echo htmlspecialchars($act['title']); ?></h4>
-                        <p class="info"><?php echo $act['loc']; ?> • <?php echo $act['date']; ?></p>
-                        <div class="card-footer">
-                            <span><?php echo $act['inscrits']; ?></span>
-                            <button class="btn-subscribe">S'inscrire</button>
-                        </div>
+                    <div class="card-footer">
+                        <span><?php echo htmlspecialchars($act['inscrits'], ENT_QUOTES, 'UTF-8'); ?> inscrits</span>
+                        <button class="btn-subscribe">S'inscrire</button>
                     </div>
                 </div>
-            <?php endforeach; ?>
-        </div>
-    </section>
+            </div>
+        <?php endforeach; ?>
+    </div>
 </div>
 
 <script src="assets/script.js"></script>

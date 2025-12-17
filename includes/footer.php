@@ -1,4 +1,5 @@
     </main>
+
     <footer>
         <ul class="footer-links">
             <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>pages/contact.php">Contact</a></li>

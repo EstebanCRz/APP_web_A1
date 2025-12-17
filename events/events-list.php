@@ -6,7 +6,10 @@ header('Content-Type: text/html; charset=UTF-8');
 $pageTitle = "Liste des événements - AmiGo";
 $pageDescription = "Découvrez tous les événements disponibles";
 $assetsDepth = 1;
-$customCSS = "../assets/css/index.css";
+$customCSS = [
+    "../assets/css/style.css",
+    "css/events-list.css"
+];
 
 $events = [
     ['id' => 1, 'category' => 'Sport', 'title' => 'Sortie Running au Parc', 'date' => '25/11/2025', 'time' => '09h00', 'location' => 'Parc Monceau, Paris', 'places' => 50, 'taken' => 7, 'organizer' => 'Camille', 'excerpt' => 'Rejoignez-nous pour un footing convivial de 5km, tous niveaux bienvenus !', 'image' => 'https://picsum.photos/id/1067/800/600', 'subscribed' => false],

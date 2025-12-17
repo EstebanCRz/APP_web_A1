@@ -14,9 +14,16 @@
     ?>
     
     <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/footer.css">
     
     <?php if (isset($customCSS)): ?>
-        <link rel="stylesheet" href="<?php echo $customCSS; ?>">
+        <?php if (is_array($customCSS)): ?>
+            <?php foreach ($customCSS as $css): ?>
+                <link rel="stylesheet" href="<?php echo $css; ?>">
+            <?php endforeach; ?>
+        <?php else: ?>
+            <link rel="stylesheet" href="<?php echo $customCSS; ?>">
+        <?php endif; ?>
     <?php endif; ?>
 </head>
 <body>

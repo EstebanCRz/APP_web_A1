@@ -6,7 +6,10 @@ header('Content-Type: text/html; charset=UTF-8');
 $pageTitle = "Détails de l'activité - AmiGo";
 $pageDescription = "Découvrez tous les détails de cette activité";
 $assetsDepth = 1;
-$customCSS = "../assets/css/index.css";
+$customCSS = [
+    "../assets/css/style.css",
+    "css/event-details.css"
+];
 
 // Sample event data (in real app, fetch from DB)
 $events = [
