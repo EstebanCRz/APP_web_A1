@@ -29,13 +29,19 @@
 <body>
     <header>
         <div class="header-inner">
-            <h1><a href="<?php echo $prefix; ?>index.php">AmiGo</a></h1>
+            <div class="logo">
+                <a href="<?php echo $prefix; ?>index.php">
+                    <img src="<?php echo $prefix; ?>assets/images/capture.png" alt="AmiGo" style="height: 100px;">
+                </a>
+
+            </div>
 
             <nav>
                 <ul>
                     <li><a href="<?php echo $prefix; ?>index.php">Accueil</a></li>
                     <li><a href="<?php echo $prefix; ?>events/events-list.php">Événements</a></li>
                     <?php if (isset($_SESSION['user_id'])): ?>
+                        <li><a href="<?php echo $prefix; ?>pages/mes-groupes.php">Mes groupes</a></li>
                         <li><a href="<?php echo $prefix; ?>profile/profile.php">Profil</a></li>
                         <li><a href="<?php echo $prefix; ?>events/event-create.php">Créer un événement</a></li>
                         <li><a href="<?php echo $prefix; ?>auth/login.php?logout=1">Déconnexion</a></li>

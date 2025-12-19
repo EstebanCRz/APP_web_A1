@@ -1,7 +1,21 @@
 <?php
 declare(strict_types=1);
+
+// Configuration de session (AVANT session_start)
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_secure', 0);
+
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
+
+require_once '../includes/activities_functions.php';
+
+// Vérifier que l'utilisateur est connecté
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../auth/login.php');
+    exit;
+}
 
 $pageTitle = "Créer une activité - AmiGo";
 $pageDescription = "Créez et partagez une nouvelle activité avec la communauté";
@@ -11,6 +25,9 @@ $customCSS = [
     "css/event-create.css"
 ];
 
+// Récupérer les catégories
+$categories = getAllCategories();
+
 // Handle form submission
 $success = false;
 $error = '';
@@ -18,21 +35,46 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim((string) ($_POST['title'] ?? ''));
     $description = trim((string) ($_POST['description'] ?? ''));
-    $category = trim((string) ($_POST['category'] ?? ''));
+    $category_id = (int) ($_POST['category'] ?? 0);
     $location = trim((string) ($_POST['location'] ?? ''));
+    $city = trim((string) ($_POST['city'] ?? ''));
     $date = trim((string) ($_POST['date'] ?? ''));
     $time = trim((string) ($_POST['time'] ?? ''));
-    $capacity = trim((string) ($_POST['capacity'] ?? ''));
+    $capacity = (int) ($_POST['capacity'] ?? 0);
     $image = trim((string) ($_POST['image'] ?? ''));
 
     // Validation
-    if (empty($title) || empty($description) || empty($category) || empty($location) || empty($date) || empty($time) || empty($capacity)) {
+    if (empty($title) || empty($description) || $category_id === 0 || empty($location) || empty($city) || empty($date) || empty($time) || $capacity < 1) {
         $error = 'Tous les champs obligatoires doivent être remplis.';
-    } elseif ((int)$capacity < 1) {
-        $error = 'La capacité doit être supérieure à 0.';
     } else {
-        // TODO: Save to database
-        $success = true;
+        try {
+            // Créer l'activité
+            $activityData = [
+                'title' => $title,
+                'description' => $description,
+                'excerpt' => substr($description, 0, 200),
+                'category_id' => $category_id,
+                'creator_id' => $_SESSION['user_id'],
+                'location' => $location,
+                'city' => $city,
+                'event_date' => $date,
+                'event_time' => $time,
+                'max_participants' => $capacity,
+                'image' => !empty($image) ? $image : 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800'
+            ];
+            
+            $activityId = createActivity($activityData);
+            
+            if ($activityId) {
+                $success = true;
+                // Rediriger vers le profil après 2 secondes
+                header("Refresh: 2; url=../profile/profile-created.php");
+            } else {
+                $error = 'Erreur lors de la création de l\'activité.';
+            }
+        } catch (Exception $e) {
+            $error = 'Erreur: ' . $e->getMessage();
+        }
     }
 }
 
@@ -86,10 +128,11 @@ include '../includes/header.php';
                 <label for="category">Catégorie <span class="required">*</span></label>
                 <select id="category" name="category" required>
                     <option value="">Sélectionner une catégorie</option>
-                    <option value="Musique" <?php echo ($_POST['category'] ?? '') === 'Musique' ? 'selected' : ''; ?>>Musique</option>
-                    <option value="Sport" <?php echo ($_POST['category'] ?? '') === 'Sport' ? 'selected' : ''; ?>>Sport</option>
-                    <option value="Cinéma" <?php echo ($_POST['category'] ?? '') === 'Cinéma' ? 'selected' : ''; ?>>Cinéma</option>
-                    <option value="Autres" <?php echo ($_POST['category'] ?? '') === 'Autres' ? 'selected' : ''; ?>>Autres</option>
+                    <?php foreach ($categories as $cat): ?>
+                        <option value="<?php echo $cat['id']; ?>" <?php echo (($_POST['category'] ?? 0) == $cat['id']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($cat['name'], ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
@@ -99,8 +142,20 @@ include '../includes/header.php';
                     type="text" 
                     id="location" 
                     name="location" 
-                    placeholder="ex: Parc Monceau, Paris"
+                    placeholder="ex: Parc Monceau"
                     value="<?php echo htmlspecialchars($_POST['location'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="city">Ville <span class="required">*</span></label>
+                <input 
+                    type="text" 
+                    id="city" 
+                    name="city" 
+                    placeholder="ex: Paris"
+                    value="<?php echo htmlspecialchars($_POST['city'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
                     required
                 >
             </div>

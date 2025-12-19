@@ -1,7 +1,15 @@
 <?php
 declare(strict_types=1);
+
+// Configuration de session (AVANT session_start)
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_secure', 0);
+
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
+
+require_once '../includes/activities_functions.php';
 
 $pageTitle = "Liste des événements - AmiGo";
 $pageDescription = "Découvrez tous les événements disponibles";
@@ -11,69 +19,38 @@ $customCSS = [
     "css/events-list.css"
 ];
 
-$events = [
-    ['id' => 1, 'category' => 'Sport', 'title' => 'Sortie Running au Parc', 'date' => '25/11/2025', 'time' => '09h00', 'location' => 'Parc Monceau, Paris', 'places' => 50, 'taken' => 7, 'organizer' => 'Camille', 'excerpt' => 'Rejoignez-nous pour un footing convivial de 5km, tous niveaux bienvenus !', 'image' => 'https://picsum.photos/id/1067/800/600', 'subscribed' => false],
-    ['id' => 2, 'category' => 'Art', 'title' => 'Balade Photo au Bord de l\'Eau', 'date' => '28/11/2025', 'time' => '18h00', 'location' => 'Bordeaux', 'places' => 20, 'taken' => 12, 'organizer' => 'Zoé', 'excerpt' => 'Découvrons les meilleurs spots photo au coucher du soleil, débutants bienvenus.', 'image' => 'https://picsum.photos/id/288/800/600', 'subscribed' => true],
-    ['id' => 3, 'category' => 'Bien-être', 'title' => 'Initiation Yoga Vinyasa', 'date' => '30/11/2025', 'time' => '18h00', 'location' => 'Marseille', 'places' => 30, 'taken' => 4, 'organizer' => 'Nora', 'excerpt' => 'Séance détente et respiration, pensez à apporter votre tapis de yoga.', 'image' => 'https://picsum.photos/id/232/800/600', 'subscribed' => false],
-    ['id' => 4, 'category' => 'Jeux', 'title' => 'Soirée Jeux de Société', 'date' => '27/11/2025', 'time' => '20h00', 'location' => 'Toulouse', 'places' => 20, 'taken' => 16, 'organizer' => 'Mathis', 'excerpt' => 'Ambiance conviviale, venez avec vos jeux préférés, boissons partagées.', 'image' => 'https://picsum.photos/id/500/800/600', 'subscribed' => false],
-    ['id' => 5, 'category' => 'Nature', 'title' => 'Randonnée en Forêt', 'date' => '29/11/2025', 'time' => '18h00', 'location' => 'Chamonix', 'places' => 15, 'taken' => 6, 'organizer' => 'Romain', 'excerpt' => 'Parcours de 10km, prévoir chaussures de marche et eau. Belle vue garantie !', 'image' => 'https://picsum.photos/id/1022/800/600', 'subscribed' => false],
-    ['id' => 6, 'category' => 'Musique', 'title' => 'Concert Jazz Improvisé', 'date' => '30/11/2025', 'time' => '18h00', 'location' => 'Nice', 'places' => 25, 'taken' => 18, 'organizer' => 'Sophie', 'excerpt' => 'Soirée musicale décontractée au son du jazz, apéro inclus.', 'image' => 'https://picsum.photos/id/441/800/600', 'subscribed' => false],
-    ['id' => 7, 'category' => 'Nature', 'title' => 'Picnic d\'Été en Montagne', 'date' => '31/11/2025', 'time' => '12h00', 'location' => 'Annecy', 'places' => 35, 'taken' => 22, 'organizer' => 'Luc', 'excerpt' => 'Partageons un moment convivial avec vue panoramique sur les Alpes.', 'image' => 'https://picsum.photos/id/1056/800/600', 'subscribed' => false],
-    ['id' => 8, 'category' => 'Sport', 'title' => 'Cours de Badminton', 'date' => '26/11/2025', 'time' => '19h00', 'location' => 'Lyon', 'places' => 12, 'taken' => 9, 'organizer' => 'Alex', 'excerpt' => 'Entraînement récréatif tous niveaux avec moniteur bénévole.', 'image' => 'https://picsum.photos/id/463/800/600', 'subscribed' => false],
+// Récupération des filtres depuis l'URL
+$filters = [
+    'search' => (string) ($_GET['search'] ?? ''),
+    'category' => (string) ($_GET['category'] ?? ''),
+    'time_filter' => (string) ($_GET['time'] ?? ''),
+    'date_filter' => (string) ($_GET['date'] ?? '')
 ];
 
-// simple search and filters
-$search = (string) ($_GET['search'] ?? '');
-$filterCat = (string) ($_GET['category'] ?? '');
-$filterTime = (string) ($_GET['time'] ?? '');
-$filterDate = (string) ($_GET['date'] ?? '');
+// Récupération des activités depuis la base de données avec filtres
+$activitiesFromDB = getAllActivities($filters);
 
-if ($search !== '') {
-    $events = array_filter($events, function($event) use ($search) {
-        return stripos($event['title'], $search) !== false || stripos($event['location'], $search) !== false || stripos($event['excerpt'], $search) !== false;
-    });
-}
+// Récupération de toutes les catégories pour les filtres
+$categories = getAllCategories();
 
-if ($filterCat !== '') {
-    $events = array_filter($events, function($event) use ($filterCat) {
-        return strcasecmp($event['category'], $filterCat) === 0;
-    });
-}
-
-// Helper function to parse time (e.g., "20h00" -> 20)
-$getHour = function($timeStr) {
-    preg_match('/(\d+)/', $timeStr, $matches);
-    return (int) ($matches[1] ?? 0);
-};
-
-// Filter by time of day
-if ($filterTime !== '') {
-    $events = array_filter($events, function($event) use ($filterTime, $getHour) {
-        $hour = $getHour($event['time']);
-        switch ($filterTime) {
-            case 'morning': return $hour >= 6 && $hour < 12;
-            case 'afternoon': return $hour >= 12 && $hour < 18;
-            case 'evening': return $hour >= 18 && $hour < 24;
-            default: return true;
-        }
-    });
-}
-
-// Filter by date range
-if ($filterDate !== '') {
-    $today = new DateTime();
-    $events = array_filter($events, function($event) use ($filterDate, $today) {
-        $eventDate = DateTime::createFromFormat('d/m/Y', $event['date']);
-        $thisWeekEnd = (clone $today)->modify('+6 days');
-        $thisMonthEnd = (clone $today)->modify('last day of this month');
-        
-        switch ($filterDate) {
-            case 'week': return $eventDate <= $thisWeekEnd;
-            case 'month': return $eventDate <= $thisMonthEnd;
-            case 'coming': return $eventDate >= $today;
-            default: return true;
-        }
-    });
+// Transformation des données pour l'affichage
+$events = [];
+foreach ($activitiesFromDB as $act) {
+    $eventDate = new DateTime($act['event_date']);
+    $events[] = [
+        'id' => $act['id'],
+        'category' => $act['category_name'],
+        'title' => $act['title'],
+        'date' => $eventDate->format('d/m/Y'),
+        'time' => formatEventTime($act['event_time']),
+        'location' => $act['location'] . ', ' . $act['city'],
+        'places' => (int)$act['max_participants'],
+        'taken' => (int)$act['current_participants'],
+        'organizer' => $act['creator_first_name'] ?? $act['creator_username'],
+        'excerpt' => $act['excerpt'],
+        'image' => $act['image'] ?? 'https://picsum.photos/800/600',
+        'subscribed' => isset($_SESSION['user_id']) ? isUserRegistered($act['id'], $_SESSION['user_id']) : false
+    ];
 }
 
 include '../includes/header.php';
@@ -87,7 +64,7 @@ include '../includes/header.php';
 
     <div class="search-section">
         <form method="GET" class="search-form">
-            <input type="search" name="search" placeholder="Chercher (mot-clé, ville, organisateur)" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="search" name="search" placeholder="Chercher (mot-clé, ville, organisateur)" value="<?php echo htmlspecialchars($filters['search'], ENT_QUOTES, 'UTF-8'); ?>">
             <button type="submit" class="btn btn-primary">Rechercher</button>
         </form>
     </div>
@@ -96,8 +73,35 @@ include '../includes/header.php';
         <div class="filter-group">
             <h3>Catégorie</h3>
             <div class="filter-chips">
-                <a href="?<?php echo http_build_query(['search' => $search, 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === '') ? 'active' : ''; ?>">Tous</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Sport', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Sport') ? 'active' : ''; ?>">Sport</a>
+                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'time' => $filters['time_filter'], 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['category'] === '') ? 'active' : ''; ?>">Tous</a>
+                <?php foreach ($categories as $cat): ?>
+                    <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $cat['name'], 'time' => $filters['time_filter'], 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['category'] === $cat['name']) ? 'active' : ''; ?>">
+                        <?php echo htmlspecialchars($cat['name'], ENT_QUOTES, 'UTF-8'); ?>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <h3>Moment de la journée</h3>
+            <div class="filter-chips">
+                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['time_filter'] === '') ? 'active' : ''; ?>">Tous</a>
+                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => 'morning', 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['time_filter'] === 'morning') ? 'active' : ''; ?>">Matin</a>
+                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => 'afternoon', 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['time_filter'] === 'afternoon') ? 'active' : ''; ?>">Après-midi</a>
+                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => 'evening', 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['time_filter'] === 'evening') ? 'active' : ''; ?>">Soirée</a>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <h3>Période</h3>
+            <div class="filter-chips">
+                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter']]); ?>" class="filter-chip <?php echo ($filters['date_filter'] === '') ? 'active' : ''; ?>">Toutes</a>
+                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'week']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'week') ? 'active' : ''; ?>">Cette semaine</a>
+                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'month']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'month') ? 'active' : ''; ?>">Ce mois-ci</a>
+                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'coming']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'coming') ? 'active' : ''; ?>">À venir</a>
+            </div>
+        </div>
+    </div>
                 <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Art', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Art') ? 'active' : ''; ?>">Art</a>
                 <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Bien-être', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Bien-être') ? 'active' : ''; ?>">Bien-être</a>
                 <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Jeux', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Jeux') ? 'active' : ''; ?>">Jeux</a>
@@ -145,7 +149,7 @@ include '../includes/header.php';
                 $image = htmlspecialchars($event['image'] ?? '', ENT_QUOTES, 'UTF-8');
                 $subscribed = !empty($event['subscribed']);
             ?>
-                <article class="event-card">
+                <a href="event-details.php?id=<?php echo $id; ?>" class="event-card">
                     <div class="card-media" style="background-image: url('<?php echo $image; ?>');">
                         <span class="badge"><?php echo $category; ?></span>
                     </div>
@@ -160,18 +164,19 @@ include '../includes/header.php';
                         </div>
 
                         <div class="card-footer">
-                            <span class="places"><?php echo $taken; ?>/<?php echo $places; ?> inscrits</span>
+                            <span class="places participant-count"><?php echo $taken; ?>/<?php echo $places; ?> inscrits</span>
                             <?php if ($subscribed): ?>
-                                <a href="event-details.php?id=<?php echo $id; ?>" class="event-cta event-cta--subscribed">Se désinscrire</a>
+                                <button class="event-cta event-cta--subscribed btn-unsubscribe" data-activity-id="<?php echo $id; ?>">Se désinscrire</button>
                             <?php else: ?>
-                                <a href="event-details.php?id=<?php echo $id; ?>" class="event-cta">S'inscrire</a>
+                                <button class="event-cta btn-subscribe" data-activity-id="<?php echo $id; ?>">S'inscrire</button>
                             <?php endif; ?>
                         </div>
                     </div>
-                </article>
+                </a>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
 </div>
 
+<script src="../assets/js/activity-registration.js"></script>
 <?php include '../includes/footer.php'; ?>

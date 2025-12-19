@@ -1,6 +1,14 @@
 ﻿<?php
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
+require_once '../includes/config.php';
+
+// Gérer la déconnexion
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: ../index.php');
+    exit;
+}
 
 $pageTitle = "Connexion - AmiGo";
 $pageDescription = "Connectez-vous à votre compte AmiGo";
@@ -13,11 +21,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     
     if (!empty($email) && !empty($password)) {
-        // TODO: Vérifier dans la base de données
-        $_SESSION['user_id'] = 1;
-        $_SESSION['user_email'] = $email;
-        header('Location: ../profile/profile.php');
-        exit;
+        try {
+            $pdo = getDB();
+            
+            // Chercher l'utilisateur par email
+            $stmt = $pdo->prepare("SELECT id, first_name, last_name, email, password FROM users WHERE email = ?");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch();
+            
+            // Vérifier le mot de passe
+            if ($user && password_verify($password, $user['password'])) {
+                // Connexion réussie
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_email'] = $user['email'];
+                $_SESSION['user_first_name'] = $user['first_name'];
+                $_SESSION['user_last_name'] = $user['last_name'];
+                
+                header('Location: ../profile/profile.php');
+                exit;
+            } else {
+                $error = "Email ou mot de passe incorrect";
+            }
+        } catch(PDOException $e) {
+            $error = "Erreur de connexion: " . $e->getMessage();
+        }
     } else {
         $error = "Veuillez remplir tous les champs";
     }
