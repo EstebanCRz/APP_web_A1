@@ -5,7 +5,10 @@ header('Content-Type: text/html; charset=UTF-8');
 $pageTitle = "FAQ - AmiGo";
 $pageDescription = "Questions fréquemment posées";
 $assetsDepth = 1;
-$customCSS = "../assets/css/index.css";
+$customCSS = [
+    "../assets/css/style.css",
+    "css/faq.css"
+];
 
 $faqs = [
     [
@@ -63,7 +66,7 @@ include '../includes/header.php';
     </section>
 </main>
 
-<script src="js/faq.js"></script>
+<script src="../assets/js/faq.js"></script>
 
 <?php include '../includes/footer.php'; ?>
 

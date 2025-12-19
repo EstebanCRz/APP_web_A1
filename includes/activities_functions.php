@@ -64,6 +64,9 @@ function getAllActivities($filters = []) {
             case 'coming':
                 $sql .= " AND a.event_date >= CURDATE()";
                 break;
+            case 'past':
+                $sql .= " AND a.event_date < CURDATE()";
+                break;
         }
     }
     

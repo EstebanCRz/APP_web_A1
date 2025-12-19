@@ -13,7 +13,10 @@ if (isset($_GET['logout'])) {
 $pageTitle = "Connexion - AmiGo";
 $pageDescription = "Connectez-vous à votre compte AmiGo";
 $assetsDepth = 1;
-$customCSS = "../assets/css/index.css";
+$customCSS = [
+    "../assets/css/style.css",
+    "css/login.css"
+];
 
 // Traiter le formulaire de connexion
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

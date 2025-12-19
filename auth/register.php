@@ -6,7 +6,10 @@ require_once '../includes/config.php';
 $pageTitle = "Inscription - AmiGo";
 $pageDescription = "Créez votre compte AmiGo";
 $assetsDepth = 1;
-$customCSS = "../assets/css/index.css";
+$customCSS = [
+    "../assets/css/style.css",
+    "css/register.css"
+];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $last_name = $_POST['nom'] ?? '';

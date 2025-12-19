@@ -31,12 +31,18 @@
         <div class="header-inner">
             <div class="logo">
                 <a href="<?php echo $prefix; ?>index.php">
-                    <img src="<?php echo $prefix; ?>assets/images/capture.png" alt="AmiGo" style="height: 100px;">
+                    <img src="<?php echo $prefix; ?>assets/images/cap.png" alt="AmiGo" style="height: 100px;">
                 </a>
 
             </div>
 
-            <nav>
+            <button class="burger-menu" id="burgerMenu" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav id="mainNav">
                 <ul>
                     <li><a href="<?php echo $prefix; ?>index.php">Accueil</a></li>
                     <li><a href="<?php echo $prefix; ?>events/events-list.php">Événements</a></li>
@@ -51,8 +57,43 @@
                     <?php endif; ?>
                 </ul>
             </nav>
-
-            <!-- Global header search removed (moved to events page) -->
         </div>
+        <div class="menu-overlay" id="menuOverlay"></div>
     </header>
+    <script>
+        // Menu burger toggle
+        const burgerMenu = document.getElementById('burgerMenu');
+        const mainNav = document.getElementById('mainNav');
+        const menuOverlay = document.getElementById('menuOverlay');
+        
+        if (burgerMenu && mainNav) {
+            burgerMenu.addEventListener('click', function() {
+                this.classList.toggle('active');
+                mainNav.classList.toggle('active');
+                menuOverlay.classList.toggle('active');
+                document.body.classList.toggle('menu-open');
+            });
+            
+            // Fermer le menu en cliquant sur l'overlay
+            if (menuOverlay) {
+                menuOverlay.addEventListener('click', () => {
+                    burgerMenu.classList.remove('active');
+                    mainNav.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                });
+            }
+            
+            // Fermer le menu en cliquant sur un lien
+            const navLinks = mainNav.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    burgerMenu.classList.remove('active');
+                    mainNav.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                });
+            });
+        }
+    </script>
     <main>

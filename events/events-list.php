@@ -27,6 +27,9 @@ $filters = [
     'date_filter' => (string) ($_GET['date'] ?? '')
 ];
 
+// Variables pour faciliter l'accès
+$filterDate = $filters['date_filter'];
+
 // Récupération des activités depuis la base de données avec filtres
 $activitiesFromDB = getAllActivities($filters);
 
@@ -99,34 +102,7 @@ include '../includes/header.php';
                 <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'week']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'week') ? 'active' : ''; ?>">Cette semaine</a>
                 <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'month']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'month') ? 'active' : ''; ?>">Ce mois-ci</a>
                 <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'coming']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'coming') ? 'active' : ''; ?>">À venir</a>
-            </div>
-        </div>
-    </div>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Art', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Art') ? 'active' : ''; ?>">Art</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Bien-être', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Bien-être') ? 'active' : ''; ?>">Bien-être</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Jeux', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Jeux') ? 'active' : ''; ?>">Jeux</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Nature', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Nature') ? 'active' : ''; ?>">Nature</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => 'Musique', 'time' => $filterTime, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterCat === 'Musique') ? 'active' : ''; ?>">Musique</a>
-            </div>
-        </div>
-
-        <div class="filter-group">
-            <h3>Moment</h3>
-            <div class="filter-chips">
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => $filterCat, 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterTime === '') ? 'active' : ''; ?>">N'importe quand</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => $filterCat, 'time' => 'morning', 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterTime === 'morning') ? 'active' : ''; ?>">Matin</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => $filterCat, 'time' => 'afternoon', 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterTime === 'afternoon') ? 'active' : ''; ?>">Après-midi</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => $filterCat, 'time' => 'evening', 'date' => $filterDate]); ?>" class="filter-chip <?php echo ($filterTime === 'evening') ? 'active' : ''; ?>">Soirée</a>
-            </div>
-        </div>
-
-        <div class="filter-group">
-            <h3>Quand</h3>
-            <div class="filter-chips">
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => $filterCat, 'time' => $filterTime]); ?>" class="filter-chip <?php echo ($filterDate === '') ? 'active' : ''; ?>">Tous les événements</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => $filterCat, 'time' => $filterTime, 'date' => 'week']); ?>" class="filter-chip <?php echo ($filterDate === 'week') ? 'active' : ''; ?>">Cette semaine</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => $filterCat, 'time' => $filterTime, 'date' => 'month']); ?>" class="filter-chip <?php echo ($filterDate === 'month') ? 'active' : ''; ?>">Ce mois-ci</a>
-                <a href="?<?php echo http_build_query(['search' => $search, 'category' => $filterCat, 'time' => $filterTime, 'date' => 'coming']); ?>" class="filter-chip <?php echo ($filterDate === 'coming') ? 'active' : ''; ?>">À venir</a>
+                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'past']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'past') ? 'active' : ''; ?>">Passés</a>
             </div>
         </div>
     </div>

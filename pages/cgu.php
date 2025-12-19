@@ -5,7 +5,10 @@ header('Content-Type: text/html; charset=UTF-8');
 $pageTitle = "Conditions Générales d'Utilisation - AmiGo";
 $pageDescription = "CGU de la plateforme AmiGo";
 $assetsDepth = 1;
-$customCSS = "../assets/css/index.css";
+$customCSS = [
+    "../assets/css/style.css",
+    "css/legal.css"
+];
 
 include '../includes/header.php';
 ?>
