@@ -19,6 +19,7 @@ function getAllActivities($filters = []) {
                 a.location,
                 a.city,
                 a.event_date,
+                a.event_date as date,
                 a.event_time,
                 a.max_participants,
                 a.current_participants,
@@ -122,6 +123,7 @@ function getActivityById($id) {
     
     $sql = "SELECT 
                 a.*,
+                a.event_date as date,
                 c.name as category_name,
                 c.color as category_color,
                 c.icon as category_icon,

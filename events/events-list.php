@@ -39,6 +39,20 @@ $categories = getAllCategories();
 
 // Transformation des données pour l'affichage
 $events = [];
+$userFavorites = [];
+
+// Récupérer les favoris de l'utilisateur si connecté
+if (isset($_SESSION['user_id'])) {
+    try {
+        $pdo = getDB();
+        $stmt = $pdo->prepare("SELECT activity_id FROM user_favorites WHERE user_id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $userFavorites = array_column($stmt->fetchAll(), 'activity_id');
+    } catch (PDOException $e) {
+        $userFavorites = [];
+    }
+}
+
 foreach ($activitiesFromDB as $act) {
     $eventDate = new DateTime($act['event_date']);
     $events[] = [
@@ -53,7 +67,8 @@ foreach ($activitiesFromDB as $act) {
         'organizer' => $act['creator_first_name'] ?? $act['creator_username'],
         'excerpt' => $act['excerpt'],
         'image' => $act['image'] ?? 'https://picsum.photos/800/600',
-        'subscribed' => isset($_SESSION['user_id']) ? isUserRegistered($act['id'], $_SESSION['user_id']) : false
+        'subscribed' => isset($_SESSION['user_id']) ? isUserRegistered($act['id'], $_SESSION['user_id']) : false,
+        'is_favorite' => in_array($act['id'], $userFavorites)
     ];
 }
 
@@ -134,10 +149,21 @@ include '../includes/header.php';
                 $organizer = htmlspecialchars($event['organizer'] ?? '', ENT_QUOTES, 'UTF-8');
                 $image = htmlspecialchars($event['image'] ?? '', ENT_QUOTES, 'UTF-8');
                 $subscribed = !empty($event['subscribed']);
+                $isFavorite = !empty($event['is_favorite']);
             ?>
                 <a href="event-details.php?id=<?php echo $id; ?>" class="event-card">
                     <div class="card-media" style="background-image: url('<?php echo $image; ?>');">
                         <span class="badge"><?php echo $category; ?></span>
+                        <?php if (isset($_SESSION['user_id'])): ?>
+                            <button 
+                                class="favorite-btn-card <?php echo $isFavorite ? 'active' : ''; ?>" 
+                                data-activity-id="<?php echo $id; ?>"
+                                onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this);"
+                                title="<?php echo $isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'; ?>"
+                            >
+                                ❤️
+                            </button>
+                        <?php endif; ?>
                     </div>
                     <div class="card-body">
                         <h3 class="card-title"><?php echo $title; ?></h3>
@@ -344,6 +370,42 @@ document.addEventListener('DOMContentLoaded', function() {
         map.setView(defaultCenter, 6);
     }
 });
+
+// Gestion des favoris
+function toggleFavorite(button) {
+    const activityId = button.dataset.activityId;
+    const isActive = button.classList.contains('active');
+    const action = isActive ? 'remove' : 'add';
+    
+    fetch('api/favorite-toggle.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `activity_id=${activityId}&action=${action}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            button.classList.toggle('active');
+            button.title = button.classList.contains('active') ? 'Retirer des favoris' : 'Ajouter aux favoris';
+            
+            // Animation
+            if (button.classList.contains('active')) {
+                button.style.animation = 'heartBeat 0.3s ease';
+                setTimeout(() => {
+                    button.style.animation = '';
+                }, 300);
+            }
+        } else {
+            alert('Erreur: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Erreur de connexion. Vérifiez la console pour plus de détails.');
+    });
+}
 </script>
 
 <?php include '../includes/footer.php'; ?>
