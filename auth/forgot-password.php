@@ -1,9 +1,10 @@
 <?php
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
+require_once '../includes/language.php';
 
-$pageTitle = "Mot de passe oublié - AmiGo";
-$pageDescription = "Réinitialisez votre mot de passe AmiGo";
+$pageTitle = t('auth.reset_password') . " - AmiGo";
+$pageDescription = t('auth.reset_password');
 $assetsDepth = 1;
 $customCSS = "../assets/css/index.css";
 
@@ -22,27 +23,27 @@ include '../includes/header.php';
 
 <div class="container">
     <div class="form-container">
-        <h2>Mot de passe oublié</h2>
+        <h2><?php echo t('auth.reset_password'); ?></h2>
         
         <?php if ($success): ?>
             <div class="alert alert-success">
-                Un email de réinitialisation a été envoyé à votre adresse email.
+                <?php echo t('auth.reset_email_sent'); ?>
             </div>
         <?php else: ?>
-            <p>Entrez votre adresse email pour recevoir un lien de réinitialisation.</p>
+            <p><?php echo t('auth.forgot_password_desc'); ?></p>
             
             <form method="POST" action="">
                 <div class="form-group">
-                    <label for="email">Email</label>
+                    <label for="email"><?php echo t('auth.email'); ?></label>
                     <input type="email" id="email" name="email" required placeholder="votre@email.com">
                 </div>
                 
-                <button type="submit" class="btn btn-primary btn-block">Envoyer le lien</button>
+                <button type="submit" class="btn btn-primary btn-block"><?php echo t('auth.send_link'); ?></button>
             </form>
         <?php endif; ?>
         
         <div class="form-links">
-            <p><a href="login.php">Retour à la connexion</a></p>
+            <p><a href="login.php"><?php echo t('auth.back_to_login'); ?></a></p>
         </div>
     </div>
 </div>

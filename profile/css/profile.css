@@ -1,4 +1,265 @@
-/* Styles sp�cifiques pour profile */
+/* Styles spécifiques pour profile */
 
 @import 'style.css';
 
+/* Onglets du profil */
+.profile-header {
+    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 24px;
+    row-gap: 12px;
+    align-items: center;
+}
+
+.profile-header h2 {
+    font-size: 2rem;
+    line-height: 1.2;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.profile-header p {
+    color: #7f8c8d;
+    font-size: 1.05rem;
+}
+
+.profile-tabs {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0.5rem 0 0 0;
+    flex-wrap: wrap;
+    grid-column: 1 / -1;
+}
+
+.tab-btn {
+    border: 2px solid #e1e8ed;
+    background: #f8f9fb;
+    color: #34495e;
+    border-radius: 999px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.tab-btn.active {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(85, 213, 224, 0.25);
+}
+
+.tab-btn:hover {
+    border-color: #d4dde3;
+    background: #f1f3f6;
+}
+
+/* Contenu des onglets */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Grille d'activités */
+.activities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+}
+
+.event-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+    cursor: pointer;
+}
+
+.event-card:visited {
+    color: inherit;
+}
+
+.event-banner {
+    width: 100%;
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+}
+
+.event-info {
+    padding: 1.25rem 1.25rem 1rem;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.event-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0.5rem 0;
+}
+
+.event-details {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0.5rem 0;
+}
+
+section {
+    margin: 2rem 0;
+}
+
+section h3 {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--brand-primary-1) 0%, var(--brand-primary-2) 100%);
+    color: #fff;
+    box-shadow: 0 6px 12px rgba(85, 213, 224, 0.25);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(85, 213, 224, 0.35);
+}
+
+.btn-secondary {
+    background: #f8f9fb;
+    color: #34495e;
+    border: 2px solid #e1e8ed;
+    border-radius: 999px;
+    padding: 10px 16px;
+}
+
+.btn-secondary:hover {
+    background: #f1f3f6;
+    border-color: #d4dde3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .profile-header h2 {
+        font-size: 1.6rem;
+    }
+    .profile-header {
+        grid-template-columns: 1fr;
+    }
+    .profile-header p {
+        margin-top: 2px;
+    }
+    .profile-tabs {
+        gap: 0.5rem;
+        margin-top: 8px;
+        justify-content: flex-start;
+    }
+    .tab-btn {
+        padding: 9px 14px;
+    }
+}
+
+/* Choose Interests page */
+.choose-interests h2 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 4px;
+}
+.choose-interests p.subtitle {
+    color: #7f8c8d;
+    margin-bottom: 16px;
+}
+.choose-interests .interests-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 20px;
+    margin-top: 12px;
+}
+.choose-interests .interest-item {
+    background: #fafbfc;
+    border: 2px solid #e1e8ed;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+}
+.choose-interests .interest-item input[type="checkbox"] {
+    margin-right: 12px;
+    accent-color: var(--accent-fresh);
+}
+.choose-interests .interest-item span {
+    color: #34495e;
+    font-weight: 600;
+}
+.choose-interests .interest-item:has(input:checked) {
+    border-color: #bfeaf0;
+    background: #e8fbfd;
+    box-shadow: 0 4px 10px rgba(85, 213, 224, 0.15);
+}
+.choose-interests .actions {
+    margin-top: 18px;
+    display: flex;
+    gap: 12px;
+}
+
+/* Chips (recommendations page) */
+.chip {
+    display: inline-block;
+    padding: 8px 14px;
+    border: 2px solid #e1e8ed;
+    border-radius: 999px;
+    background: #f8f9fb;
+    color: #34495e;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+    .choose-interests .interests-grid {
+        grid-template-columns: 1fr;
+    }
+}

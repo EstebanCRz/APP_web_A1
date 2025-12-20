@@ -17,16 +17,34 @@ define('CSS_URL', ASSETS_URL . '/css');
 define('JS_URL', ASSETS_URL . '/js');
 define('IMAGES_URL', ASSETS_URL . '/images');
 
-// Configuration de la base de données (à compléter)
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'amigo');
+// Configuration de la base de données MAMP
+define('DB_HOST', 'localhost:3306'); // Port MySQL MAMP
+define('DB_NAME', 'amigo_db');
 define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_PASS', 'root'); // Mot de passe MAMP
 
-// Configuration de session
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_secure', 0); // Mettre à 1 en HTTPS
+// Fonction de connexion à la base de données
+function getDB() {
+    try {
+        $pdo = new PDO(
+            'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4',
+            DB_USER,
+            DB_PASS,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+            ]
+        );
+        return $pdo;
+    } catch(PDOException $e) {
+        die('Erreur de connexion à la base de données: ' . $e->getMessage());
+    }
+}
 
 // Fuseau horaire
 date_default_timezone_set('Europe/Paris');
+
+// Application name
+define('SITE_NAME', 'AmiGo');

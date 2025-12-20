@@ -1,11 +1,23 @@
 ﻿<?php
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
+require_once '../includes/config.php';
+require_once '../includes/language.php';
 
-$pageTitle = "Connexion - AmiGo";
-$pageDescription = "Connectez-vous à votre compte AmiGo";
+// Gérer la déconnexion
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: ../index.php');
+    exit;
+}
+
+$pageTitle = t('auth.login_title') . " - AmiGo";
+$pageDescription = t('auth.login_title');
 $assetsDepth = 1;
-$customCSS = "../assets/css/index.css";
+$customCSS = [
+    "../assets/css/style.css",
+    "css/login.css"
+];
 
 // Traiter le formulaire de connexion
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,13 +25,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     
     if (!empty($email) && !empty($password)) {
-        // TODO: Vérifier dans la base de données
-        $_SESSION['user_id'] = 1;
-        $_SESSION['user_email'] = $email;
-        header('Location: ../profile/profile.php');
-        exit;
+        try {
+            $pdo = getDB();
+            
+            // Chercher l'utilisateur par email
+            $stmt = $pdo->prepare("SELECT id, first_name, last_name, email, password FROM users WHERE email = ?");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch();
+            
+            // Vérifier le mot de passe
+            if ($user && password_verify($password, $user['password'])) {
+                // Connexion réussie
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_email'] = $user['email'];
+                $_SESSION['user_first_name'] = $user['first_name'];
+                $_SESSION['user_last_name'] = $user['last_name'];
+                
+                header('Location: ../profile/profile.php');
+                exit;
+            } else {
+                $error = t('auth.invalid_credentials');
+            }
+        } catch(PDOException $e) {
+            $error = t('auth.connection_error') . ": " . $e->getMessage();
+        }
     } else {
-        $error = "Veuillez remplir tous les champs";
+        $error = t('auth.fill_all_fields');
     }
 }
 
@@ -28,7 +59,7 @@ include '../includes/header.php';
 
 <div class="container">
     <div class="form-container">
-        <h2>Connexion</h2>
+        <h2><?php echo t('auth.login_title'); ?></h2>
         
         <?php if (isset($error)): ?>
             <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
@@ -36,27 +67,27 @@ include '../includes/header.php';
         
         <form method="POST" action="">
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email"><?php echo t('auth.email'); ?></label>
                 <input type="email" id="email" name="email" required placeholder="votre@email.com">
             </div>
             
             <div class="form-group">
-                <label for="password">Mot de passe</label>
+                <label for="password"><?php echo t('auth.password'); ?></label>
                 <input type="password" id="password" name="password" required placeholder="">
             </div>
             
             <div class="form-group">
                 <label>
-                    <input type="checkbox" name="remember"> Se souvenir de moi
+                    <input type="checkbox" name="remember"> <?php echo t('auth.remember_me'); ?>
                 </label>
             </div>
             
-            <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+            <button type="submit" class="btn btn-primary btn-block"><?php echo t('auth.sign_in'); ?></button>
         </form>
         
         <div class="form-links">
-            <a href="forgot-password.php">Mot de passe oublié ?</a>
-            <p>Pas encore de compte ? <a href="register.php">S'inscrire</a></p>
+            <a href="forgot-password.php"><?php echo t('auth.forgot_password'); ?></a>
+            <p><?php echo t('auth.no_account'); ?> <a href="register.php"><?php echo t('auth.sign_up'); ?></a></p>
         </div>
     </div>
 </div>

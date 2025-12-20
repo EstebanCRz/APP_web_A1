@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../includes/language.php';
 header('Content-Type: text/html; charset=UTF-8');
 
 $pageTitle = "Gestion du Contenu - Admin AmiGo";

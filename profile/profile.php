@@ -1,98 +1,144 @@
 <?php
+// Configuration de session (AVANT session_start)
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_secure', 0);
+
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
 
-$pageTitle = "Mon Profil - AmiGo";
-$pageDescription = "Gérez votre profil AmiGo";
+require_once '../includes/language.php';
+require_once '../includes/activities_functions.php';
+
+// Vérifier que l'utilisateur est connecté
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../auth/login.php');
+    exit;
+}
+
+$pageTitle = t('profile.my_profile') . " - AmiGo";
+$pageDescription = t('profile.my_profile');
 $assetsDepth = 1;
-$customCSS = "../assets/css/index.css";
+$customCSS = [
+    "../assets/css/style.css",
+    "css/profile.css"
+];
+
+// Récupérer les activités créées par l'utilisateur
+$myActivities = getUserCreatedActivities($_SESSION['user_id']);
+
+// Récupérer les activités auxquelles l'utilisateur est inscrit
+$registeredActivities = getUserRegisteredActivities($_SESSION['user_id']);
 
 include '../includes/header.php';
-            </select>
+?>
+
+<div class="container">
+    <section class="profile-header">
+        <h2><?php echo t('profile.my_profile'); ?></h2>
+        <p><?php echo t('profile.welcome'); ?> <?php echo htmlspecialchars($_SESSION['user_first_name'] ?? 'Utilisateur', ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($_SESSION['user_last_name'] ?? '', ENT_QUOTES, 'UTF-8'); ?> !</p>
+        
+        <div class="profile-tabs">
+            <button class="tab-btn btn btn-primary active" data-tab="modifier"><?php echo t('profile.edit'); ?></button>
+            <button class="tab-btn btn btn-secondary" data-tab="created"><?php echo t('profile.created_events'); ?> (<?php echo count($myActivities); ?>)</button>
+            <button class="tab-btn btn btn-secondary" data-tab="registered"><?php echo t('profile.registered_events'); ?> (<?php echo count($registeredActivities); ?>)</button>
+            <a href="../auth/login.php?logout=1" class="btn btn-secondary"><?php echo t('profile.logout'); ?></a>
         </div>
-    </header>
+    </section>
 
-    <nav>
-        <ul>
-            <li><a href="index.php">Accueil</a></li>
-            <li><a href="../events/events-list.php">Événements</a></li>
-            <li><a href="../auth/login.php">Connexion</a></li>
-            <li><a href="../auth/register.php">Inscription</a></li>
-        </ul>
-    </nav>
-
-    <main>
-        <div class="container">
-            <section>
-                <h2>Bienvenue sur AmiGo</h2>
-                <p>Découvrez et participez à des événements proches de vous. Rencontrez de nouvelles personnes et partagez des moments inoubliables !</p>
-                
-                <div style="margin: 2rem 0;">
-                    <a href="../auth/register.php" class="btn btn-primary">S'inscrire</a>
-                    <a href="../auth/login.php" class="btn btn-secondary">Se connecter</a>
-                </div>
-            </section>
-
-            <section>
-                <h3>Événements tendance</h3>
-                <!-- TODO: Charger les événements depuis la base de données avec PHP -->
-                <div class="grid">
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Concert Rock en plein air</h4>
-                            <p class="event-details">📅 25/11/2025 - 20h00</p>
-                            <p class="event-details">📍 Paris, France</p>
-                            <p class="event-details">👥 50 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Match de Football</h4>
-                            <p class="event-details">📅 28/11/2025 - 15h00</p>
-                            <p class="event-details">📍 Lyon, France</p>
-                            <p class="event-details">👥 20 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Soirée Cinéma</h4>
-                            <p class="event-details">📅 30/11/2025 - 19h30</p>
-                            <p class="event-details">📍 Marseille, France</p>
-                            <p class="event-details">👥 30 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section>
-                <h3>Rechercher un événement</h3>
-                <form action="events-list.php" method="get">
-                    <!-- TODO: Implémenter la recherche avec PHP/MySQL -->
-                    <div class="form-group">
-                        <input type="text" name="search" placeholder="Rechercher par mots-clés..." aria-label="Rechercher un événement">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Rechercher</button>
-                </form>
-            </section>
+    <!-- Onglet Modifier profil -->
+    <section class="tab-content active" id="tab-modifier">
+        <div style="padding: 2rem; background: #f9f9f9; border-radius: 8px; text-align: center;">
+            <h3><?php echo t('profile.edit'); ?></h3>
+            <p><?php echo t('profile.upcoming_feature'); ?></p>
+            <a href="profile-edit.php" class="btn btn-primary"><?php echo t('profile.access_settings'); ?></a>
         </div>
-    </main>
+    </section>
 
-    <footer>
-        <ul class="footer-links">
-            <li><a href="../pages/contact.php">Contact</a></li>
-            <li><a href="../pages/faq.php">FAQ</a></li>
-            <li><a href="../pages/cgu.php">CGU</a></li>
-            <li><a href="../pages/mentions-legales.php">Mentions légales</a></li>
-        </ul>
-        <p>&copy; 2025 AmiGo - Tous droits réservés</p>
-    </footer>
-</body>
-</html>
+    <!-- Onglet Mes activités créées -->
+    <section class="tab-content" id="tab-created">
+        <h3><?php echo t('profile.my_events'); ?></h3>
+        <?php if (empty($myActivities)): ?>
+            <p>Vous n'avez pas encore créé d'activité. <a href="../events/event-create.php">Créer une activité</a></p>
+        <?php else: ?>
+            <div class="activities-grid">
+                <?php foreach ($myActivities as $activity): ?>
+                    <a href="../events/event-details.php?id=<?php echo $activity['id']; ?>" class="event-card">
+                        <div class="event-banner" style="background-image: url('<?php echo htmlspecialchars($activity['image'] ?? '', ENT_QUOTES, 'UTF-8'); ?>'); background-size: cover; background-position: center; height: 150px;"></div>
+                        <div class="event-info">
+                            <span class="badge" style="background: <?php echo htmlspecialchars($activity['category_color'], ENT_QUOTES, 'UTF-8'); ?>">
+                                <?php echo htmlspecialchars($activity['category_name'], ENT_QUOTES, 'UTF-8'); ?>
+                            </span>
+                            <h4 class="event-title"><?php echo htmlspecialchars($activity['title'], ENT_QUOTES, 'UTF-8'); ?></h4>
+                            <p class="event-details">📅 <?php echo formatEventDate($activity['event_date']); ?> - <?php echo formatEventTime($activity['event_time']); ?></p>
+                            <p class="event-details">📍 <?php echo htmlspecialchars($activity['location'] . ', ' . $activity['city'], ENT_QUOTES, 'UTF-8'); ?></p>
+                            <p class="event-details">👥 <?php echo $activity['current_participants']; ?>/<?php echo $activity['max_participants']; ?> participants</p>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    </section>
+
+    <!-- Onglet Activités inscrites -->
+    <section class="tab-content" id="tab-registered">
+        <h3>Activités auxquelles je participe</h3>
+        <?php if (empty($registeredActivities)): ?>
+            <p>Vous n'êtes inscrit à aucune activité pour le moment. <a href="../events/events-list.php">Découvrir les activités</a></p>
+        <?php else: ?>
+            <div class="activities-grid">
+                <?php foreach ($registeredActivities as $activity): ?>
+                    <a href="../events/event-details.php?id=<?php echo $activity['id']; ?>" class="event-card">
+                        <div class="event-banner" style="background-image: url('<?php echo htmlspecialchars($activity['image'] ?? '', ENT_QUOTES, 'UTF-8'); ?>'); background-size: cover; background-position: center; height: 150px;"></div>
+                        <div class="event-info">
+                            <span class="badge" style="background: <?php echo htmlspecialchars($activity['category_color'], ENT_QUOTES, 'UTF-8'); ?>">
+                                <?php echo htmlspecialchars($activity['category_name'], ENT_QUOTES, 'UTF-8'); ?>
+                            </span>
+                            <h4 class="event-title"><?php echo htmlspecialchars($activity['title'], ENT_QUOTES, 'UTF-8'); ?></h4>
+                            <p class="event-details">📅 <?php echo formatEventDate($activity['event_date']); ?> - <?php echo formatEventTime($activity['event_time']); ?></p>
+                            <p class="event-details">📍 <?php echo htmlspecialchars($activity['location'] . ', ' . $activity['city'], ENT_QUOTES, 'UTF-8'); ?></p>
+                            <p class="event-details">👤 Organisé par <?php echo htmlspecialchars($activity['creator_first_name'] ?? $activity['creator_username'], ENT_QUOTES, 'UTF-8'); ?></p>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    </section>
+</div>
+
+<script>
+// Gestion des onglets
+document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetTab = this.dataset.tab;
+            
+            // Retirer la classe active de tous les boutons
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active', 'btn-primary');
+                btn.classList.add('btn-secondary');
+            });
+            
+            // Ajouter la classe active au bouton cliqué
+            this.classList.add('active', 'btn-primary');
+            this.classList.remove('btn-secondary');
+            
+            // Cacher tous les contenus
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Afficher le contenu correspondant
+            const targetContent = document.getElementById('tab-' + targetTab);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        });
+    });
+});
+</script>
+
+<?php include '../includes/footer.php'; ?>

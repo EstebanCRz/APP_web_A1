@@ -2,62 +2,116 @@
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
 
-$pageTitle = "Conditions Générales d'Utilisation - AmiGo";
-$pageDescription = "CGU de la plateforme AmiGo";
+require_once '../includes/language.php';
+
+$pageTitle = t('pages.cgu') . " - AmiGo";
+$pageDescription = t('pages.cgu');
 $assetsDepth = 1;
-$customCSS = "../assets/css/index.css";
+$customCSS = [
+    "../assets/css/style.css",
+    "css/legal.css"
+];
 
 include '../includes/header.php';
 ?>
 
-<div class="container">
-    <h2>Conditions Générales d'Utilisation</h2>
-    <p class="last-updated">Dernière mise à jour : <?php echo date('d/m/Y'); ?></p>
-    
-    <section>
-        <h3>1. Objet</h3>
-        <p>Les présentes conditions générales d'utilisation (CGU) régissent l'utilisation de la plateforme AmiGo, permettant aux utilisateurs de créer et participer à des événements.</p>
+<main class="legal-container">
+    <header class="legal-header">
+        <div class="legal-header-content">
+            <h1><?php echo t('pages.cgu'); ?></h1>
+            <p class="subtitle"><?php echo t('pages.cgu_subtitle'); ?></p>
+        </div>
+        <div class="last-updated-badge">
+            <?php echo t('pages.last_updated'); ?> : <?php echo date('d/m/Y'); ?>
+        </div>
+    </header>
+
+    <nav class="legal-toc">
+        <h3><?php echo t('pages.table_of_contents'); ?></h3>
+        <ul>
+            <li><a href="#section-1"><?php echo t('cgu.section1_title'); ?></a></li>
+            <li><a href="#section-2"><?php echo t('cgu.section2_title'); ?></a></li>
+            <li><a href="#section-3"><?php echo t('cgu.section3_title'); ?></a></li>
+            <li><a href="#section-4"><?php echo t('cgu.section4_title'); ?></a></li>
+            <li><a href="#section-5"><?php echo t('cgu.section5_title'); ?></a></li>
+            <li><a href="#section-6"><?php echo t('cgu.section6_title'); ?></a></li>
+            <li><a href="#section-7"><?php echo t('cgu.section7_title'); ?></a></li>
+            <li><a href="#section-8"><?php echo t('cgu.section8_title'); ?></a></li>
+            <li><a href="#section-9"><?php echo t('cgu.section9_title'); ?></a></li>
+        </ul>
+    </nav>
+
+    <section class="legal-section" id="section-1">
+        <div class="section-header">
+            <h2><?php echo t('cgu.section1_title'); ?></h2>
+        </div>
+        <p><?php echo t('cgu.section1_content'); ?></p>
     </section>
-    
-    <section>
-        <h3>2. Inscription</h3>
-        <p>L'inscription sur AmiGo nécessite la création d'un compte avec des informations exactes et à jour. Vous êtes responsable de la confidentialité de vos identifiants.</p>
+
+    <section class="legal-section" id="section-2">
+        <div class="section-header">
+            <h2><?php echo t('cgu.section2_title'); ?></h2>
+        </div>
+        <p><?php echo t('cgu.section2_content'); ?></p>
     </section>
-    
-    <section>
-        <h3>3. Utilisation du service</h3>
-        <p>Vous vous engagez à utiliser AmiGo de manière respectueuse et conforme aux lois en vigueur. Tout comportement abusif ou illégal entraînera la suspension de votre compte.</p>
+
+    <section class="legal-section" id="section-3">
+        <div class="section-header">
+            <h2><?php echo t('cgu.section3_title'); ?></h2>
+        </div>
+        <p><?php echo t('cgu.section3_content'); ?></p>
     </section>
-    
-    <section>
-        <h3>4. Événements</h3>
-        <p>Les organisateurs d'événements sont responsables du contenu et de la tenue de leurs événements. AmiGo ne peut être tenu responsable des événements organisés via la plateforme.</p>
+
+    <section class="legal-section" id="section-4">
+        <div class="section-header">
+            <h2><?php echo t('cgu.section4_title'); ?></h2>
+        </div>
+        <p><?php echo t('cgu.section4_content'); ?></p>
     </section>
-    
-    <section>
-        <h3>5. Données personnelles</h3>
-        <p>Vos données personnelles sont traitées conformément à notre politique de confidentialité et au RGPD.</p>
+
+    <section class="legal-section" id="section-5">
+        <div class="section-header">
+            <h2><?php echo t('cgu.section5_title'); ?></h2>
+        </div>
+        <p><?php echo t('cgu.section5_content'); ?></p>
     </section>
-    
-    <section>
-        <h3>6. Propriété intellectuelle</h3>
-        <p>Tous les contenus présents sur AmiGo (textes, images, logos) sont protégés par le droit de la propriété intellectuelle.</p>
+
+    <section class="legal-section" id="section-6">
+        <div class="section-header">
+            <h2><?php echo t('cgu.section6_title'); ?></h2>
+        </div>
+        <p><?php echo t('cgu.section6_content'); ?></p>
     </section>
-    
-    <section>
-        <h3>7. Responsabilité</h3>
-        <p>AmiGo met tout en œuvre pour assurer la disponibilité du service mais ne peut garantir une absence totale d'interruption.</p>
+
+    <section class="legal-section" id="section-7">
+        <div class="section-header">
+            <h2><?php echo t('cgu.section7_title'); ?></h2>
+        </div>
+        <p><?php echo t('cgu.section7_content'); ?></p>
     </section>
-    
-    <section>
-        <h3>8. Modification des CGU</h3>
-        <p>AmiGo se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés des modifications majeures.</p>
+
+    <section class="legal-section" id="section-8">
+        <div class="section-header">
+            <h2><?php echo t('cgu.section8_title'); ?></h2>
+        </div>
+        <p><?php echo t('cgu.section8_content'); ?></p>
     </section>
-    
-    <section>
-        <h3>9. Contact</h3>
-        <p>Pour toute question concernant ces CGU, contactez-nous via notre <a href="contact.php">page de contact</a>.</p>
+
+    <section class="legal-section" id="section-9">
+        <div class="section-header">
+            <h2><?php echo t('cgu.section9_title'); ?></h2>
+        </div>
+        <p>
+            <?php echo t('cgu.section9_content'); ?>
+            <a href="contact.php" class="link-button"><?php echo t('cgu.section9_link'); ?></a>.
+            <?php echo t('cgu.section9_content2'); ?>
+        </p>
     </section>
-</div>
+
+    <div class="legal-footer">
+        <p>© 2025 AmiGo. <?php echo t('cgu.all_rights_reserved'); ?></p>
+        <p><a href="../index.php" class="footer-link"><?php echo t('cgu.back_to_home'); ?></a></p>
+    </div>
+</main>
 
 <?php include '../includes/footer.php'; ?>
