@@ -62,7 +62,7 @@ include '../includes/header.php';
 
 <div class="container">
     <div class="page-header">
-        <h1>❤️ Mes Favoris</h1>
+        <h1> Mes Favoris</h1>
         <p class="subtitle">Retrouvez toutes les activités que vous avez sauvegardées</p>
     </div>
     

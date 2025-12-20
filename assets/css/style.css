@@ -77,14 +77,15 @@ main {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--brand-primary-1) 0%, var(--brand-primary-2) 100%);
+    background: linear-gradient(135deg, #6ee0eb 0%, #4a7fad 100%);
     color: #fff;
-    box-shadow: 0 8px 20px rgba(85, 213, 224, 0.25);
+    box-shadow: 0 8px 20px rgba(110, 224, 235, 0.35);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 26px rgba(85, 213, 224, 0.35);
+    box-shadow: 0 12px 26px rgba(110, 224, 235, 0.45);
+    filter: brightness(1.1);
 }
 
 .btn-secondary {
