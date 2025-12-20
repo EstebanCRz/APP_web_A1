@@ -2,6 +2,8 @@
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
 
+require_once '../includes/language.php';
+
 // Simuler des groupes et conversations pour l'exemple
 $groupes = [
     [
@@ -90,7 +92,7 @@ $conversations = [
     ]
 ];
 
-$pageTitle = "Mes Groupes - AmiGo";
+$pageTitle = t('pages.my_groups') . " - AmiGo";
 $assetsDepth = 1;
 $customCSS = ["../pages/css/mes-groupes.css"];
 

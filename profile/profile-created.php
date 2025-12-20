@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../includes/language.php';
 header('Content-Type: text/html; charset=UTF-8');
 
 $pageTitle = "Mes Événements Créés - AmiGo";
@@ -14,14 +15,15 @@ include '../includes/header.php';
 ?>
 
 <div class="container">
-    <h2>Mes événements créés</h2>
-    <p>Voici la liste des événements que vous avez créés.</p>
+    <h2><?php echo t('pages.my_created_events'); ?></h2>
+    <p><?php echo t('pages.created_events_desc'); ?></p>
     
     <div class="events-grid">
         <!-- TODO: Afficher les événements créés depuis la base de données -->
-        <p>Aucun événement créé pour le moment.</p>
-        <a href="../events/event-create.php" class="btn btn-primary">Créer un événement</a>
+        <p><?php echo t('pages.no_created_events'); ?></p>
+        <a href="../events/event-create.php" class="btn btn-primary"><?php echo t('pages.create_event'); ?></a>
     </div>
 </div>
 
 <?php include '../includes/footer.php'; ?>
+

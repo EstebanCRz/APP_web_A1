@@ -34,6 +34,12 @@
     color: #c0392b;
 }
 
+.alert-success {
+    background-color: #d4edda;
+    border-left: 4px solid #28a745;
+    color: #155724;
+}
+
 .form-group {
     margin-bottom: 24px;
 }

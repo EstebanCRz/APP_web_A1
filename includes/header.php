@@ -1,5 +1,18 @@
+<?php
+// Charger le système de traduction
+require_once dirname(__FILE__) . '/language.php';
+
+// Déterminer le chemin relatif vers assets selon la profondeur du fichier
+$depth = isset($assetsDepth) ? $assetsDepth : 1; // Par défaut 1 niveau (pour les sous-dossiers)
+$prefix = str_repeat('../', $depth);
+
+// Déterminer la page active
+$current_page = basename($_SERVER['PHP_SELF']);
+$current_dir = basename(dirname($_SERVER['PHP_SELF']));
+?>
+
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?php echo getCurrentLanguage(); ?>">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -7,14 +20,9 @@
     <meta name="description" content="<?php echo isset($pageDescription) ? htmlspecialchars($pageDescription) : 'AmiGo - Plateforme de rencontre et d\'événements'; ?>">
     <title><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) : 'AmiGo'; ?></title>
     
-    <?php
-    // Déterminer le chemin relatif vers assets selon la profondeur du fichier
-    $depth = isset($assetsDepth) ? $assetsDepth : 1; // Par défaut 1 niveau (pour les sous-dossiers)
-    $prefix = str_repeat('../', $depth);
-    ?>
-    
     <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/header.css">
     <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/footer.css">
+    <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/dark-theme.css">
     
     <?php if (isset($customCSS)): ?>
         <?php if (is_array($customCSS)): ?>
@@ -27,6 +35,15 @@
     <?php endif; ?>
 </head>
 <body>
+    <script>
+        // Appliquer le thème immédiatement pour éviter le flash
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+            }
+        })();
+    </script>
     <header>
         <div class="header-inner">
             <div class="logo">
@@ -44,22 +61,39 @@
 
             <nav id="mainNav">
                 <ul>
-                    <li><a href="<?php echo $prefix; ?>index.php">Accueil</a></li>
-                    <li><a href="<?php echo $prefix; ?>events/events-list.php">Événements</a></li>
+                    <li><a href="<?php echo $prefix; ?>index.php" class="<?php echo ($current_page === 'index.php' && $current_dir !== 'events' && $current_dir !== 'profile' && $current_dir !== 'pages' && $current_dir !== 'auth') ? 'active' : ''; ?>"><?php echo t('header.home'); ?></a></li>
+                    <li><a href="<?php echo $prefix; ?>events/events-list.php" class="<?php echo ($current_dir === 'events') ? 'active' : ''; ?>"><?php echo t('header.events'); ?></a></li>
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <li><a href="<?php echo $prefix; ?>pages/mes-groupes.php">Mes groupes</a></li>
-                        <li><a href="<?php echo $prefix; ?>profile/profile.php">Profil</a></li>
-                        <li><a href="<?php echo $prefix; ?>events/event-create.php">Créer un événement</a></li>
-                        <li><a href="<?php echo $prefix; ?>auth/login.php?logout=1">Déconnexion</a></li>
+                        <li><a href="<?php echo $prefix; ?>pages/mes-groupes.php" class="<?php echo ($current_page === 'mes-groupes.php') ? 'active' : ''; ?>"><?php echo t('header.my_groups'); ?></a></li>
+                        <li><a href="<?php echo $prefix; ?>profile/profile.php" class="<?php echo ($current_dir === 'profile') ? 'active' : ''; ?>"><?php echo t('header.profile'); ?></a></li>
+                        <li><a href="<?php echo $prefix; ?>events/event-create.php" class="<?php echo ($current_page === 'event-create.php') ? 'active' : ''; ?>"><?php echo t('header.create_event'); ?></a></li>
+                        <li><a href="<?php echo $prefix; ?>auth/login.php?logout=1"><?php echo t('header.logout'); ?></a></li>
                     <?php else: ?>
-                        <li><a href="<?php echo $prefix; ?>auth/login.php">Connexion</a></li>
-                        <li><a href="<?php echo $prefix; ?>auth/register.php">Inscription</a></li>
+                        <li><a href="<?php echo $prefix; ?>auth/login.php" class="<?php echo ($current_page === 'login.php') ? 'active' : ''; ?>"><?php echo t('header.login'); ?></a></li>
+                        <li><a href="<?php echo $prefix; ?>auth/register.php" class="<?php echo ($current_page === 'register.php') ? 'active' : ''; ?>"><?php echo t('header.register'); ?></a></li>
                     <?php endif; ?>
+                    <li class="language-selector">
+                        <span class="language-label"><?php echo t('header.language'); ?></span>
+                        <div class="language-options">
+                            <a href="<?php echo getLanguageUrl('fr'); ?>" class="lang-option <?php echo getCurrentLanguage() === 'fr' ? 'active' : ''; ?>">
+                                <span class="flag-fr">🇫🇷</span> Français
+                            </a>
+                            <a href="<?php echo getLanguageUrl('en'); ?>" class="lang-option <?php echo getCurrentLanguage() === 'en' ? 'active' : ''; ?>">
+                                <span class="flag-en">🇬🇧</span> English
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <button id="themeToggle" class="theme-toggle" aria-label="<?php echo t('header.toggle_theme'); ?>">
+                            🌙
+                        </button>
+                    </li>
                 </ul>
             </nav>
         </div>
         <div class="menu-overlay" id="menuOverlay"></div>
     </header>
+    <script src="<?php echo $prefix; ?>assets/js/theme-toggle.js"></script>
     <script>
         // Menu burger toggle
         const burgerMenu = document.getElementById('burgerMenu');

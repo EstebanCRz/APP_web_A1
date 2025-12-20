@@ -2,6 +2,7 @@
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
 require_once '../includes/config.php';
+require_once '../includes/language.php';
 
 // Gérer la déconnexion
 if (isset($_GET['logout'])) {
@@ -10,8 +11,8 @@ if (isset($_GET['logout'])) {
     exit;
 }
 
-$pageTitle = "Connexion - AmiGo";
-$pageDescription = "Connectez-vous à votre compte AmiGo";
+$pageTitle = t('auth.login_title') . " - AmiGo";
+$pageDescription = t('auth.login_title');
 $assetsDepth = 1;
 $customCSS = [
     "../assets/css/style.css",
@@ -43,13 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: ../profile/profile.php');
                 exit;
             } else {
-                $error = "Email ou mot de passe incorrect";
+                $error = t('auth.invalid_credentials');
             }
         } catch(PDOException $e) {
-            $error = "Erreur de connexion: " . $e->getMessage();
+            $error = t('auth.connection_error') . ": " . $e->getMessage();
         }
     } else {
-        $error = "Veuillez remplir tous les champs";
+        $error = t('auth.fill_all_fields');
     }
 }
 
@@ -58,7 +59,7 @@ include '../includes/header.php';
 
 <div class="container">
     <div class="form-container">
-        <h2>Connexion</h2>
+        <h2><?php echo t('auth.login_title'); ?></h2>
         
         <?php if (isset($error)): ?>
             <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
@@ -66,27 +67,27 @@ include '../includes/header.php';
         
         <form method="POST" action="">
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email"><?php echo t('auth.email'); ?></label>
                 <input type="email" id="email" name="email" required placeholder="votre@email.com">
             </div>
             
             <div class="form-group">
-                <label for="password">Mot de passe</label>
+                <label for="password"><?php echo t('auth.password'); ?></label>
                 <input type="password" id="password" name="password" required placeholder="">
             </div>
             
             <div class="form-group">
                 <label>
-                    <input type="checkbox" name="remember"> Se souvenir de moi
+                    <input type="checkbox" name="remember"> <?php echo t('auth.remember_me'); ?>
                 </label>
             </div>
             
-            <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+            <button type="submit" class="btn btn-primary btn-block"><?php echo t('auth.sign_in'); ?></button>
         </form>
         
         <div class="form-links">
-            <a href="forgot-password.php">Mot de passe oublié ?</a>
-            <p>Pas encore de compte ? <a href="register.php">S'inscrire</a></p>
+            <a href="forgot-password.php"><?php echo t('auth.forgot_password'); ?></a>
+            <p><?php echo t('auth.no_account'); ?> <a href="register.php"><?php echo t('auth.sign_up'); ?></a></p>
         </div>
     </div>
 </div>

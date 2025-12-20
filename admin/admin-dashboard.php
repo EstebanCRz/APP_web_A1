@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../includes/language.php';
 header('Content-Type: text/html; charset=UTF-8');
 
 $pageTitle = "Tableau de bord Admin - AmiGo";
@@ -8,6 +9,7 @@ $assetsDepth = 1;
 $customCSS = "../assets/css/index.css";
 
 include '../includes/header.php';
+?>
             </select>
         </div>
     </header>

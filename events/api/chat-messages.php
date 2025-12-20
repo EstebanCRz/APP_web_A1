@@ -10,12 +10,13 @@ ini_set('session.use_only_cookies', 1);
 ini_set('session.cookie_secure', 0);
 
 session_start();
+require_once '../../includes/language.php';
 header('Content-Type: application/json');
 
 // Vérifier que l'utilisateur est connecté
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Vous devez être connecté']);
+    echo json_encode(['success' => false, 'message' => t('common.must_login')]);
     exit;
 }
 
@@ -28,7 +29,7 @@ if (!file_exists($messagesDir)) {
 $activityId = (int) ($_GET['activity_id'] ?? $_POST['activity_id'] ?? 0);
 if ($activityId <= 0) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'ID d\'activité invalide']);
+    echo json_encode(['success' => false, 'message' => t('common.invalid_activity_id')]);
     exit;
 }
 

@@ -9,10 +9,11 @@ ini_set('session.cookie_secure', 0);
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
 
+require_once '../includes/language.php';
 require_once '../includes/activities_functions.php';
 
-$pageTitle = "Liste des événements - AmiGo";
-$pageDescription = "Découvrez tous les événements disponibles";
+$pageTitle = t('events.all_events') . " - AmiGo";
+$pageDescription = t('events.all_events');
 $assetsDepth = 1;
 $customCSS = [
     "../assets/css/style.css",
@@ -61,51 +62,55 @@ include '../includes/header.php';
 
 <div class="container">
     <div class="page-header">
-        <h2>Tous les événements</h2>
-        <a href="event-create.php" class="btn btn-primary">Créer une activité</a>
+        <h2><?php echo t('events.all_events'); ?></h2>
+        <a href="event-create.php" class="btn btn-primary"><?php echo t('events.create'); ?></a>
     </div>
 
-    <div class="search-section">
-        <form method="GET" class="search-form">
-            <input type="search" name="search" placeholder="Chercher (mot-clé, ville, organisateur)" value="<?php echo htmlspecialchars($filters['search'], ENT_QUOTES, 'UTF-8'); ?>">
-            <button type="submit" class="btn btn-primary">Rechercher</button>
-        </form>
-    </div>
-
-    <div class="filters-section">
-        <div class="filter-group">
-            <h3>Catégorie</h3>
-            <div class="filter-chips">
-                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'time' => $filters['time_filter'], 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['category'] === '') ? 'active' : ''; ?>">Tous</a>
-                <?php foreach ($categories as $cat): ?>
-                    <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $cat['name'], 'time' => $filters['time_filter'], 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['category'] === $cat['name']) ? 'active' : ''; ?>">
-                        <?php echo htmlspecialchars($cat['name'], ENT_QUOTES, 'UTF-8'); ?>
-                    </a>
-                <?php endforeach; ?>
+    <div class="content-wrapper">
+        <!-- Sidebar avec filtres -->
+        <aside class="filters-sidebar">
+            <div class="filter-group">
+                <h3><?php echo t('events.category_filter'); ?></h3>
+                <div class="filter-chips">
+                    <a href="?<?php echo http_build_query(['search' => $filters['search'], 'time' => $filters['time_filter'], 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['category'] === '') ? 'active' : ''; ?>"><?php echo t('events.all_categories'); ?></a>
+                    <?php foreach ($categories as $cat): ?>
+                        <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $cat['name'], 'time' => $filters['time_filter'], 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['category'] === $cat['name']) ? 'active' : ''; ?>">
+                            <?php echo htmlspecialchars($cat['name'], ENT_QUOTES, 'UTF-8'); ?>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
             </div>
-        </div>
 
-        <div class="filter-group">
-            <h3>Moment de la journée</h3>
-            <div class="filter-chips">
-                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['time_filter'] === '') ? 'active' : ''; ?>">Tous</a>
-                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => 'morning', 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['time_filter'] === 'morning') ? 'active' : ''; ?>">Matin</a>
-                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => 'afternoon', 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['time_filter'] === 'afternoon') ? 'active' : ''; ?>">Après-midi</a>
-                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => 'evening', 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['time_filter'] === 'evening') ? 'active' : ''; ?>">Soirée</a>
+            <div class="filter-group">
+                <h3><?php echo t('events.time_filter'); ?></h3>
+                <div class="filter-chips">
+                    <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['time_filter'] === '') ? 'active' : ''; ?>"><?php echo t('events.all_times'); ?></a>
+                    <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => 'morning', 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['time_filter'] === 'morning') ? 'active' : ''; ?>"><?php echo t('events.morning'); ?></a>
+                    <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => 'afternoon', 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['time_filter'] === 'afternoon') ? 'active' : ''; ?>"><?php echo t('events.afternoon'); ?></a>
+                    <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => 'evening', 'date' => $filters['date_filter']]); ?>" class="filter-chip <?php echo ($filters['time_filter'] === 'evening') ? 'active' : ''; ?>"><?php echo t('events.evening'); ?></a>
+                </div>
             </div>
-        </div>
 
-        <div class="filter-group">
-            <h3>Période</h3>
-            <div class="filter-chips">
-                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter']]); ?>" class="filter-chip <?php echo ($filters['date_filter'] === '') ? 'active' : ''; ?>">Toutes</a>
-                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'week']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'week') ? 'active' : ''; ?>">Cette semaine</a>
-                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'month']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'month') ? 'active' : ''; ?>">Ce mois-ci</a>
-                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'coming']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'coming') ? 'active' : ''; ?>">À venir</a>
-                <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'past']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'past') ? 'active' : ''; ?>">Passés</a>
+            <div class="filter-group">
+                <h3><?php echo t('events.period_filter'); ?></h3>
+                <div class="filter-chips">
+                    <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter']]); ?>" class="filter-chip <?php echo ($filters['date_filter'] === '') ? 'active' : ''; ?>"><?php echo t('events.all_periods'); ?></a>
+                    <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'week']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'week') ? 'active' : ''; ?>"><?php echo t('events.this_week'); ?></a>
+                    <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'month']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'month') ? 'active' : ''; ?>"><?php echo t('events.this_month'); ?></a>
+                    <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'coming']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'coming') ? 'active' : ''; ?>"><?php echo t('events.coming_soon'); ?></a>
+                    <a href="?<?php echo http_build_query(['search' => $filters['search'], 'category' => $filters['category'], 'time' => $filters['time_filter'], 'date' => 'past']); ?>" class="filter-chip <?php echo ($filters['date_filter'] === 'past') ? 'active' : ''; ?>"><?php echo t('events.past'); ?></a>
+                </div>
             </div>
-        </div>
-    </div>
+        </aside>
+
+        <!-- Contenu principal -->
+        <div class="main-content">
+            <div class="search-section">
+                <form method="GET" class="search-form">
+                    <input type="search" name="search" placeholder="<?php echo t('events.search_placeholder'); ?>" value="<?php echo htmlspecialchars($filters['search'], ENT_QUOTES, 'UTF-8'); ?>">
+                    <button type="submit" class="btn btn-primary"><?php echo t('events.search_button'); ?></button>
+                </form>
+            </div>
 
     <?php if (empty($events)): ?>
         <p>Aucun événement trouvé.</p>
@@ -152,6 +157,8 @@ include '../includes/header.php';
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
+        </div><!-- fin main-content -->
+    </div><!-- fin content-wrapper -->
 </div>
 
 <script src="../assets/js/activity-registration.js"></script>

@@ -2,8 +2,10 @@
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
 
-$pageTitle = "FAQ - AmiGo";
-$pageDescription = "Questions fréquemment posées";
+require_once '../includes/language.php';
+
+$pageTitle = t('faq.title') . " - AmiGo";
+$pageDescription = t('faq.description');
 $assetsDepth = 1;
 $customCSS = [
     "../assets/css/style.css",
@@ -12,28 +14,28 @@ $customCSS = [
 
 $faqs = [
     [
-        'question' => 'Comment créer un compte ?',
-        'answer' => 'Cliquez sur "Inscription" en haut de la page et remplissez le formulaire avec vos informations.'
+        'question' => t('faq.q1'),
+        'answer' => t('faq.a1')
     ],
     [
-        'question' => 'Comment participer à un événement ?',
-        'answer' => 'Connectez-vous, parcourez les événements et cliquez sur "S’inscrire" sur la page de l’événement qui vous intéresse.'
+        'question' => t('faq.q2'),
+        'answer' => t('faq.a2')
     ],
     [
-        'question' => 'Comment créer un événement ?',
-        'answer' => 'Une fois connecté, accédez à la section "Créer un événement" depuis le menu et renseignez les informations demandées.'
+        'question' => t('faq.q3'),
+        'answer' => t('faq.a3')
     ],
     [
-        'question' => 'Est-ce gratuit ?',
-        'answer' => 'Oui, l’inscription est gratuite. Certains événements peuvent être payants selon le choix de l’organisateur.'
+        'question' => t('faq.q4'),
+        'answer' => t('faq.a4')
     ],
     [
-        'question' => 'Comment contacter l’organisateur d’un événement ?',
-        'answer' => 'Les informations de contact de l’organisateur sont disponibles sur la page de l’événement.'
+        'question' => t('faq.q5'),
+        'answer' => t('faq.a5')
     ],
     [
-        'question' => 'Puis-je annuler ma participation ?',
-        'answer' => 'Oui, vous pouvez vous désinscrire à tout moment depuis votre profil, dans la section "Événements inscrits".'
+        'question' => t('faq.q6'),
+        'answer' => t('faq.a6')
     ]
 ];
 
@@ -42,8 +44,8 @@ include '../includes/header.php';
 
 <main class="faq-container">
     <header class="faq-header">
-        <h1>Foire Aux Questions</h1>
-        <p>Retrouvez ici les réponses aux questions les plus fréquemment posées sur AmiGo.</p>
+        <h1><?php echo t('faq.title'); ?></h1>
+        <p><?php echo t('faq.description'); ?></p>
     </header>
 
     <section class="faq-list">
@@ -61,8 +63,8 @@ include '../includes/header.php';
     </section>
 
     <section class="faq-contact">
-        <p>Vous ne trouvez pas la réponse à votre question ?</p>
-        <a href="contact.php" class="btn btn-primary">Contactez-nous</a>
+        <p><?php echo t('faq.cant_find_answer'); ?></p>
+        <a href="contact.php" class="btn btn-primary"><?php echo t('footer.contact'); ?></a>
     </section>
 </main>
 

@@ -45,3 +45,6 @@ function getDB() {
 
 // Fuseau horaire
 date_default_timezone_set('Europe/Paris');
+
+// Application name
+define('SITE_NAME', 'AmiGo');

@@ -9,6 +9,7 @@ ini_set('session.cookie_secure', 0);
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
 
+require_once '../includes/language.php';
 require_once '../includes/activities_functions.php';
 
 // Vérifier que l'utilisateur est connecté
@@ -17,8 +18,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$pageTitle = "Créer une activité - AmiGo";
-$pageDescription = "Créez et partagez une nouvelle activité avec la communauté";
+$pageTitle = t('events.create') . " - AmiGo";
+$pageDescription = t('events.create');
 $assetsDepth = 1;
 $customCSS = [
     "../assets/css/style.css",
@@ -84,13 +85,13 @@ include '../includes/header.php';
 <div class="container">
     <div class="form-container">
         <div class="form-header">
-            <h1>Créer une nouvelle activité</h1>
-            <p class="form-subtitle">Partagez votre idée d'activité avec la communauté</p>
+            <h1><?php echo t('events.create_new_activity'); ?></h1>
+            <p class="form-subtitle"><?php echo t('events.share_activity_idea'); ?></p>
         </div>
 
         <?php if ($success): ?>
             <div class="alert alert-success">
-                Votre activité a été créée avec succès ! <a href="events-list.php">Voir la liste des événements</a>
+                <?php echo t('events.activity_created'); ?> <a href="events-list.php"><?php echo t('events.view_events'); ?></a>
             </div>
         <?php endif; ?>
 
@@ -102,21 +103,21 @@ include '../includes/header.php';
 
         <form method="POST" class="event-form">
             <div class="form-group">
-                <label for="title">Titre de l'activité <span class="required">*</span></label>
+                <label for="title"><?php echo t('events.activity_title'); ?> <span class="required">*</span></label>
                 <input 
                     type="text" 
                     id="title" 
                     name="title" 
-                    placeholder="ex: Sortie Running au Parc"
+                    placeholder="<?php echo t('events.activity_title_placeholder'); ?>"
                     value="<?php echo htmlspecialchars($_POST['title'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
                     required
                 >
             </div>
 
             <div class="form-group">
-                <label for="description">Description <span class="required">*</span></label>
+                <label for="description"><?php echo t('events.description_field'); ?> <span class="required">*</span></label>
                 <textarea 
-                    id="description" 
+                    id="description"
                     name="description" 
                     placeholder="Décrivez votre activité..."
                     rows="4"
@@ -125,9 +126,9 @@ include '../includes/header.php';
             </div>
 
             <div class="form-group">
-                <label for="category">Catégorie <span class="required">*</span></label>
+                <label for="category"><?php echo t('events.category_field'); ?> <span class="required">*</span></label>
                 <select id="category" name="category" required>
-                    <option value="">Sélectionner une catégorie</option>
+                    <option value=""><?php echo t('events.select_category'); ?></option>
                     <?php foreach ($categories as $cat): ?>
                         <option value="<?php echo $cat['id']; ?>" <?php echo (($_POST['category'] ?? 0) == $cat['id']) ? 'selected' : ''; ?>>
                             <?php echo htmlspecialchars($cat['name'], ENT_QUOTES, 'UTF-8'); ?>
@@ -137,7 +138,7 @@ include '../includes/header.php';
             </div>
 
             <div class="form-group">
-                <label for="location">Lieu <span class="required">*</span></label>
+                <label for="location"><?php echo t('events.location_field'); ?> <span class="required">*</span></label>
                 <input 
                     type="text" 
                     id="location" 
@@ -149,7 +150,7 @@ include '../includes/header.php';
             </div>
 
             <div class="form-group">
-                <label for="city">Ville <span class="required">*</span></label>
+                <label for="city"><?php echo t('events.city_field'); ?> <span class="required">*</span></label>
                 <input 
                     type="text" 
                     id="city" 
@@ -162,7 +163,7 @@ include '../includes/header.php';
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="date">Date <span class="required">*</span></label>
+                    <label for="date"><?php echo t('events.date_field'); ?> <span class="required">*</span></label>
                     <input 
                         type="date" 
                         id="date" 
@@ -172,7 +173,7 @@ include '../includes/header.php';
                     >
                 </div>
                 <div class="form-group">
-                    <label for="time">Heure <span class="required">*</span></label>
+                    <label for="time"><?php echo t('events.time_field'); ?> <span class="required">*</span></label>
                     <input 
                         type="time" 
                         id="time" 
@@ -184,7 +185,7 @@ include '../includes/header.php';
             </div>
 
             <div class="form-group">
-                <label for="capacity">Capacité maximale <span class="required">*</span></label>
+                <label for="capacity"><?php echo t('events.max_participants_field'); ?> <span class="required">*</span></label>
                 <input 
                     type="number" 
                     id="capacity" 
@@ -208,8 +209,8 @@ include '../includes/header.php';
             </div>
 
             <div class="form-actions">
-                <a href="events-list.php" class="btn btn-secondary">Annuler</a>
-                <button type="submit" class="btn btn-primary btn-lg">Créer l'activité</button>
+                <a href="events-list.php" class="btn btn-secondary"><?php echo t('common.cancel'); ?></a>
+                <button type="submit" class="btn btn-primary btn-lg"><?php echo t('events.submit_event'); ?></button>
             </div>
         </form>
     </div>

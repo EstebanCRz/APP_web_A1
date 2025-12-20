@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../includes/language.php';
 header('Content-Type: text/html; charset=UTF-8');
 
 $pageTitle = "Mes Favoris - AmiGo";
@@ -14,14 +15,14 @@ include '../includes/header.php';
 ?>
 
 <div class="container">
-    <h2>Mes favoris</h2>
-    <p>Événements que vous avez ajoutés à vos favoris.</p>
+    <h2><?php echo t('pages.my_favorites'); ?></h2>
+    <p><?php echo t('pages.no_favorites'); ?></p>
     
     <div class="events-grid">
         <!-- TODO: Afficher les événements favoris depuis la base de données -->
-        <p>Aucun favori pour le moment.</p>
-        <a href="../events/events-list.php" class="btn btn-primary">Découvrir des événements</a>
+        <a href="../events/events-list.php" class="btn btn-primary"><?php echo t('pages.discover_events'); ?></a>
     </div>
 </div>
 
 <?php include '../includes/footer.php'; ?>
+

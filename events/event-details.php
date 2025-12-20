@@ -9,10 +9,11 @@ ini_set('session.cookie_secure', 0);
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
 
+require_once '../includes/language.php';
 require_once '../includes/activities_functions.php';
 
-$pageTitle = "Détails de l'activité - AmiGo";
-$pageDescription = "Découvrez tous les détails de cette activité";
+$pageTitle = t('event_details.title') . " - AmiGo";
+$pageDescription = t('event_details.title');
 $assetsDepth = 1;
 $customCSS = [
     "../assets/css/style.css",
@@ -71,21 +72,21 @@ include '../includes/header.php';
 
             <!-- Discussion Section -->
             <div class="event-discussion card" id="activity-chat" data-activity-id="<?php echo $event_id; ?>" data-user-id="<?php echo $_SESSION['user_id'] ?? 0; ?>">
-                <h2 class="discussion-title">💬 Discussion avec les participants</h2>
+                <h2 class="discussion-title">💬 <?php echo t('event_details.discussion'); ?></h2>
                 
                 <?php if (!isset($_SESSION['user_id'])): ?>
                     <div class="chat-login-notice">
-                        <p>Vous devez être connecté pour participer à la discussion.</p>
-                        <a href="../auth/login.php" class="btn btn-primary">Se connecter</a>
+                        <p><?php echo getCurrentLanguage() === 'fr' ? 'Vous devez être connecté pour participer à la discussion.' : 'You must be logged in to participate in the discussion.'; ?></p>
+                        <a href="../auth/login.php" class="btn btn-primary"><?php echo t('header.login'); ?></a>
                     </div>
                 <?php else: ?>
                     <div class="discussion-messages" id="chat-messages">
-                        <div class="loading-messages">Chargement des messages...</div>
+                        <div class="loading-messages"><?php echo t('event_details.loading_messages'); ?></div>
                     </div>
                     
                     <form class="discussion-form" id="chat-form" onsubmit="return false;">
-                        <input type="text" id="chat-input" placeholder="Tapez votre message..." class="message-input" required autocomplete="off">
-                        <button type="submit" class="btn btn-primary">Envoyer</button>
+                        <input type="text" id="chat-input" placeholder="<?php echo t('event_details.type_message'); ?>" class="message-input" required autocomplete="off">
+                        <button type="submit" class="btn btn-primary"><?php echo t('event_details.send_button'); ?></button>
                     </form>
                 <?php endif; ?>
             </div>
@@ -93,10 +94,10 @@ include '../includes/header.php';
             <!-- Participants List -->
             <div class="event-participants card">
                 <h2 class="participants-title">
-                    👥 Participants inscrits (<?php echo count($participants); ?>/<?php echo htmlspecialchars($event['max_participants'], ENT_QUOTES, 'UTF-8'); ?>)
+                    👥 <?php echo t('event_details.registered_participants'); ?> (<?php echo count($participants); ?>/<?php echo htmlspecialchars($event['max_participants'], ENT_QUOTES, 'UTF-8'); ?>)
                 </h2>
                 <?php if (empty($participants)): ?>
-                    <p class="no-participants">Aucun participant inscrit pour le moment. Soyez le premier !</p>
+                    <p class="no-participants"><?php echo getCurrentLanguage() === 'fr' ? 'Aucun participant inscrit pour le moment. Soyez le premier !' : 'No participants registered yet. Be the first!'; ?></p>
                 <?php else: ?>
                     <div class="participants-list">
                         <?php foreach ($participants as $participant): ?>
@@ -128,30 +129,30 @@ include '../includes/header.php';
         <aside class="event-sidebar">
             <!-- Participate Card -->
             <div class="participate-card card">
-                <h3 class="sidebar-title">Participer</h3>
+                <h3 class="sidebar-title"><?php echo getCurrentLanguage() === 'fr' ? 'Participer' : 'Participate'; ?></h3>
                 <div class="capacity-info">
                     <p class="capacity-text">
-                        Capacité: <strong><span id="participant-count"><?php echo count($participants); ?></span>/<?php echo htmlspecialchars($event['max_participants'], ENT_QUOTES, 'UTF-8'); ?></strong>
+                        <?php echo getCurrentLanguage() === 'fr' ? 'Capacité' : 'Capacity'; ?>: <strong><span id="participant-count"><?php echo count($participants); ?></span>/<?php echo htmlspecialchars($event['max_participants'], ENT_QUOTES, 'UTF-8'); ?></strong>
                     </p>
                 </div>
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <?php if ($isUserRegistered): ?>
                         <button class="btn btn-danger btn-block btn-unsubscribe" data-activity-id="<?php echo $event_id; ?>">
-                            ✓ Se désinscrire
+                            ✓ <?php echo t('event_details.unregister_button'); ?>
                         </button>
                     <?php else: ?>
                         <button class="btn btn-primary btn-block btn-subscribe" data-activity-id="<?php echo $event_id; ?>">
-                            S'inscrire
+                            <?php echo t('event_details.register_button'); ?>
                         </button>
                     <?php endif; ?>
                 <?php else: ?>
-                    <a href="../auth/login.php" class="btn btn-primary btn-block">Connexion pour s'inscrire</a>
+                    <a href="../auth/login.php" class="btn btn-primary btn-block"><?php echo t('event_details.login_to_register'); ?></a>
                 <?php endif; ?>
             </div>
 
             <!-- Other Activities Card -->
             <div class="other-activities card">
-                <h3 class="sidebar-title">Autres activités</h3>
+                <h3 class="sidebar-title"><?php echo t('event_details.other_activities'); ?></h3>
                 <div class="activities-list">
                     <?php foreach ($otherActivities as $other): ?>
                         <div class="activity-mini">

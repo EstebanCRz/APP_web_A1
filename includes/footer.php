@@ -5,7 +5,7 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>AmiGo</h3>
-                    <p>Partagez des activités entre particuliers</p>
+                    <p><?php echo t('footer.share_activities'); ?></p>
                     <div class="footer-social">
                         <a href="#" aria-label="Facebook"><i class="social-icon">👍</i></a>
                         <a href="#" aria-label="Twitter"><i class="social-icon">🐦</i></a>
@@ -14,27 +14,27 @@
                 </div>
                 
                 <div class="footer-section">
-                    <h4>Liens rapides</h4>
+                    <h4><?php echo t('footer.quick_links'); ?></h4>
                     <ul class="footer-links">
-                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>index.php">🏠 Accueil</a></li>
-                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>events/events-list.php">🎉 Événements</a></li>
-                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>pages/faq.php">❓ FAQ</a></li>
-                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>pages/contact.php">✉️ Contact</a></li>
+                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>index.php">🏠 <?php echo t('footer.home'); ?></a></li>
+                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>events/events-list.php">🎉 <?php echo t('footer.events'); ?></a></li>
+                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>pages/faq.php">❓ <?php echo t('footer.faq'); ?></a></li>
+                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>pages/contact.php">✉️ <?php echo t('footer.contact'); ?></a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-section">
-                    <h4>Légal</h4>
+                    <h4><?php echo t('footer.legal_info'); ?></h4>
                     <ul class="footer-links">
-                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>pages/cgu.php">CGU</a></li>
-                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>pages/mentions-legales.php">Mentions légales</a></li>
-                        <li><a href="#">Politique de confidentialité</a></li>
+                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>pages/cgu.php"><?php echo t('footer.cgu'); ?></a></li>
+                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>pages/mentions-legales.php"><?php echo t('footer.legal'); ?></a></li>
+                        <li><a href="#"><?php echo t('footer.privacy'); ?></a></li>
                     </ul>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 AmiGo - Tous droits réservés</p>
+                <p>&copy; 2025 AmiGo - <?php echo t('footer.all_rights_reserved'); ?></p>
             </div>
         </div>
     </footer>

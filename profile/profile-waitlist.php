@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../includes/language.php';
 header('Content-Type: text/html; charset=UTF-8');
 
 $pageTitle = "Liste d'attente - AmiGo";
@@ -14,13 +15,13 @@ include '../includes/header.php';
 ?>
 
 <div class="container">
-    <h2>Liste d'attente</h2>
-    <p>Événements pour lesquels vous êtes en liste d'attente.</p>
+    <h2><?php echo t('pages.waitlist'); ?></h2>
+    <p><?php echo t('pages.waitlist_events_desc'); ?></p>
     
     <div class="events-grid">
         <!-- TODO: Afficher les événements en liste d'attente depuis la base de données -->
-        <p>Aucune liste d'attente pour le moment.</p>
-        <a href="../events/events-list.php" class="btn btn-primary">Découvrir des événements</a>
+        <p><?php echo t('pages.no_waitlist'); ?></p>
+        <a href="../events/events-list.php" class="btn btn-primary"><?php echo t('pages.discover_events'); ?></a>
     </div>
 </div>
 
