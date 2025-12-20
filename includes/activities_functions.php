@@ -42,8 +42,15 @@ function getAllActivities($filters = []) {
     
     // Filtrage par recherche
     if (!empty($filters['search'])) {
-        $sql .= " AND (a.title LIKE :search OR a.location LIKE :search OR a.city LIKE :search OR a.description LIKE :search OR u.username LIKE :search OR u.first_name LIKE :search OR u.last_name LIKE :search)";
-        $params[':search'] = '%' . $filters['search'] . '%';
+        $searchTerm = '%' . $filters['search'] . '%';
+        $sql .= " AND (a.title LIKE :search1 OR a.location LIKE :search2 OR a.city LIKE :search3 OR a.description LIKE :search4 OR u.username LIKE :search5 OR u.first_name LIKE :search6 OR u.last_name LIKE :search7)";
+        $params[':search1'] = $searchTerm;
+        $params[':search2'] = $searchTerm;
+        $params[':search3'] = $searchTerm;
+        $params[':search4'] = $searchTerm;
+        $params[':search5'] = $searchTerm;
+        $params[':search6'] = $searchTerm;
+        $params[':search7'] = $searchTerm;
     }
     
     // Filtrage par catégorie
@@ -140,6 +147,15 @@ function getActivityById($id) {
 function getAllCategories() {
     $pdo = getDB();
     $stmt = $pdo->query("SELECT * FROM activity_categories ORDER BY name");
+    return $stmt->fetchAll();
+}
+
+/**
+ * Récupère toutes les villes
+ */
+function getAllCities() {
+    $pdo = getDB();
+    $stmt = $pdo->query("SELECT name FROM cities ORDER BY name ASC");
     return $stmt->fetchAll();
 }
 

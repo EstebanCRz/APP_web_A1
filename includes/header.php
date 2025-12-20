@@ -64,15 +64,12 @@ $current_dir = basename(dirname($_SERVER['PHP_SELF']));
                         <li><a href="<?php echo $prefix; ?>auth/register.php" class="<?php echo ($current_page === 'register.php') ? 'active' : ''; ?>"><?php echo t('header.register'); ?></a></li>
                     <?php endif; ?>
                     <li class="language-selector">
-                        <span class="language-label"><?php echo t('header.language'); ?></span>
-                        <div class="language-options">
-                            <a href="<?php echo getLanguageUrl('fr'); ?>" class="lang-option <?php echo getCurrentLanguage() === 'fr' ? 'active' : ''; ?>">
-                                <span class="flag-fr">🇫🇷</span> Français
-                            </a>
-                            <a href="<?php echo getLanguageUrl('en'); ?>" class="lang-option <?php echo getCurrentLanguage() === 'en' ? 'active' : ''; ?>">
-                                <span class="flag-en">🇬🇧</span> English
-                            </a>
-                        </div>
+                        <a href="<?php echo getLanguageUrl('fr'); ?>" class="language-flag-btn <?php echo getCurrentLanguage() === 'fr' ? 'active' : ''; ?>" title="Français">
+                            <img src="<?php echo $prefix; ?>assets/images/flag-fr.svg" alt="FR" class="flag-img">
+                        </a>
+                        <a href="<?php echo getLanguageUrl('en'); ?>" class="language-flag-btn <?php echo getCurrentLanguage() === 'en' ? 'active' : ''; ?>" title="English">
+                            <img src="<?php echo $prefix; ?>assets/images/flag-gb.svg" alt="GB" class="flag-img">
+                        </a>
                     </li>
                     
                 </ul>

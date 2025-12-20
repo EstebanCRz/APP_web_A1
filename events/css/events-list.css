@@ -38,6 +38,49 @@
 	box-shadow: 0 1px 2px rgba(47,69,88,0.04);
 }
 
+/* Section de la carte */
+.map-section {
+	margin: 1.5rem 0 2rem;
+	border-radius: 16px;
+	overflow: hidden;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+	position: relative;
+}
+
+.events-map {
+	width: 100%;
+	height: 450px;
+	border: none;
+	background: #f0f0f0;
+	z-index: 1;
+}
+
+/* Personnalisation des popups Leaflet */
+.leaflet-popup-content-wrapper {
+	border-radius: 12px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-content {
+	margin: 16px;
+	font-family: inherit;
+}
+
+.leaflet-popup-tip {
+	background: white;
+}
+
+.custom-popup .leaflet-popup-content-wrapper {
+	background: white;
+	border-radius: 12px;
+}
+
+.custom-popup a:hover {
+	background: linear-gradient(135deg, #4ECDE6 0%, #55D5E0 100%) !important;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(85, 213, 224, 0.4) !important;
+}
+
 /* Layout avec sidebar */
 .content-wrapper {
 	display: grid;
