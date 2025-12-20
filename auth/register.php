@@ -12,6 +12,7 @@ $customCSS = [
     "css/register.css"
 ];
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $last_name = $_POST['nom'] ?? '';
     $first_name = $_POST['prenom'] ?? '';
@@ -19,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
+    
     
     $errors = [];
     
@@ -58,9 +60,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_first_name'] = $first_name;
                 $_SESSION['user_last_name'] = $last_name;
                 
-                // Suppression de l'envoi d'email de bienvenue
                 
-                header('Location: ../profile/profile.php');
+                
+                // Rediriger vers la page de sélection des centres d'intérêt
+                header('Location: ../profile/choose-interests.php');
                 exit;
             }
         } catch(PDOException $e) {
@@ -108,6 +111,8 @@ include '../includes/header.php';
             <div class="form-group">
                 <label><input type="checkbox" required> <?php echo getCurrentLanguage() === 'fr' ? 'J\'accepte les' : 'I accept the'; ?> <a href="../pages/cgu.php"><?php echo t('footer.cgu'); ?></a></label>
             </div>
+
+            
             <button type="submit" class="btn btn-primary btn-block"><?php echo t('auth.sign_up'); ?></button>
         </form>
         <div class="form-links"><p><?php echo t('auth.already_account'); ?> <a href="login.php"><?php echo t('auth.sign_in'); ?></a></p></div>

@@ -22,7 +22,6 @@ $current_dir = basename(dirname($_SERVER['PHP_SELF']));
     
     <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/header.css">
     <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/footer.css">
-    <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/dark-theme.css">
     
     <?php if (isset($customCSS)): ?>
         <?php if (is_array($customCSS)): ?>
@@ -35,15 +34,7 @@ $current_dir = basename(dirname($_SERVER['PHP_SELF']));
     <?php endif; ?>
 </head>
 <body>
-    <script>
-        // Appliquer le thème immédiatement pour éviter le flash
-        (function() {
-            const theme = localStorage.getItem('theme');
-            if (theme === 'dark') {
-                document.body.classList.add('dark-theme');
-            }
-        })();
-    </script>
+    
     <header>
         <div class="header-inner">
             <div class="logo">
@@ -62,11 +53,11 @@ $current_dir = basename(dirname($_SERVER['PHP_SELF']));
             <nav id="mainNav">
                 <ul>
                     <li><a href="<?php echo $prefix; ?>index.php" class="<?php echo ($current_page === 'index.php' && $current_dir !== 'events' && $current_dir !== 'profile' && $current_dir !== 'pages' && $current_dir !== 'auth') ? 'active' : ''; ?>"><?php echo t('header.home'); ?></a></li>
-                    <li><a href="<?php echo $prefix; ?>events/events-list.php" class="<?php echo ($current_dir === 'events') ? 'active' : ''; ?>"><?php echo t('header.events'); ?></a></li>
+                    <li><a href="<?php echo $prefix; ?>events/events-list.php" class="<?php echo ($current_dir === 'events' || strpos($_SERVER['REQUEST_URI'], 'events') !== false) ? 'active' : ''; ?>"><?php echo t('header.events'); ?></a></li>
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <li><a href="<?php echo $prefix; ?>pages/mes-groupes.php" class="<?php echo ($current_page === 'mes-groupes.php') ? 'active' : ''; ?>"><?php echo t('header.my_groups'); ?></a></li>
-                        <li><a href="<?php echo $prefix; ?>profile/profile.php" class="<?php echo ($current_dir === 'profile') ? 'active' : ''; ?>"><?php echo t('header.profile'); ?></a></li>
-                        <li><a href="<?php echo $prefix; ?>events/event-create.php" class="<?php echo ($current_page === 'event-create.php') ? 'active' : ''; ?>"><?php echo t('header.create_event'); ?></a></li>
+                        <li><a href="<?php echo $prefix; ?>pages/mes-groupes.php" class="<?php echo (strpos($_SERVER['REQUEST_URI'], 'mes-groupes.php') !== false || $current_page === 'mes-groupes.php') ? 'active' : ''; ?>"><?php echo t('header.my_groups'); ?></a></li>
+                        <li><a href="<?php echo $prefix; ?>profile/profile.php" class="<?php echo ($current_dir === 'profile' || strpos($_SERVER['REQUEST_URI'], 'profile') !== false) ? 'active' : ''; ?>"><?php echo t('header.profile'); ?></a></li>
+                        <li><a href="<?php echo $prefix; ?>events/event-create.php" class="<?php echo ($current_page === 'event-create.php' || strpos($_SERVER['REQUEST_URI'], 'event-create.php') !== false) ? 'active' : ''; ?>"><?php echo t('header.create_event'); ?></a></li>
                         <li><a href="<?php echo $prefix; ?>auth/login.php?logout=1"><?php echo t('header.logout'); ?></a></li>
                     <?php else: ?>
                         <li><a href="<?php echo $prefix; ?>auth/login.php" class="<?php echo ($current_page === 'login.php') ? 'active' : ''; ?>"><?php echo t('header.login'); ?></a></li>
@@ -83,17 +74,13 @@ $current_dir = basename(dirname($_SERVER['PHP_SELF']));
                             </a>
                         </div>
                     </li>
-                    <li>
-                        <button id="themeToggle" class="theme-toggle" aria-label="<?php echo t('header.toggle_theme'); ?>">
-                            🌙
-                        </button>
-                    </li>
+                    
                 </ul>
             </nav>
         </div>
         <div class="menu-overlay" id="menuOverlay"></div>
     </header>
-    <script src="<?php echo $prefix; ?>assets/js/theme-toggle.js"></script>
+    
     <script>
         // Menu burger toggle
         const burgerMenu = document.getElementById('burgerMenu');

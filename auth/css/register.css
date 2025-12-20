@@ -143,6 +143,32 @@
     text-decoration: underline;
 }
 
+/* Interests section */
+.interests-section .interests-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 16px;
+    margin-top: 10px;
+}
+.interest-item {
+    background: #f8f9fb;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+.interest-item input[type="checkbox"] {
+    margin-right: 10px;
+}
+.interest-item span {
+    color: #34495e;
+}
+
+@media (max-width: 480px) {
+    .interests-section .interests-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Animation d'entrée */
 .form-container {
     animation: slideUp 0.4s ease-out;
