@@ -242,7 +242,7 @@
 		width: 100%;
 	}
 	}
-}
+
 
 @media (max-width: 560px) {
 	.search-form { flex-direction: column; align-items: stretch; width: 100%; }
