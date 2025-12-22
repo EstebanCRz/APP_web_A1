@@ -128,7 +128,7 @@ function displayInvitations(invitations) {
                     <path d="M22 12h-6l-2 3h-4l-2-3H2"></path>
                     <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
                 </svg>
-                Invitations de groupe (${invitations.length})
+                ${window.messagesTranslations.invitationsTitle} (${invitations.length})
             </h3>
             <div class="invitations-list">
                 ${invitations.map(inv => `
@@ -136,11 +136,11 @@ function displayInvitations(invitations) {
                         <div class="invitation-info">
                             <h4>${escapeHtml(inv.group_name)}</h4>
                             <p>${escapeHtml(inv.activity_title || inv.description || '')}</p>
-                            <small>Invité par ${escapeHtml(inv.invited_by_name)}</small>
+                            <small>${window.messagesTranslations.invitedBy} ${escapeHtml(inv.invited_by_name)}</small>
                         </div>
                         <div class="invitation-actions">
-                            <button class="btn-accept" onclick="acceptInvitation(${inv.id})">Accepter</button>
-                            <button class="btn-decline" onclick="declineInvitation(${inv.id})">Refuser</button>
+                            <button class="btn-accept" onclick="acceptInvitation(${inv.id})">${window.messagesTranslations.accept}</button>
+                            <button class="btn-decline" onclick="declineInvitation(${inv.id})">${window.messagesTranslations.decline}</button>
                         </div>
                     </div>
                 `).join('')}
@@ -222,8 +222,8 @@ function displayGroups(groups) {
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
                 </svg>
-                <h3>Aucun groupe</h3>
-                <p>Créez votre premier groupe pour commencer</p>
+                <h3>${window.messagesTranslations.noGroups}</h3>
+                <p>${window.messagesTranslations.noGroupsDesc}</p>
             </div>
         `;
         return;
@@ -236,7 +236,7 @@ function displayGroups(groups) {
                 ${group.activity_title ? `<p class="activity-badge">📌 ${escapeHtml(group.activity_title)}</p>` : ''}
                 <p>${escapeHtml(group.description || '')}</p>
                 <div class="group-meta">
-                    <span>${group.member_count} membres</span>
+                    <span>${group.member_count} ${window.messagesTranslations.members}</span>
                     <span>${formatDate(group.created_at)}</span>
                 </div>
             </div>
@@ -302,20 +302,20 @@ function displayGroupDetails(group, messages, members, currentUserId) {
                         <div class="message-content">${escapeHtml(msg.message)}</div>
                     </div>
                 `;
-            }).join('') || '<p class="empty-state">Aucun message</p>'}
+            }).join('') || `<p class="empty-state">${window.messagesTranslations.noMessages}</p>`}
         </div>
         
         <form class="chat-form" onsubmit="sendGroupMessage(event, ${group.id})">
-            <textarea name="message" placeholder="Votre message..." required></textarea>
-            <button type="submit">Envoyer</button>
+            <textarea name="message" placeholder="${window.messagesTranslations.yourMessage}" required></textarea>
+            <button type="submit">${window.messagesTranslations.send}</button>
         </form>
         
         <div class="members-list">
-            <h3>Membres (${members.length})</h3>
+            <h3>${window.messagesTranslations.members} (${members.length})</h3>
             ${members.map(member => `
                 <div class="member-item">
                     <span>${escapeHtml(member.username)}</span>
-                    ${member.role === 'admin' ? '<span class="badge">Admin</span>' : ''}
+                    ${member.role === 'admin' ? `<span class="badge">${window.messagesTranslations.admin}</span>` : ''}
                 </div>
             `).join('')}
         </div>
@@ -375,8 +375,8 @@ function displayConversations(conversations) {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
-                <h3>Aucune conversation</h3>
-                <p>Recherchez un utilisateur pour démarrer une conversation</p>
+                <h3>${window.messagesTranslations.noConversations}</h3>
+                <p>${window.messagesTranslations.noConversationsDesc}</p>
             </div>
         `;
         return;
@@ -386,7 +386,7 @@ function displayConversations(conversations) {
         <div class="conversation-card">
             <div class="conversation-info" onclick="openConversation(${conv.id})">
                 <h3>${escapeHtml(conv.other_user_name)}</h3>
-                <p>${escapeHtml(conv.last_message || 'Aucun message')}</p>
+                <p>${escapeHtml(conv.last_message || window.messagesTranslations.noMessages)}</p>
                 ${conv.unread_count > 0 ? `<span class="unread-badge">${conv.unread_count}</span>` : ''}
             </div>
             <button class="btn-delete-conv" onclick="event.stopPropagation(); deleteConversation(${conv.id})" title="Supprimer la conversation">
@@ -428,7 +428,7 @@ function displaySearchResults(users) {
     const container = document.getElementById('search-results');
     
     if (users.length === 0) {
-        container.innerHTML = '<div class="search-result-item">Aucun utilisateur trouvé</div>';
+        container.innerHTML = `<div class="search-result-item">${window.messagesTranslations.noUserFound}</div>`;
         container.classList.add('show');
         return;
     }
@@ -506,12 +506,12 @@ function displayConversationDetails(conversation, messages, currentUserId) {
                         <div class="message-content">${escapeHtml(msg.message)}</div>
                     </div>
                 `;
-            }).join('') || '<p class="empty-state">Aucun message</p>'}
+            }).join('') || `<p class="empty-state">${window.messagesTranslations.noMessages}</p>`}
         </div>
         
         <form class="chat-form" onsubmit="sendPrivateMessage(event, ${conversation.id})">
-            <textarea name="message" placeholder="Votre message..." required></textarea>
-            <button type="submit">Envoyer</button>
+            <textarea name="message" placeholder="${window.messagesTranslations.yourMessage}" required></textarea>
+            <button type="submit">${window.messagesTranslations.send}</button>
         </form>
     `;
     
@@ -548,7 +548,7 @@ async function sendPrivateMessage(e, conversationId) {
 
 // Supprimer une conversation
 async function deleteConversation(conversationId) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette conversation ? Tous les messages seront supprimés.')) {
+    if (!confirm(window.messagesTranslations.deleteConversationConfirm)) {
         return;
     }
     
@@ -576,13 +576,13 @@ async function deleteConversation(conversationId) {
 function showCreateGroupModal() {
     const content = `
         <div class="chat-header">
-            <h2>Créer un groupe</h2>
+            <h2>${window.messagesTranslations.createGroupTitle}</h2>
         </div>
         
         <form class="chat-form" onsubmit="createGroup(event)" style="flex-direction: column;">
-            <input type="text" name="name" placeholder="Nom du groupe" required style="padding: 10px; border: 2px solid #e0e0e0; border-radius: 5px; margin-bottom: 10px;">
-            <textarea name="description" placeholder="Description (optionnel)" style="padding: 10px; border: 2px solid #e0e0e0; border-radius: 5px; min-height: 80px; margin-bottom: 10px;"></textarea>
-            <button type="submit">Créer</button>
+            <input type="text" name="name" placeholder="${window.messagesTranslations.groupName}" required style="padding: 10px; border: 2px solid #e0e0e0; border-radius: 5px; margin-bottom: 10px;">
+            <textarea name="description" placeholder="${window.messagesTranslations.groupDescription}" style="padding: 10px; border: 2px solid #e0e0e0; border-radius: 5px; min-height: 80px; margin-bottom: 10px;"></textarea>
+            <button type="submit">${window.messagesTranslations.create}</button>
         </form>
     `;
     
@@ -617,7 +617,7 @@ async function createGroup(e) {
 
 // Quitter un groupe
 async function leaveGroup(groupId) {
-    if (!confirm('Êtes-vous sûr de vouloir quitter ce groupe ?')) {
+    if (!confirm(window.messagesTranslations.leaveGroupConfirm)) {
         return;
     }
     
@@ -643,7 +643,7 @@ async function leaveGroup(groupId) {
 
 // Supprimer un groupe (admin uniquement)
 async function deleteGroup(groupId) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce groupe ? Tous les messages seront supprimés et cette action est irréversible.')) {
+    if (!confirm(window.messagesTranslations.deleteGroupConfirm)) {
         return;
     }
     
@@ -698,12 +698,12 @@ function formatDate(dateString) {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
     
-    if (minutes < 1) return 'À l\'instant';
-    if (minutes < 60) return `Il y a ${minutes} min`;
-    if (hours < 24) return `Il y a ${hours}h`;
-    if (days < 7) return `Il y a ${days}j`;
+    if (minutes < 1) return window.messagesTranslations.justNow || 'Just now';
+    if (minutes < 60) return `${minutes} min`;
+    if (hours < 24) return `${hours}h`;
+    if (days < 7) return `${days}d`;
     
-    return date.toLocaleDateString('fr-FR');
+    return date.toLocaleDateString();
 }
 
 function scrollToBottom(elementId) {

@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $assetsDepth = 1;
-$pageTitle = "Messages et Groupes - AmiGo";
+$pageTitle = t('messages.page_title') . " - AmiGo";
 $customCSS = ['css/messages.css'];
 require_once '../includes/header.php';
 
@@ -18,7 +18,7 @@ $user_id = $_SESSION['user_id'];
 
 <div class="messages-container">
     <div class="messages-header">
-        <h1>Messages et Groupes</h1>
+        <h1><?php echo t('messages.page_title'); ?></h1>
     </div>
 
     <!-- Navigation par onglets -->
@@ -30,22 +30,22 @@ $user_id = $_SESSION['user_id'];
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
             </svg>
-            Groupes
+            <?php echo t('messages.tab_groups'); ?>
             <span id="groups-badge" class="tab-badge" style="display: none;"></span>
         </button>
         <button class="tab-btn" data-tab="private">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
-            Messages privés
+            <?php echo t('messages.tab_private'); ?>
         </button>
     </div>
 
     <!-- Contenu des onglets -->
     <div class="tab-content active" id="groups-content">
         <div class="section-header">
-            <h2>Mes Groupes</h2>
-            <button class="btn-primary" id="btn-create-group">+ Créer un groupe</button>
+            <h2><?php echo t('messages.my_groups'); ?></h2>
+            <button class="btn-primary" id="btn-create-group"><?php echo t('messages.create_group'); ?></button>
         </div>
         
         <!-- Invitations en attente -->
@@ -56,9 +56,9 @@ $user_id = $_SESSION['user_id'];
 
     <div class="tab-content" id="private-content">
         <div class="section-header">
-            <h2>Conversations privées</h2>
+            <h2><?php echo t('messages.tab_private'); ?></h2>
             <div class="search-users">
-                <input type="text" id="search-users" placeholder="Rechercher un utilisateur..." />
+                <input type="text" id="search-users" placeholder="<?php echo t('messages.search_users'); ?>" />
                 <div id="search-results" class="search-results"></div>
             </div>
         </div>
@@ -81,6 +81,34 @@ $user_id = $_SESSION['user_id'];
         <div id="conversation-details"></div>
     </div>
 </div>
+
+<script>
+// Passer les traductions au JavaScript
+window.messagesTranslations = {
+    noGroups: <?php echo json_encode(t('messages.no_groups')); ?>,
+    noGroupsDesc: <?php echo json_encode(t('messages.no_groups_desc')); ?>,
+    members: <?php echo json_encode(t('messages.members')); ?>,
+    noConversations: <?php echo json_encode(t('messages.no_conversations')); ?>,
+    noConversationsDesc: <?php echo json_encode(t('messages.no_conversations_desc')); ?>,
+    noMessages: <?php echo json_encode(t('messages.no_messages')); ?>,
+    yourMessage: <?php echo json_encode(t('messages.your_message')); ?>,
+    send: <?php echo json_encode(t('messages.send')); ?>,
+    invitedBy: <?php echo json_encode(t('messages.invited_by')); ?>,
+    accept: <?php echo json_encode(t('messages.accept')); ?>,
+    decline: <?php echo json_encode(t('messages.decline')); ?>,
+    invitationsTitle: <?php echo json_encode(t('messages.invitations_title')); ?>,
+    admin: <?php echo json_encode(t('messages.admin')); ?>,
+    leaveGroupConfirm: <?php echo json_encode(t('messages.leave_group_confirm')); ?>,
+    deleteGroupConfirm: <?php echo json_encode(t('messages.delete_group_confirm')); ?>,
+    deleteConversationConfirm: <?php echo json_encode(t('messages.delete_conversation_confirm')); ?>,
+    createGroupTitle: <?php echo json_encode(t('messages.create_group_title')); ?>,
+    groupName: <?php echo json_encode(t('messages.group_name')); ?>,
+    groupDescription: <?php echo json_encode(t('messages.group_description')); ?>,
+    noUserFound: <?php echo json_encode(t('messages.no_user_found')); ?>,
+    create: <?php echo json_encode(t('messages.create')); ?>,
+    justNow: <?php echo json_encode(t('messages.just_now')); ?>
+};
+</script>
 
 <script src="../assets/js/messages.js"></script>
 
