@@ -295,7 +295,16 @@ function createActivity($data) {
         ':image' => $data['image'] ?? null
     ]);
     
-    return $pdo->lastInsertId();
+    $activityId = $pdo->lastInsertId();
+    
+    // Ajouter des points pour la création d'événement
+    require_once __DIR__ . '/gamification.php';
+    addPoints($data['creator_id'], POINTS['event_create'], 'event_create', 'Création d\'un événement', $activityId);
+    
+    // Vérifier et attribuer les badges
+    checkBadges($data['creator_id']);
+    
+    return $activityId;
 }
 
 /**

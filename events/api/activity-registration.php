@@ -10,6 +10,7 @@ ini_set('session.cookie_secure', 0);
 
 session_start();
 require_once '../../includes/language.php';
+require_once '../../includes/gamification.php';
 header('Content-Type: application/json');
 
 require_once '../../includes/activities_functions.php';
@@ -44,6 +45,12 @@ try {
     if ($action === 'register') {
         // Inscription
         registerUserToActivity($activityId, $userId);
+        
+        // Ajouter des points pour la participation
+        addPoints($userId, POINTS['event_attend'], 'event_attend', 'Participation à un événement', $activityId);
+        
+        // Vérifier et attribuer les badges
+        checkBadges($userId);
         
         // Créer ou récupérer le groupe de l'activité et créer une invitation
         require_once '../../includes/config.php';

@@ -9,6 +9,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
 require_once '../includes/language.php';
 require_once '../includes/activities_functions.php';
+require_once '../includes/gamification.php';
 
 // Vérifier que l'utilisateur est connecté
 if (!isset($_SESSION['user_id'])) {
@@ -92,16 +93,66 @@ try {
     $myFriends = [];
 }
 
+// Récupérer les stats de gamification
+$userStats = getUserStats($_SESSION['user_id']);
+$levelName = getLevelName($userStats['level']);
+$levelColor = getLevelColor($userStats['level']);
+
+// Récupérer le classement pour l'onglet classement
+$leaderboard = getLeaderboard(50, 0);
+$recentBadges = getRecentBadges(10);
+
 include '../includes/header.php';
 ?>
 
 <div class="container">
+    <!-- Bannière de gamification -->
+    <section class="gamification-banner">
+        <div class="gamification-card">
+            <div class="level-display" style="border-color: <?php echo $levelColor; ?>">
+                <div class="level-number"><?php echo $userStats['level']; ?></div>
+                <div class="level-name"><?php echo $levelName[getCurrentLanguage()]; ?></div>
+            </div>
+            <div class="points-display">
+                <div class="points-value">🏆 <?php echo number_format($userStats['total_points']); ?></div>
+                <div class="points-label"><?php echo t('leaderboard.points'); ?></div>
+            </div>
+            <div class="rank-display">
+                <div class="rank-value">#<?php echo $userStats['rank']; ?></div>
+                <div class="rank-label"><?php echo t('leaderboard.ranking'); ?></div>
+            </div>
+            <div class="badges-display">
+                <div class="badges-preview">
+                    <?php 
+                    $displayBadges = array_slice($userStats['badges'], 0, 5);
+                    foreach ($displayBadges as $badge): ?>
+                        <span class="badge-icon-small" title="<?php echo $badge['name_' . getCurrentLanguage()]; ?>"><?php echo $badge['icon']; ?></span>
+                    <?php endforeach; ?>
+                    <?php if ($userStats['badge_count'] > 5): ?>
+                        <span class="more-badges">+<?php echo $userStats['badge_count'] - 5; ?></span>
+                    <?php endif; ?>
+                </div>
+                <a href="../pages/badges.php" class="btn-view-badges"><?php echo t('leaderboard.view_all_badges'); ?></a>
+            </div>
+        </div>
+        <div class="progress-section">
+            <div class="progress-info">
+                <span><?php echo t('leaderboard.progress_to_next'); ?></span>
+                <span><?php echo number_format($userStats['points_in_current_level']); ?> / <?php echo number_format($userStats['points_needed_for_next']); ?></span>
+            </div>
+            <div class="progress-bar-profile">
+                <div class="progress-fill-profile" style="width: <?php echo $userStats['progress_percent']; ?>%"></div>
+            </div>
+        </div>
+    </section>
+    
     <section class="profile-header">
         <h2><?php echo t('profile.my_profile'); ?></h2>
         <p><?php echo t('profile.welcome'); ?> <?php echo htmlspecialchars($_SESSION['user_first_name'] ?? 'Utilisateur', ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($_SESSION['user_last_name'] ?? '', ENT_QUOTES, 'UTF-8'); ?> !</p>
         
         <div class="profile-tabs">
             <button class="tab-btn btn btn-primary active" data-tab="modifier"><?php echo t('profile.edit'); ?></button>
+            <button class="tab-btn btn btn-secondary" data-tab="leaderboard"> <?php echo t('leaderboard.page_title'); ?></button>
             <button class="tab-btn btn btn-secondary" data-tab="friends"> <?php echo t('profile.my_friends'); ?> (<?php echo count($myFriends); ?>)</button>
             <button class="tab-btn btn btn-secondary" data-tab="favorites"> <?php echo t('profile.favorites'); ?> (<?php echo count($favoriteActivities); ?>)</button>
             <button class="tab-btn btn btn-secondary" data-tab="created"><?php echo t('profile.created_events'); ?> (<?php echo count($myActivities); ?>)</button>
@@ -116,6 +167,122 @@ include '../includes/header.php';
             <h3><?php echo t('profile.edit'); ?></h3>
             <p><?php echo t('profile.upcoming_feature'); ?></p>
             <a href="profile-edit.php" class="btn btn-primary"><?php echo t('profile.access_settings'); ?></a>
+        </div>
+    </section>
+
+    <!-- Onglet Classement -->
+    <section class="tab-content" id="tab-leaderboard">
+        <div class="leaderboard-container">
+            <h3 style="font-size: 1.8rem; color: var(--accent-structure); margin-bottom: 1.5rem;">
+                 <?php echo t('leaderboard.ranking'); ?>
+            </h3>
+            
+            <?php if (empty($leaderboard)): ?>
+                <div class="empty-state">
+                    <p><?php echo t('leaderboard.no_users'); ?></p>
+                </div>
+            <?php else: ?>
+                <div class="ranking-list-profile">
+                    <?php foreach ($leaderboard as $user): ?>
+                        <div class="ranking-item-profile <?php echo $user['id'] == $_SESSION['user_id'] ? 'current-user' : ''; ?>">
+                            <div class="rank-badge-profile rank-<?php echo $user['rank']; ?>">
+                                <?php if ($user['rank'] == 1): ?>
+                                    🥇
+                                <?php elseif ($user['rank'] == 2): ?>
+                                    🥈
+                                <?php elseif ($user['rank'] == 3): ?>
+                                    🥉
+                                <?php else: ?>
+                                    #<?php echo $user['rank']; ?>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <div class="user-info-profile">
+                                <div class="user-name-profile">
+                                    <a href="profile-other.php?id=<?php echo $user['id']; ?>">
+                                        <?php 
+                                        $displayName = trim($user['first_name'] . ' ' . $user['last_name']);
+                                        echo htmlspecialchars($displayName ?: $user['username']); 
+                                        ?>
+                                    </a>
+                                    <?php if ($user['id'] == $_SESSION['user_id']): ?>
+                                        <span class="you-badge-profile"><?php echo t('leaderboard.you'); ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="user-stats-mini-profile">
+                                    <span title="<?php echo t('leaderboard.events_created'); ?>">📅 <?php echo $user['events_created']; ?></span>
+                                    <span title="<?php echo t('leaderboard.events_attended'); ?>">🎉 <?php echo $user['events_attended']; ?></span>
+                                    <span title="<?php echo t('leaderboard.badges'); ?>">🎖️ <?php echo $user['badge_count']; ?></span>
+                                </div>
+                            </div>
+                            
+                            <div class="user-level-profile">
+                                <div class="level-badge-profile" style="border-color: <?php echo getLevelColor($user['level']); ?>">
+                                    <div class="level-number-profile"><?php echo $user['level']; ?></div>
+                                </div>
+                            </div>
+                            
+                            <div class="user-points-profile">
+                                <div class="points-value-profile"><?php echo number_format($user['total_points']); ?></div>
+                                <div class="points-label-profile"><?php echo t('leaderboard.points'); ?></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+            
+            <!-- Derniers badges -->
+            <div class="recent-badges-section" style="margin-top: 2rem;">
+                <h3 style="font-size: 1.5rem; color: var(--accent-structure); margin-bottom: 1rem;">
+                    🎖️ <?php echo t('leaderboard.recent_badges'); ?>
+                </h3>
+                
+                <?php if (empty($recentBadges)): ?>
+                    <div class="empty-state-small">
+                        <p><?php echo t('leaderboard.no_recent_badges'); ?></p>
+                    </div>
+                <?php else: ?>
+                    <div class="recent-badges-grid">
+                        <?php foreach ($recentBadges as $badge): ?>
+                            <div class="badge-item-profile">
+                                <div class="badge-icon-profile"><?php echo $badge['icon']; ?></div>
+                                <div class="badge-info-profile">
+                                    <div class="badge-name-profile"><?php echo $badge['name_' . getCurrentLanguage()]; ?></div>
+                                    <div class="badge-user-profile">
+                                        <?php 
+                                        $displayName = trim($badge['first_name'] . ' ' . $badge['last_name']);
+                                        echo htmlspecialchars($displayName ?: $badge['username']); 
+                                        ?>
+                                    </div>
+                                    <div class="badge-time-profile">
+                                        <?php 
+                                        $now = new DateTime();
+                                        $time = new DateTime($badge['earned_at']);
+                                        $diff = $now->diff($time);
+                                        
+                                        if ($diff->days == 0) {
+                                            if ($diff->h == 0) {
+                                                echo $diff->i . ' min';
+                                            } else {
+                                                echo $diff->h . 'h';
+                                            }
+                                        } elseif ($diff->days < 7) {
+                                            echo $diff->days . 'j';
+                                        } else {
+                                            echo $time->format('d/m');
+                                        }
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+                
+                <a href="../pages/badges.php" class="btn btn-primary" style="margin-top: 1.5rem; display: inline-block;">
+                    <?php echo t('leaderboard.view_all_badges'); ?>
+                </a>
+            </div>
         </div>
     </section>
 

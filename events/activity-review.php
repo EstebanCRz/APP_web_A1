@@ -5,6 +5,7 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once '../includes/config.php';
 require_once '../includes/language.php';
 require_once '../includes/security.php';
+require_once '../includes/gamification.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../auth/login.php');
@@ -75,6 +76,10 @@ try {
                         $stmt = $pdo->prepare("INSERT INTO activity_reviews (activity_id, user_id, rating, comment) VALUES (?, ?, ?, ?)");
                         $stmt->execute([$activityId, $userId, $rating, $comment]);
                         $message = 'Merci pour votre retour d\'expérience !';
+                        
+                        // Attribuer des points pour l'avis
+                        addPoints($userId, 10, 'review_leave');
+                        checkBadges($userId);
                     }
                     
                     // Recharger l'avis

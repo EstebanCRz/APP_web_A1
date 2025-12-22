@@ -11,6 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require_once '../../includes/config.php';
+require_once '../../includes/gamification.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
 $action = $input['action'] ?? '';
@@ -51,6 +52,12 @@ try {
             $stmt->execute([$friend_id, $user_id]);
             
             if ($stmt->rowCount() > 0) {
+                // Attribuer des points aux deux utilisateurs pour l'amitié
+                addPoints($user_id, 5, 'friend_add');
+                checkBadges($user_id);
+                addPoints($friend_id, 5, 'friend_add');
+                checkBadges($friend_id);
+                
                 echo json_encode([
                     'success' => true,
                     'message' => 'Demande acceptée'
