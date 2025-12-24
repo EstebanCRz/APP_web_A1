@@ -488,6 +488,41 @@ async function openConversation(conversationId) {
     }
 }
 
+// Fonction pour rafraîchir uniquement les messages sans recréer le textarea
+async function refreshConversationMessages(conversationId) {
+    try {
+        const response = await fetch(`api/private-messages.php?id=${conversationId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            updateMessagesOnly(data.messages, data.current_user_id);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+    }
+}
+
+// Fonction pour mettre à jour uniquement la zone de messages
+function updateMessagesOnly(messages, currentUserId) {
+    const chatMessages = document.getElementById('chat-messages');
+    if (!chatMessages) return;
+    
+    chatMessages.innerHTML = messages.map(msg => {
+        const isOwnMessage = msg.sender_id == currentUserId;
+        return `
+            <div class="message ${isOwnMessage ? 'own-message' : 'other-message'}">
+                <div class="message-header">
+                    <span class="message-author">${escapeHtml(msg.sender_name)}</span>
+                    <span class="message-time">${formatDate(msg.created_at)}</span>
+                </div>
+                <div class="message-content">${escapeHtml(msg.message)}</div>
+            </div>
+        `;
+    }).join('') || `<p class="empty-state">${window.messagesTranslations.noMessages}</p>`;
+    
+    scrollToBottom('chat-messages');
+}
+
 function displayConversationDetails(conversation, messages, currentUserId) {
     const content = `
         <div class="chat-header">
@@ -678,7 +713,7 @@ function startMessageRefresh(id, type) {
         if (type === 'group') {
             openGroup(id);
         } else {
-            openConversation(id);
+            refreshConversationMessages(id);
         }
     }, 5000);
 }
