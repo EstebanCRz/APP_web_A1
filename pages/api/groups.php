@@ -144,8 +144,9 @@ try {
         } elseif ($action === 'send_message') {
             $group_id = (int)($data['group_id'] ?? 0);
             $message = trim($data['message'] ?? '');
+            $image_path = $data['image_path'] ?? null;
             
-            if (empty($message)) {
+            if (empty($message) && empty($image_path)) {
                 throw new Exception('Le message est vide');
             }
             
@@ -162,10 +163,10 @@ try {
             
             // Envoyer le message
             $stmt = $pdo->prepare("
-                INSERT INTO group_messages (group_id, user_id, message)
-                VALUES (?, ?, ?)
+                INSERT INTO group_messages (group_id, user_id, message, image_path)
+                VALUES (?, ?, ?, ?)
             ");
-            $stmt->execute([$group_id, $user_id, $message]);
+            $stmt->execute([$group_id, $user_id, $message, $image_path]);
             
             echo json_encode(['success' => true]);
             

@@ -180,8 +180,9 @@ try {
         } elseif ($action === 'send_message') {
             $conversation_id = (int)($data['conversation_id'] ?? 0);
             $message = trim($data['message'] ?? '');
+            $image_path = $data['image_path'] ?? null;
             
-            if (empty($message)) {
+            if (empty($message) && empty($image_path)) {
                 throw new Exception('Le message est vide');
             }
             
@@ -198,10 +199,10 @@ try {
             
             // Envoyer le message
             $stmt = $pdo->prepare("
-                INSERT INTO private_messages (conversation_id, sender_id, message)
-                VALUES (?, ?, ?)
+                INSERT INTO private_messages (conversation_id, sender_id, message, image_path)
+                VALUES (?, ?, ?, ?)
             ");
-            $stmt->execute([$conversation_id, $user_id, $message]);
+            $stmt->execute([$conversation_id, $user_id, $message, $image_path]);
             
             // Mettre à jour last_message_at
             $stmt = $pdo->prepare("
@@ -240,6 +241,44 @@ try {
             $stmt->execute([$conversation_id]);
             
             echo json_encode(['success' => true]);
+            
+        } elseif ($action === 'upload_image') {
+            if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+                throw new Exception('Erreur lors de l\'upload');
+            }
+            
+            $file = $_FILES['image'];
+            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            $maxSize = 5 * 1024 * 1024; // 5MB
+            
+            // Vérifier le type
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $file['tmp_name']);
+            finfo_close($finfo);
+            
+            if (!in_array($mimeType, $allowedTypes)) {
+                throw new Exception('Type de fichier non autorisé');
+            }
+            
+            // Vérifier la taille
+            if ($file['size'] > $maxSize) {
+                throw new Exception('Fichier trop volumineux (max 5MB)');
+            }
+            
+            // Créer un nom unique
+            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $filename = uniqid('msg_') . '_' . $user_id . '.' . $extension;
+            $uploadPath = __DIR__ . '/../../uploads/messages/' . $filename;
+            
+            // Déplacer le fichier
+            if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                throw new Exception('Erreur lors de la sauvegarde');
+            }
+            
+            echo json_encode([
+                'success' => true,
+                'image_path' => 'uploads/messages/' . $filename
+            ]);
             
         } else {
             throw new Exception('Action invalide');

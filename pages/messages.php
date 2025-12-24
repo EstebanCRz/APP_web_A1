@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $assetsDepth = 1;
 $pageTitle = t('messages.page_title') . " - AmiGo";
-$customCSS = ['css/messages.css'];
+$customCSS = ['css/messages.css', '../assets/css/message-images.css'];
 require_once '../includes/header.php';
 
 $user_id = $_SESSION['user_id'];

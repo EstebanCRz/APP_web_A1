@@ -269,6 +269,50 @@ async function openGroup(groupId) {
     }
 }
 
+// Fonction pour rafraîchir uniquement les messages du groupe
+async function refreshGroupMessages(groupId) {
+    try {
+        const response = await fetch(`api/groups.php?id=${groupId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            updateGroupMessagesOnly(data.messages, data.current_user_id);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+    }
+}
+
+// Fonction pour mettre à jour uniquement la zone de messages du groupe
+function updateGroupMessagesOnly(messages, currentUserId) {
+    const chatMessages = document.getElementById('chat-messages');
+    if (!chatMessages) return;
+    
+    chatMessages.innerHTML = messages.map(msg => {
+        const isOwnMessage = msg.user_id == currentUserId;
+        let messageContent = '';
+        
+        if (msg.image_path) {
+            messageContent += `<img src="../${msg.image_path}" alt="Image" class="message-image" onclick="openImageModal('../${msg.image_path}')"/>`;
+        }
+        if (msg.message) {
+            messageContent += `<div class="message-text">${escapeHtml(msg.message)}</div>`;
+        }
+        
+        return `
+            <div class="message ${isOwnMessage ? 'own-message' : 'other-message'}">
+                <div class="message-header">
+                    <span class="message-author">${escapeHtml(msg.username)}</span>
+                    <span class="message-time">${formatDate(msg.created_at)}</span>
+                </div>
+                <div class="message-content">${messageContent}</div>
+            </div>
+        `;
+    }).join('') || `<p class="empty-state">${window.messagesTranslations.noMessages}</p>`;
+    
+    scrollToBottom('chat-messages');
+}
+
 function displayGroupDetails(group, messages, members, currentUserId) {
     // Vérifier si l'utilisateur actuel est admin
     const currentUserMember = members.find(m => m.user_id == currentUserId);
@@ -293,21 +337,40 @@ function displayGroupDetails(group, messages, members, currentUserId) {
         <div class="chat-messages" id="chat-messages">
             ${messages.map(msg => {
                 const isOwnMessage = msg.user_id == currentUserId;
+                let messageContent = '';
+                
+                if (msg.image_path) {
+                    messageContent += `<img src="../${msg.image_path}" alt="Image" class="message-image" onclick="openImageModal('../${msg.image_path}')"/>`;
+                }
+                if (msg.message) {
+                    messageContent += `<div class="message-text">${escapeHtml(msg.message)}</div>`;
+                }
+                
                 return `
                     <div class="message ${isOwnMessage ? 'own-message' : 'other-message'}">
                         <div class="message-header">
                             <span class="message-author">${escapeHtml(msg.username)}</span>
                             <span class="message-time">${formatDate(msg.created_at)}</span>
                         </div>
-                        <div class="message-content">${escapeHtml(msg.message)}</div>
+                        <div class="message-content">${messageContent}</div>
                     </div>
                 `;
             }).join('') || `<p class="empty-state">${window.messagesTranslations.noMessages}</p>`}
         </div>
         
-        <form class="chat-form" onsubmit="sendGroupMessage(event, ${group.id})">
-            <textarea name="message" placeholder="${window.messagesTranslations.yourMessage}" required></textarea>
-            <button type="submit">${window.messagesTranslations.send}</button>
+        <form class="chat-form" onsubmit="sendGroupMessage(event, ${group.id})" id="group-message-form">
+            <input type="file" id="group-image-input" accept="image/*" style="display:none" onchange="handleGroupImageSelect(event)">
+            <div id="group-image-preview" style="display:none">
+                <img id="group-preview-img" src="" alt="Preview" style="max-width:80px; max-height:80px; margin:5px; border-radius:8px;">
+                <button type="button" onclick="removeGroupImagePreview()">×</button>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <button type="button" class="btn-attach" onclick="document.getElementById('group-image-input').click()" title="Joindre une image">
+                    📎
+                </button>
+                <textarea name="message" placeholder="${window.messagesTranslations.yourMessage}"></textarea>
+                <button type="submit">${window.messagesTranslations.send}</button>
+            </div>
         </form>
         
         <div class="members-list">
@@ -326,30 +389,103 @@ function displayGroupDetails(group, messages, members, currentUserId) {
 }
 
 // Envoyer un message de groupe
+let uploadedGroupImagePath = null;
+
 async function sendGroupMessage(e, groupId) {
     e.preventDefault();
     
     const form = e.target;
     const message = form.message.value.trim();
     
-    if (!message) return;
+    if (!message && !uploadedGroupImagePath) return;
     
     try {
         const response = await fetch('api/groups.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'send_message', group_id: groupId, message })
+            body: JSON.stringify({ 
+                action: 'send_message', 
+                group_id: groupId, 
+                message: message,
+                image_path: uploadedGroupImagePath
+            })
         });
         
         const data = await response.json();
         
         if (data.success) {
             form.reset();
-            openGroup(groupId);
+            uploadedGroupImagePath = null;
+            removeGroupImagePreview();
+            refreshGroupMessages(groupId);
         }
     } catch (error) {
         console.error('Erreur:', error);
     }
+}
+
+// Gérer la sélection d'image pour groupe
+async function handleGroupImageSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+        alert('Veuillez sélectionner une image');
+        return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) {
+        alert('Image trop volumineuse (max 5MB)');
+        return;
+    }
+    
+    // Afficher la prévisualisation
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const preview = document.getElementById('group-image-preview');
+        const previewImg = document.getElementById('group-preview-img');
+        if (preview && previewImg) {
+            previewImg.src = e.target.result;
+            preview.style.display = 'flex';
+        }
+    };
+    reader.readAsDataURL(file);
+    
+    // Upload l'image
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    try {
+        const response = await fetch('api/upload-group-image.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            uploadedGroupImagePath = data.image_path;
+        } else {
+            alert(data.message || 'Erreur lors de l\'upload');
+            removeGroupImagePreview();
+        }
+    } catch (error) {
+        console.error('Erreur upload:', error);
+        alert('Erreur lors de l\'upload');
+        removeGroupImagePreview();
+    }
+}
+
+// Supprimer la prévisualisation de groupe
+function removeGroupImagePreview() {
+    const preview = document.getElementById('group-image-preview');
+    const previewImg = document.getElementById('group-preview-img');
+    const input = document.getElementById('group-image-input');
+    
+    if (preview) preview.style.display = 'none';
+    if (previewImg) previewImg.src = '';
+    if (input) input.value = '';
+    uploadedGroupImagePath = null;
 }
 
 // Charger les conversations
@@ -509,13 +645,22 @@ function updateMessagesOnly(messages, currentUserId) {
     
     chatMessages.innerHTML = messages.map(msg => {
         const isOwnMessage = msg.sender_id == currentUserId;
+        let messageContent = '';
+        
+        if (msg.image_path) {
+            messageContent += `<img src="../${msg.image_path}" alt="Image" class="message-image" onclick="openImageModal('../${msg.image_path}')"/>`;
+        }
+        if (msg.message) {
+            messageContent += `<div class="message-text">${escapeHtml(msg.message)}</div>`;
+        }
+        
         return `
             <div class="message ${isOwnMessage ? 'own-message' : 'other-message'}">
                 <div class="message-header">
                     <span class="message-author">${escapeHtml(msg.sender_name)}</span>
                     <span class="message-time">${formatDate(msg.created_at)}</span>
                 </div>
-                <div class="message-content">${escapeHtml(msg.message)}</div>
+                <div class="message-content">${messageContent}</div>
             </div>
         `;
     }).join('') || `<p class="empty-state">${window.messagesTranslations.noMessages}</p>`;
@@ -532,21 +677,40 @@ function displayConversationDetails(conversation, messages, currentUserId) {
         <div class="chat-messages" id="chat-messages">
             ${messages.map(msg => {
                 const isOwnMessage = msg.sender_id == currentUserId;
+                let messageContent = '';
+                
+                if (msg.image_path) {
+                    messageContent += `<img src="../${msg.image_path}" alt="Image" class="message-image" onclick="openImageModal('../${msg.image_path}')"/>`;
+                }
+                if (msg.message) {
+                    messageContent += `<div class="message-text">${escapeHtml(msg.message)}</div>`;
+                }
+                
                 return `
                     <div class="message ${isOwnMessage ? 'own-message' : 'other-message'}">
                         <div class="message-header">
                             <span class="message-author">${escapeHtml(msg.sender_name)}</span>
                             <span class="message-time">${formatDate(msg.created_at)}</span>
                         </div>
-                        <div class="message-content">${escapeHtml(msg.message)}</div>
+                        <div class="message-content">${messageContent}</div>
                     </div>
                 `;
             }).join('') || `<p class="empty-state">${window.messagesTranslations.noMessages}</p>`}
         </div>
         
-        <form class="chat-form" onsubmit="sendPrivateMessage(event, ${conversation.id})">
-            <textarea name="message" placeholder="${window.messagesTranslations.yourMessage}" required></textarea>
-            <button type="submit">${window.messagesTranslations.send}</button>
+        <form class="chat-form" onsubmit="sendPrivateMessage(event, ${conversation.id})" id="private-message-form">
+            <input type="file" id="message-image-input" accept="image/*" style="display:none" onchange="handleImageSelect(event, 'private')">
+            <div id="image-preview" style="display:none">
+                <img id="preview-img" src="" alt="Preview" style="max-width:100px; max-height:100px; margin:5px;">
+                <button type="button" onclick="removeImagePreview()">×</button>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <button type="button" class="btn-attach" onclick="document.getElementById('message-image-input').click()" title="Joindre une image">
+                    📎
+                </button>
+                <textarea name="message" placeholder="${window.messagesTranslations.yourMessage}"></textarea>
+                <button type="submit">${window.messagesTranslations.send}</button>
+            </div>
         </form>
     `;
     
@@ -555,30 +719,121 @@ function displayConversationDetails(conversation, messages, currentUserId) {
 }
 
 // Envoyer un message privé
+let uploadedImagePath = null;
+
 async function sendPrivateMessage(e, conversationId) {
     e.preventDefault();
     
     const form = e.target;
     const message = form.message.value.trim();
     
-    if (!message) return;
+    if (!message && !uploadedImagePath) return;
     
     try {
         const response = await fetch('api/private-messages.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'send_message', conversation_id: conversationId, message })
+            body: JSON.stringify({ 
+                action: 'send_message', 
+                conversation_id: conversationId, 
+                message: message,
+                image_path: uploadedImagePath
+            })
         });
         
         const data = await response.json();
         
         if (data.success) {
             form.reset();
-            openConversation(conversationId);
+            uploadedImagePath = null;
+            removeImagePreview();
+            refreshConversationMessages(conversationId);
         }
     } catch (error) {
         console.error('Erreur:', error);
     }
+}
+
+// Gérer la sélection d'image
+async function handleImageSelect(event, type) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Vérifier le type
+    if (!file.type.startsWith('image/')) {
+        alert('Veuillez sélectionner une image');
+        return;
+    }
+    
+    // Vérifier la taille (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('Image trop volumineuse (max 5MB)');
+        return;
+    }
+    
+    // Afficher la prévisualisation
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const preview = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        if (preview && previewImg) {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+        }
+    };
+    reader.readAsDataURL(file);
+    
+    // Upload l'image
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    try {
+        const response = await fetch('api/upload-message-image.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            uploadedImagePath = data.image_path;
+        } else {
+            alert(data.message || 'Erreur lors de l\'upload');
+            removeImagePreview();
+        }
+    } catch (error) {
+        console.error('Erreur upload:', error);
+        alert('Erreur lors de l\'upload');
+        removeImagePreview();
+    }
+}
+
+// Supprimer la prévisualisation
+function removeImagePreview() {
+    const preview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    const input = document.getElementById('message-image-input');
+    
+    if (preview) preview.style.display = 'none';
+    if (previewImg) previewImg.src = '';
+    if (input) input.value = '';
+    uploadedImagePath = null;
+}
+
+// Ouvrir une image en plein écran
+function openImageModal(imagePath) {
+    const modal = document.createElement('div');
+    modal.className = 'image-modal';
+    modal.innerHTML = `
+        <div class="image-modal-content">
+            <span class="image-modal-close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+            <img src="${imagePath}" alt="Image">
+        </div>
+    `;
+    modal.onclick = (e) => {
+        if (e.target === modal) modal.remove();
+    };
+    document.body.appendChild(modal);
 }
 
 // Supprimer une conversation
@@ -711,7 +966,7 @@ function startMessageRefresh(id, type) {
     
     messageRefreshInterval = setInterval(() => {
         if (type === 'group') {
-            openGroup(id);
+            refreshGroupMessages(id);
         } else {
             refreshConversationMessages(id);
         }

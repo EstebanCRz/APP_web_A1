@@ -17,7 +17,8 @@ $pageDescription = t('event_details.title');
 $assetsDepth = 1;
 $customCSS = [
     "../assets/css/style.css",
-    "css/event-details.css"
+    'css/event-details.css',
+    '../assets/css/message-images.css'
 ];
 
 // Récupérer l'ID de l'activité
@@ -192,8 +193,18 @@ include '../includes/header.php';
                     </div>
                     
                     <form class="discussion-form" id="chat-form" onsubmit="return false;">
-                        <input type="text" id="chat-input" placeholder="<?php echo t('event_details.type_message'); ?>" class="message-input" required autocomplete="off">
-                        <button type="submit" class="btn btn-primary"><?php echo t('event_details.send_button'); ?></button>
+                        <input type="file" id="chat-image-input" accept="image/*" style="display:none" onchange="window.activityChat.handleImageSelect(event)">
+                        <div id="chat-image-preview" style="display:none; margin-bottom:8px;">
+                            <img id="chat-preview-img" src="" alt="Preview" style="max-width:100px; max-height:100px; margin:5px; border-radius:8px;">
+                            <button type="button" onclick="window.activityChat.removeImagePreview()" style="background:#ff4444; color:white; border:none; padding:4px 8px; cursor:pointer; border-radius:4px;">×</button>
+                        </div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <button type="button" class="btn-attach" onclick="document.getElementById('chat-image-input').click()" title="Joindre une image" style="background:#55D5E0; color:white; border:none; padding:8px 12px; cursor:pointer; border-radius:4px; font-size:18px;">
+                                📎
+                            </button>
+                            <input type="text" id="chat-input" placeholder="<?php echo t('event_details.type_message'); ?>" class="message-input" autocomplete="off" style="flex:1;">
+                            <button type="submit" class="btn btn-primary"><?php echo t('event_details.send_button'); ?></button>
+                        </div>
                     </form>
                 <?php endif; ?>
             </div>
