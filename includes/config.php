@@ -23,14 +23,6 @@ define('DB_NAME', 'amigo_db');
 define('DB_USER', 'root');
 define('DB_PASS', 'root'); // Mot de passe MAMP
 
-// Configuration SMTP pour l'envoi d'emails
-define('SMTP_HOST', 'smtp.amigo.fr'); // Serveur SMTP de votre hébergeur
-define('SMTP_PORT', 587); // 587 pour TLS, 465 pour SSL
-define('SMTP_USER', 'noreply@amigo.fr'); // Votre adresse email
-define('SMTP_PASS', 'cb2e31538c951f4539aeb88bddd46151');
-define('SMTP_FROM_EMAIL', 'noreply@amigo.fr');
-define('SMTP_FROM_NAME', 'AmiGo');
-
 // Fonction de connexion à la base de données
 function getDB() {
     try {
