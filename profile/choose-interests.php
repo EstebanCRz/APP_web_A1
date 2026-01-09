@@ -4,6 +4,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
 require_once '../includes/config.php';
 require_once '../includes/language.php';
+require_once '../includes/gamification.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../auth/login.php');
@@ -48,6 +49,9 @@ try {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $newInterests = isset($_POST['interests']) && is_array($_POST['interests']) ? array_map('intval', $_POST['interests']) : [];
+        
+        // Vérifier si c'est la première fois que l'utilisateur configure ses intérêts
+        $firstTime = empty($selected);
 
         // Replace selections
         $pdo->prepare("DELETE FROM user_interest_categories WHERE user_id = ?")->execute([$userId]);
@@ -57,6 +61,13 @@ try {
                 $ins->execute([$userId, $cid]);
             }
         }
+        
+        // Attribuer des points si c'est la première configuration
+        if ($firstTime && !empty($newInterests)) {
+            addPoints($userId, 10, 'profile_complete');
+            checkBadges($userId);
+        }
+        
         $message = t('profile.choose_interests_saved');
         // Redirect to recommendations
         header('Location: recommendations.php');
