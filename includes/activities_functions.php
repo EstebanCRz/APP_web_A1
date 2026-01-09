@@ -19,6 +19,7 @@ function getAllActivities($filters = []) {
                 a.location,
                 a.city,
                 a.event_date,
+                a.event_date as date,
                 a.event_time,
                 a.max_participants,
                 a.current_participants,
@@ -42,8 +43,15 @@ function getAllActivities($filters = []) {
     
     // Filtrage par recherche
     if (!empty($filters['search'])) {
-        $sql .= " AND (a.title LIKE :search OR a.location LIKE :search OR a.city LIKE :search OR a.description LIKE :search OR u.username LIKE :search OR u.first_name LIKE :search OR u.last_name LIKE :search)";
-        $params[':search'] = '%' . $filters['search'] . '%';
+        $searchTerm = '%' . $filters['search'] . '%';
+        $sql .= " AND (a.title LIKE :search1 OR a.location LIKE :search2 OR a.city LIKE :search3 OR a.description LIKE :search4 OR u.username LIKE :search5 OR u.first_name LIKE :search6 OR u.last_name LIKE :search7)";
+        $params[':search1'] = $searchTerm;
+        $params[':search2'] = $searchTerm;
+        $params[':search3'] = $searchTerm;
+        $params[':search4'] = $searchTerm;
+        $params[':search5'] = $searchTerm;
+        $params[':search6'] = $searchTerm;
+        $params[':search7'] = $searchTerm;
     }
     
     // Filtrage par catégorie
@@ -115,6 +123,7 @@ function getActivityById($id) {
     
     $sql = "SELECT 
                 a.*,
+                a.event_date as date,
                 c.name as category_name,
                 c.color as category_color,
                 c.icon as category_icon,
@@ -140,6 +149,15 @@ function getActivityById($id) {
 function getAllCategories() {
     $pdo = getDB();
     $stmt = $pdo->query("SELECT * FROM activity_categories ORDER BY name");
+    return $stmt->fetchAll();
+}
+
+/**
+ * Récupère toutes les villes
+ */
+function getAllCities() {
+    $pdo = getDB();
+    $stmt = $pdo->query("SELECT name FROM cities ORDER BY name ASC");
     return $stmt->fetchAll();
 }
 
@@ -277,7 +295,16 @@ function createActivity($data) {
         ':image' => $data['image'] ?? null
     ]);
     
-    return $pdo->lastInsertId();
+    $activityId = $pdo->lastInsertId();
+    
+    // Ajouter des points pour la création d'événement
+    require_once __DIR__ . '/gamification.php';
+    addPoints($data['creator_id'], POINTS['event_create'], 'event_create', 'Création d\'un événement', $activityId);
+    
+    // Vérifier et attribuer les badges
+    checkBadges($data['creator_id']);
+    
+    return $activityId;
 }
 
 /**

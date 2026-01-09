@@ -51,8 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
     $messageText = trim($data['message'] ?? '');
+    $imagePath = $data['image_path'] ?? null;
     
-    if (empty($messageText)) {
+    if (empty($messageText) && empty($imagePath)) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Message vide']);
         exit;
@@ -71,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'user_name' => ($_SESSION['user_first_name'] ?? '') . ' ' . ($_SESSION['user_last_name'] ?? ''),
         'username' => $_SESSION['user_username'] ?? 'user' . $_SESSION['user_id'],
         'message' => htmlspecialchars($messageText, ENT_QUOTES, 'UTF-8'),
+        'image_path' => $imagePath,
         'timestamp' => time(),
         'datetime' => date('Y-m-d H:i:s')
     ];
