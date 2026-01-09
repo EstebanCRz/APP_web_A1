@@ -29,6 +29,9 @@ $customCSS = [
 // Récupérer les catégories
 $categories = getAllCategories();
 
+// Récupérer les villes
+$cities = getAllCities();
+
 // Handle form submission
 $success = false;
 $error = '';
@@ -155,10 +158,17 @@ include '../includes/header.php';
                     type="text" 
                     id="city" 
                     name="city" 
+                    list="cities-list"
                     placeholder="ex: Paris"
                     value="<?php echo htmlspecialchars($_POST['city'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                    autocomplete="off"
                     required
                 >
+                <datalist id="cities-list">
+                    <?php foreach ($cities as $city): ?>
+                        <option value="<?php echo htmlspecialchars($city['name'], ENT_QUOTES, 'UTF-8'); ?>">
+                    <?php endforeach; ?>
+                </datalist>
             </div>
 
             <div class="form-row">
