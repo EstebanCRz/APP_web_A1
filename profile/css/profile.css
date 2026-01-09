@@ -2,6 +2,191 @@
 
 @import 'style.css';
 
+/* Bannière de gamification */
+.gamification-banner {
+    background: linear-gradient(135deg, var(--accent-fresh) 0%, var(--accent-trust) 100%);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(85, 213, 224, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.gamification-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: float 15s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-20px, -20px); }
+}
+
+.gamification-card {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.level-display, .points-display, .rank-display, .badges-display {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.level-display:hover, .points-display:hover, .rank-display:hover, .badges-display:hover {
+    background: rgba(255,255,255,0.25);
+    border-color: var(--accent-warm);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(246, 177, 45, 0.3);
+}
+
+.level-display {
+    border: 3px solid var(--accent-warm);
+    background: rgba(246, 177, 45, 0.15);
+}
+
+.level-number {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.level-name {
+    font-size: 0.9em;
+    opacity: 0.95;
+    font-weight: 600;
+}
+
+.points-value, .rank-value {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.points-label, .rank-label {
+    font-size: 0.85em;
+    opacity: 0.95;
+    font-weight: 500;
+}
+
+.badges-preview {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.badge-icon-small {
+    font-size: 1.8em;
+    cursor: help;
+    transition: transform 0.2s;
+}
+
+.badge-icon-small:hover {
+    transform: scale(1.2);
+}
+
+.more-badges {
+    background: rgba(255,255,255,0.3);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.btn-view-badges {
+    background: white;
+    color: var(--accent-structure);
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.95em;
+    font-weight: 700;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    border: 2px solid white;
+}
+
+.btn-view-badges:hover {
+    background: var(--accent-warm);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(246, 177, 45, 0.5);
+    border-color: var(--accent-warm);
+}
+
+.progress-section {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid rgba(246, 177, 45, 0.3);
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 4px 12px rgba(246, 177, 45, 0.15);
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.progress-bar-profile {
+    height: 14px;
+    background: rgba(47, 69, 88, 0.3);
+    border-radius: 7px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.progress-fill-profile {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-warm), #ffd93d);
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px rgba(246, 177, 45, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill-profile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
 /* Onglets du profil */
 .profile-header {
     margin-bottom: 1.5rem;
@@ -261,5 +446,298 @@ section h3 {
 @media (max-width: 600px) {
     .choose-interests .interests-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Styles pour le classement dans le profil */
+.leaderboard-container {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.ranking-list-profile {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.ranking-item-profile {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(85, 213, 224, 0.05) 0%, rgba(51, 95, 138, 0.05) 100%);
+    border: 2px solid rgba(85, 213, 224, 0.15);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.ranking-item-profile:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(85, 213, 224, 0.2);
+    border-color: var(--accent-fresh);
+}
+
+.ranking-item-profile.current-user {
+    background: linear-gradient(135deg, rgba(246, 177, 45, 0.12) 0%, rgba(85, 213, 224, 0.12) 100%);
+    border: 3px solid var(--accent-warm);
+    box-shadow: 0 4px 16px rgba(246, 177, 45, 0.25);
+}
+
+.rank-badge-profile {
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-fresh) 0%, var(--accent-trust) 100%);
+    color: white;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(85, 213, 224, 0.3);
+}
+
+.rank-badge-profile.rank-1 {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    font-size: 2rem;
+}
+
+.rank-badge-profile.rank-2 {
+    background: linear-gradient(135deg, #C0C0C0 0%, #808080 100%);
+    font-size: 2rem;
+}
+
+.rank-badge-profile.rank-3 {
+    background: linear-gradient(135deg, #CD7F32 0%, #8B4513 100%);
+    font-size: 2rem;
+}
+
+.user-info-profile {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.user-name-profile a {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-structure);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.user-name-profile a:hover {
+    color: var(--accent-fresh);
+}
+
+.you-badge-profile {
+    background: var(--accent-warm);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.user-stats-mini-profile {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: var(--accent-trust);
+}
+
+.user-stats-mini-profile span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.user-level-profile {
+    display: flex;
+    align-items: center;
+}
+
+.level-badge-profile {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.level-number-profile {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-structure);
+}
+
+.user-points-profile {
+    text-align: right;
+    min-width: 100px;
+}
+
+.points-value-profile {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-fresh);
+    line-height: 1.2;
+}
+
+.points-label-profile {
+    font-size: 0.85rem;
+    color: var(--accent-trust);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Badges récents */
+.recent-badges-section {
+    background: linear-gradient(135deg, rgba(85, 213, 224, 0.08) 0%, rgba(51, 95, 138, 0.08) 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 2px solid rgba(85, 213, 224, 0.2);
+}
+
+.recent-badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.badge-item-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border: 2px solid rgba(85, 213, 224, 0.2);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.badge-item-profile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(85, 213, 224, 0.2);
+    border-color: var(--accent-fresh);
+}
+
+.badge-icon-profile {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--accent-fresh) 0%, var(--accent-trust) 100%);
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(85, 213, 224, 0.3);
+}
+
+.badge-info-profile {
+    flex: 1;
+    min-width: 0;
+}
+
+.badge-name-profile {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--accent-structure);
+    margin-bottom: 0.25rem;
+}
+
+.badge-user-profile {
+    font-size: 0.85rem;
+    color: var(--accent-trust);
+    margin-bottom: 0.25rem;
+}
+
+.badge-time-profile {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.empty-state, .empty-state-small {
+    text-align: center;
+    padding: 2rem;
+    color: var(--accent-trust);
+    font-style: italic;
+    background: rgba(85, 213, 224, 0.05);
+    border-radius: 8px;
+    border: 2px dashed rgba(85, 213, 224, 0.2);
+}
+
+.empty-state-small {
+    padding: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+    .ranking-item-profile {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .user-points-profile {
+        width: 100%;
+        text-align: left;
+        margin-left: 70px;
+    }
+    
+    .recent-badges-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .leaderboard-container {
+        padding: 1rem;
+    }
+    
+    .ranking-item-profile {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+    
+    .rank-badge-profile {
+        width: 45px;
+        height: 45px;
+        font-size: 1.5rem;
+    }
+    
+    .user-name-profile a {
+        font-size: 1rem;
+    }
+    
+    .user-stats-mini-profile {
+        font-size: 0.8rem;
+        gap: 0.5rem;
+    }
+    
+    .badge-item-profile {
+        padding: 0.75rem;
+    }
+    
+    .badge-icon-profile {
+        font-size: 2rem;
+        width: 50px;
+        height: 50px;
     }
 }

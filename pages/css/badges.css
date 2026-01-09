@@ -1,0 +1,465 @@
+/* ============================================
+   BADGES PAGE STYLES
+   ============================================ */
+
+/* Fond de page avec dégradé du site */
+body {
+    background: linear-gradient(135deg, rgba(85, 213, 224, 0.15) 0%, rgba(51, 95, 138, 0.15) 100%);
+    min-height: 100vh;
+}
+
+.container {
+    background: transparent;
+}
+
+/* ============================================
+   1. HEADER & PAGE TITLE
+   ============================================ */
+
+.badges-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.badges-header h1 {
+    font-size: 2.5em;
+    color: var(--accent-structure);
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.badges-header .subtitle {
+    color: #666;
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+/* ============================================
+   2. LEVEL INFO & PROGRESS BAR
+   ============================================ */
+
+.level-info-section {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(85, 213, 224, 0.1), rgba(51, 95, 138, 0.1));
+    border-radius: 16px;
+    border: 2px solid var(--accent-fresh);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.level-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.level-icon {
+    font-size: 3em;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.level-details {
+    text-align: left;
+}
+
+.level-number {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--accent-structure);
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.level-points {
+    font-size: 1.1em;
+    color: var(--accent-trust);
+    font-weight: 600;
+}
+
+.level-progress {
+    margin-top: 15px;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+    color: var(--accent-structure);
+    font-weight: 600;
+}
+
+.progress-fraction {
+    color: var(--accent-trust);
+}
+
+.progress-bar-level {
+    height: 35px;
+    background: #e9ecef;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+
+.progress-fill-level {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-warm), var(--accent-fresh), var(--accent-trust));
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill-level::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.progress-text-inner {
+    font-size: 0.9em;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+.badges-progress {
+    max-width: 500px;
+    margin: 20px auto;
+}
+
+.progress-text {
+    display: block;
+    font-weight: 600;
+    color: var(--accent-structure);
+    margin-bottom: 10px;
+}
+
+.progress-bar-small {
+    height: 25px;
+    background: #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-fill-small {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-fresh), var(--accent-trust));
+    transition: width 0.3s ease;
+}
+
+/* ============================================
+   3. BADGE CATEGORIES
+   ============================================ */
+
+.badge-category {
+    margin-bottom: 50px;
+}
+
+.category-title {
+    font-size: 1.8em;
+    color: var(--accent-structure);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    padding-bottom: 15px;
+    border-bottom: 3px solid var(--accent-fresh);
+}
+
+.category-icon {
+    font-size: 1.2em;
+}
+
+/* ============================================
+   4. BADGES GRID & CARDS
+   ============================================ */
+
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.badge-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    border: 2px solid rgba(47, 69, 88, 0.1);
+}
+
+.badge-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(85, 213, 224, 0.3);
+}
+
+/* Badge States */
+.badge-card.unlocked {
+    border: 2px solid var(--accent-fresh);
+    background: linear-gradient(135deg, #ffffff, rgba(85, 213, 224, 0.08));
+}
+
+.badge-card.locked {
+    opacity: 0.7;
+    filter: grayscale(40%);
+    background: #f5f5f5;
+}
+
+/* ============================================
+   5. BADGE ICON & STATUS
+   ============================================ */
+
+.badge-icon-large {
+    font-size: 4em;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.unlock-checkmark {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--accent-fresh);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.4em;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(85, 213, 224, 0.5);
+}
+
+/* ============================================
+   6. BADGE DETAILS
+   ============================================ */
+
+.badge-details {
+    flex: 1;
+    width: 100%;
+}
+
+.badge-name {
+    font-size: 1.35em;
+    color: #1a2a3a;
+    margin-bottom: 10px;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.badge-description {
+    color: #444;
+    font-size: 0.95em;
+    margin-bottom: 15px;
+    min-height: 40px;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.badge-status {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.unlocked-status {
+    background: linear-gradient(135deg, var(--accent-fresh), var(--accent-trust));
+    color: white;
+    box-shadow: 0 2px 8px rgba(85, 213, 224, 0.3);
+}
+
+/* ============================================
+   7. BADGE PROGRESS
+   ============================================ */
+
+.badge-progress-info {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.progress-text-small {
+    font-size: 0.9em;
+    color: #333;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.progress-bar-tiny {
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-fill-tiny {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-fresh), var(--accent-trust));
+    transition: width 0.3s ease;
+}
+
+.progress-percent {
+    font-size: 0.85em;
+    color: #999;
+}
+
+/* ============================================
+   8. TIPS SECTION
+   ============================================ */
+
+.tips-section {
+    margin-top: 60px;
+    padding: 40px;
+    background: linear-gradient(135deg, var(--accent-fresh) 0%, var(--accent-trust) 100%);
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(85, 213, 224, 0.3);
+}
+
+.tips-section h2 {
+    text-align: center;
+    font-size: 2em;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.tip-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.tip-card:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.tip-icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+}
+
+.tip-card h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.tip-card p {
+    font-size: 0.95em;
+    line-height: 1.5;
+    opacity: 0.95;
+}
+
+/* ============================================
+   9. RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 968px) {
+    .badges-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    .tips-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .badges-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tips-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .badges-header h1 {
+        font-size: 2em;
+    }
+    
+    .category-title {
+        font-size: 1.5em;
+    }
+    
+    .tips-section {
+        padding: 30px 20px;
+    }
+    
+    .level-info-section {
+        padding: 20px;
+    }
+    
+    .level-icon {
+        font-size: 2.5em;
+    }
+    
+    .level-number {
+        font-size: 1.5em;
+    }
+    
+    .progress-label {
+        flex-direction: column;
+        gap: 5px;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 640px) {
+    .badge-card {
+        padding: 15px;
+    }
+    
+    .badge-icon-large {
+        font-size: 3em;
+    }
+    
+    .badge-name {
+        font-size: 1.1em;
+    }
+}
