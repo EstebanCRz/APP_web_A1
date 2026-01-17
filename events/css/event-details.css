@@ -1,3 +1,11 @@
+.star-rating-inline label { color: #ddd; cursor: pointer; transition: color 0.2s, transform 0.2s; font-size: 1.2em; }
+.star-rating-inline label:hover,
+.star-rating-inline label:hover ~ label,
+.star-rating-inline input:checked ~ label {
+	color: #FFD700;
+	transform: scale(1.15);
+	text-shadow: 0 2px 8px #ffe066;
+}
 /* Event Details Page Styles */
 
 .event-details-wrapper {
@@ -724,177 +732,46 @@
 }
 
 /* Review form container */
-.add-review-form-container {
-	margin-bottom: 2rem;
-	padding: 1.5rem;
-	background: white;
-	border-radius: 16px;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-	border: 2px solid rgba(85, 213, 224, 0.3);
-}
 
-.add-review-form-container #toggleReviewForm {
-	width: 100%;
-	padding: 1rem 1.5rem;
-	font-size: 1.05rem;
-	font-weight: 600;
-	border-radius: 12px;
-	box-shadow: 0 4px 12px rgba(85, 213, 224, 0.3);
-	transition: all 0.3s ease;
+/* === Review Form (20 lines max) === */
+.add-review-form-container { /* Container for review form */
+  background: #fff;
+  border-radius: 12px;
+  border: 1.5px solid #b6e6f2;
+  margin-bottom: 2rem;
+  padding: 1.2rem;
 }
-
-.add-review-form-container #toggleReviewForm:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 6px 16px rgba(85, 213, 224, 0.4);
+.review-form-inline { /* Form background */
+  background: #fafdff;
+  border-radius: 10px;
+  border: 1px solid #b6e6f2;
+  padding: 1.2rem;
+  margin-top: 1rem;
 }
-
-.review-form-inline {
-	margin-top: 1.5rem;
-	padding: 2rem;
-	background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(249, 250, 251, 0.98));
-	border: 2px solid rgba(85, 213, 224, 0.4);
-	border-radius: 16px;
-	animation: slideDown 0.3s ease-out;
-	box-shadow: inset 0 2px 8px rgba(85, 213, 224, 0.1);
+.star-rating-inline { /* Star row */
+	display: flex !important;
+    /* On inverse l'ordre visuel : l'étoile 1 (dernier input) se retrouve à gauche */
+    flex-direction: row-reverse !important; 
+    /* On cale le bloc à gauche */
+    justify-content: flex-end !important;
+    gap: 4px;
+    font-size: 2em;
 }
-
-.review-form-inline.hidden {
-	display: none;
-}
-
-@keyframes slideDown {
-	from {
-		opacity: 0;
-		transform: translateY(-10px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
-.review-form-compact .form-group {
-	margin-bottom: 1.75rem;
-	padding: 1.25rem;
-	background: white;
-	border-radius: 12px;
-	border: 1px solid rgba(0, 0, 0, 0.08);
-	transition: all 0.3s ease;
-}
-
-.review-form-compact .form-group:hover {
-	border-color: rgba(85, 213, 224, 0.4);
-	box-shadow: 0 2px 12px rgba(85, 213, 224, 0.15);
-}
-
-.review-form-compact label {
-	display: block;
-	font-weight: 700;
-	color: var(--accent-structure);
-	margin-bottom: 0.75rem;
-	font-size: 1rem;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-}
-
-.review-form-compact small {
-	display: block;
-	color: var(--text-secondary);
-	font-size: 0.85rem;
-	margin-top: 0.5rem;
-	font-style: italic;
-}
-
-/* Star rating inline */
-.star-rating-inline {
-	display: flex;
-	flex-direction: row-reverse;
-	justify-content: flex-start;
-	gap: 5px;
-	font-size: 2.5em;
-}
-
-.star-rating-inline input {
-	display: none;
-}
-
-.star-rating-inline label {
-	cursor: pointer;
-	color: #ddd;
-	transition: all 0.2s ease;
-	margin: 0;
-	font-weight: normal;
-}
-
+.star-rating-inline input { display: none; } /* Cache les boutons radio */
+.star-rating-inline label { color: #ddd; cursor: pointer; transition: color 0.2s, transform 0.2s; font-size: 1.2em; }
 .star-rating-inline input:checked ~ label,
 .star-rating-inline label:hover,
-.star-rating-inline label:hover ~ label {
-	color: #FFD700;
-	transform: scale(1.1);
-}
-
-.review-form-compact textarea {
-	width: 100%;
-	padding: 0.75rem 1rem;
-	border: 2px solid var(--border-color);
-	border-radius: 10px;
-	font-size: 0.95rem;
-	font-family: inherit;
-	resize: vertical;
-	transition: all 0.3s ease;
-	background: var(--surface-color);
-	color: var(--text-primary);
-}
-
-.review-form-compact textarea:focus {
-	outline: none;
-	border-color: var(--accent-color);
-	box-shadow: 0 0 0 3px rgba(85, 213, 224, 0.1);
-}
-
-.form-actions-inline {
-	display: flex;
-	gap: 0.75rem;
-	margin-top: 1.25rem;
-}
-
-.form-actions-inline .btn {
-	padding: 0.85rem 2rem;
-	font-weight: 700;
-	border-radius: 10px;
-	border: none;
-	cursor: pointer;
-	transition: all 0.3s ease;
-	font-size: 1.05rem;
-	letter-spacing: 0.3px;
-}
-
-.form-actions-inline .btn-primary {
-	background: linear-gradient(135deg, #6ee0eb 0%, #4a7fad 100%);
-	color: #ffffff;
-	box-shadow: 0 4px 16px rgba(110, 224, 235, 0.4);
-}
-
-.form-actions-inline .btn-primary:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 6px 20px rgba(110, 224, 235, 0.5);
-	filter: brightness(1.1);
-}
-
-.form-actions-inline .btn-secondary {
-	background: #f8f9fa;
-	color: #555;
-	border: 2px solid #d0d0d0;
-	font-weight: 600;
-}
-
-.form-actions-inline .btn-secondary:hover {
-	background: #e9ecef;
-	border-color: #999;
-	color: #333;
-	transform: translateY(-1px);
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+.star-rating-inline label:hover ~ label { color: #FFD700; }
+.review-form-compact textarea { width: 100%; border-radius: 8px; border: 1.5px solid #b6e6f2; padding: 0.7rem; resize: vertical; }
+/* Supprime les images dans les commentaires */
+.review-item img { display: none !important; }
+.form-actions-inline { display: flex; gap: 0.7rem; margin-top: 1rem; }
+.form-actions-inline .btn { border-radius: 8px; font-weight: 600; padding: 0.7rem 1.5rem; border: none; cursor: pointer; }
+.form-actions-inline .btn-primary { background: #6ee0eb; color: #fff; }
+.form-actions-inline .btn-primary:disabled { background: #b6e6f2; color: #fff; cursor: not-allowed; }
+.form-actions-inline .btn-secondary { background: #f8f9fa; color: #555; border: 1.5px solid #b6e6f2; }
+.review-form-inline.hidden { display: none; }
+/* === End Review Form CSS === */
 
 .add-review-prompt {
 	margin-bottom: 1.5rem;
@@ -927,12 +804,10 @@
 	background: var(--surface-color);
 	border: 1px solid var(--border-color);
 	border-radius: 12px;
-	transition: all 0.3s ease;
 }
 
 .review-item:hover {
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-	transform: translateY(-2px);
+	/* plus d'animation */
 }
 
 .review-header {
@@ -941,6 +816,7 @@
 	align-items: flex-start;
 	margin-bottom: 1rem;
 	gap: 1rem;
+	transition: none !important;
 }
 
 .review-author {
@@ -949,19 +825,6 @@
 	gap: 1rem;
 }
 
-.author-avatar {
-	width: 48px;
-	height: 48px;
-	border-radius: 50%;
-	background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
-	color: white;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-weight: 700;
-	font-size: 1rem;
-	flex-shrink: 0;
-}
 
 .author-info {
 	display: flex;
@@ -997,9 +860,12 @@
 
 .review-comment {
 	color: var(--text-primary);
-	line-height: 1.6;
-	font-size: 0.95rem;
-	white-space: pre-wrap;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    white-space: pre-wrap;
+    text-align: left; /* Force l'alignement à gauche */
+    padding-left: 0;   /* Supprime tout décalage intérieur gauche */
+    margin-left: 0;    /* Supprime toute marge extérieure gauche */
 }
 
 /* Dark mode adjustments for reviews */
@@ -1032,11 +898,17 @@ body.dark-mode .review-item:hover {
 	}
 	
 	.star-rating-inline {
-		font-size: 2em;
-	}
+display: flex;
+    flex-direction: row-reverse; /* Technique pour que le sélecteur ~ fonctionne de gauche à droite */
+    justify-content: flex-end;  /* Repousse le bloc vers la gauche après l'inversion */
+    gap: 4px;
+    font-size: 2em;	}
 	
 	.form-actions-inline {
-		flex-direction: column;
+		display: flex;
+    justify-content: flex-start; /* Aligne les boutons au début (gauche) */
+    gap: 0.7rem;
+    margin-top: 1rem;
 	}
 	
 	.form-actions-inline .btn {
