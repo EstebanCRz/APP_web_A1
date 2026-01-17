@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
-            // 1. Gérer l'état actif des boutons
-            buttons.forEach(b => b.classList.remove('active'));
+            // 1. Gérer l'état actif des boutons filtrage coté client   
+            buttons.forEach(b => b.classList.remove('active'));  // retirer la classe active de tous les boutons 
             btn.classList.add('active');
 
             // 2. Filtrer les cartes

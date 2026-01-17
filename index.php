@@ -21,7 +21,7 @@ require_once 'includes/activities_functions.php';
 
 // Récupération des activités depuis la base de données (limitées à 8 pour la page d'accueil)
 try {
-    $activitiesFromDB = getAllActivities(['limit' => 8]);
+    $activitiesFromDB = getAllActivities(['limit' => 8]); // limite d'activités à 8
     
     // Récupération de toutes les catégories pour les filtres
     $categories = getAllCategories();
@@ -72,7 +72,7 @@ include 'includes/header.php';
             <h1><?php echo t('home.subtitle'); ?></h1>
             <p><?php echo t('home.description'); ?></p>
             
-            <input type="text" id="searchBar" placeholder="<?php echo t('home.search_placeholder'); ?>">
+            <input type="text" id="searchBar" placeholder="<?php echo t('home.search_placeholder'); ?>"> 
             
             <div class="filter-tags">
                 <button class="filter-btn active" data-filter="all"><?php echo t('home.filter_all'); ?></button>
@@ -95,7 +95,6 @@ include 'includes/header.php';
             <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400" alt="Nature">
             <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400" alt="Yoga">
             <img src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=400" alt="Music">
-            <img src="https://images.unsplash.com/photo-1511876484798-816e2c24f1c3?w=400" alt="Games">
         </div>
     </section>
 

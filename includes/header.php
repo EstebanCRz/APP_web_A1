@@ -73,7 +73,7 @@ $current_dir = basename(dirname($_SERVER['PHP_SELF']));
                 <span></span>
                 <span></span>
             </button>
-
+            
             <nav id="mainNav">
                 <ul>
                     <li><a href="<?php echo $prefix; ?>index.php" class="<?php echo ($current_page === 'index.php' && $current_dir !== 'events' && $current_dir !== 'profile' && $current_dir !== 'pages' && $current_dir !== 'auth') ? 'active' : ''; ?>"><?php echo t('header.home'); ?></a></li>

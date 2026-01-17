@@ -1,20 +1,105 @@
-.main-container { max-width: 1200px; margin: 0 auto; padding: 20px; font-family: 'Segoe UI', sans-serif; }
+/* Conteneur principal limité en largeur pour garder l'aspect "colonne" */
+.main-container { 
+    max-width: 400px; /* Réduit pour forcer la verticalité */
+    margin: 0 auto; 
+    padding: 20px; 
+    font-family: 'Segoe UI', sans-serif; 
+}
 
-/* Filtres */
-.filter-tags { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
-.filter-btn { padding: 8px 20px; border-radius: 20px; border: 1px solid #ddd; background: #f5f5f5; cursor: pointer; transition: 0.3s; }
-.filter-btn.active { background: #e67e22; color: white; border-color: #e67e22; }
+/* Filtres : On passe d'une ligne à une liste verticale ou compacte */
+.filter-tags { 
+    display: flex; 
+    flex-direction: column; /* Alignement vertical des boutons */
+    gap: 8px; 
+    margin: 20px 0; 
+}
 
-/* Grille d'activités */
-.activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
-.activity-item { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: 0.3s; }
+.filter-btn { 
+    width: 100%; /* Les boutons prennent toute la largeur */
+    padding: 10px; 
+    text-align: center;
+    border-radius: 10px; 
+    border: 1px solid #ddd; 
+    background: #f5f5f5; 
+    cursor: pointer; 
+    transition: 0.3s; 
+}
 
-.card-img { height: 150px; background-size: cover; background-position: center; position: relative; }
-.badge { position: absolute; top: 10px; left: 10px; color: white; padding: 4px 10px; border-radius: 5px; font-size: 12px; font-weight: bold; }
+.filter-btn.active { 
+    background: #e67e22; 
+    color: white; 
+    border-color: #e67e22; 
+}
 
-.card-body { padding: 15px; }
-.card-body h4 { margin: 0 0 10px 0; height: 45px; overflow: hidden; }
-.info { color: #777; font-size: 13px; }
+/* Grille d'activités : On force une seule colonne */
+.activities-grid { 
+    display: flex;
+    flex-direction: column; /* Empilement vertical */
+    gap: 20px; 
+}
 
-.card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; }
-.btn-subscribe { background: #e67e22; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+/* Items : On peut soit garder l'image en haut, soit la mettre à gauche */
+.activity-item { 
+    background: white; 
+    border-radius: 15px; 
+    overflow: hidden; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+    transition: 0.3s;
+    display: flex; 
+    flex-direction: column; /* Image en haut, contenu en dessous */
+}
+
+.card-img { 
+    height: 180px; /* Un peu plus haut pour l'impact visuel */
+    width: 100%;
+    background-size: cover; 
+    background-position: center; 
+    position: relative; 
+}
+
+.badge { 
+    position: absolute; 
+    top: 10px; 
+    left: 10px; 
+    color: white; 
+    padding: 4px 10px; 
+    border-radius: 5px; 
+    font-size: 12px; 
+    font-weight: bold; 
+}
+
+.card-body { 
+    padding: 15px; 
+}
+
+.card-body h4 { 
+    margin: 0 0 10px 0; 
+    height: auto; /* Laisse le titre prendre sa place en hauteur */
+    font-size: 1.1em;
+}
+
+.info { 
+    color: #777; 
+    font-size: 13px; 
+}
+
+.card-footer { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: 10px; 
+    border-top: 1px solid #eee; 
+    padding: 10px 15px 15px 15px; 
+}
+
+.btn-subscribe { 
+    background: #e67e22; 
+    color: white; 
+    border: none; 
+    padding: 10px 20px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    width: 100%; /* Le bouton prend toute la largeur pour faciliter le clic */
+    text-align: center;
+}
