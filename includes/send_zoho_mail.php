@@ -20,8 +20,8 @@ function sendZohoMail($to, $subject, $body, $fromName = 'AmiGo', $fromEmail = 'a
 
         // Expéditeur = TOUJOURS amigocontact@zohomail.eu (obligatoire Zoho)
         $mail->setFrom('amigocontact@zohomail.eu', 'AmiGo');
-        // Destinataire = amigocontact@zohomail.eu (réception admin)
-        $mail->addAddress('amigocontact@zohomail.eu');
+        // Destinataire = $to (utilisateur ou admin selon usage)
+        $mail->addAddress($to);
         // Répondre à = email de l'utilisateur (pour répondre facilement)
         if ($fromEmail !== 'amigocontact@zohomail.eu') {
             $mail->addReplyTo($fromEmail, $fromName);

@@ -51,6 +51,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $pdo->prepare("INSERT INTO users (username, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?)");
                 $stmt->execute([$username, $first_name, $last_name, $email, $password_hash]);
                 
+                // Envoi du mail de bienvenue
+                require_once '../includes/send_zoho_mail.php';
+                $welcomeSubject = 'Bienvenue sur AmiGo !';
+                $welcomeBody = '<div style="text-align:center; margin-bottom:1.5em;">'
+                    . '<img src="https://amigo.nocsy.fr/assets/images/cap.png" alt="Logo AmiGo" style="max-width:120px; margin-bottom:1em;">'
+                    . '</div>'
+                    . '<h2>Bienvenue ' . htmlspecialchars($first_name) . ' !</h2>'
+                    . '<p>Merci de t\'être inscrit sur AmiGo. Nous sommes ravis de t\'accueillir dans la communauté !</p>'
+                    . '<p>Tu peux dès maintenant découvrir des activités, rejoindre des groupes et échanger avec d\'autres membres.</p>'
+                    . '<br><div style="color:#888; font-size:0.95em; margin-top:2em;">© 2026 AmiGo - Tous droits réservés</div>';
+                sendZohoMail($email, $welcomeSubject, $welcomeBody, 'AmiGo', 'amigocontact@zohomail.eu');
+                
                 // Récupérer l'ID de l'utilisateur
                 $user_id = $pdo->lastInsertId();
                 
