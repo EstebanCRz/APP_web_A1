@@ -71,11 +71,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_email'] = $email;
                 $_SESSION['user_first_name'] = $first_name;
                 $_SESSION['user_last_name'] = $last_name;
-                
-                
-                
-                // Rediriger vers la page de sélection des centres d'intérêt
-                header('Location: ../profile/choose-interests.php');
+                $_SESSION['pending_verif'] = true;
+
+                // Générer et envoyer le code de vérification
+                require_once '../includes/verification_mail.php';
+                $code = generateVerificationCode();
+                $expires = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+                $stmt = $pdo->prepare('INSERT INTO login_verifications (user_id, code, expires_at) VALUES (?, ?, ?)');
+                $stmt->execute([$user_id, $code, $expires]);
+                sendVerificationMail($email, $code);
+
+                // Rediriger vers la page de vérification du code
+                header('Location: ../auth/verify-login.php');
                 exit;
             }
         } catch(PDOException $e) {
