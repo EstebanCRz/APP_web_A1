@@ -36,34 +36,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         try {
             $pdo = getDB();
-            
             // Vérifier si l'email existe déjà
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
             $stmt->execute([$email]);
-            
             if ($stmt->fetch()) {
                 $errors[] = t('auth.email_already_used');
             } else {
                 // Hasher le mot de passe
                 $password_hash = password_hash($password, PASSWORD_DEFAULT);
-                
-                // Insérer le nouvel utilisateur
-                $stmt = $pdo->prepare("INSERT INTO users (username, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?)");
+                // Insérer le nouvel utilisateur (désactivé par défaut)
+                $stmt = $pdo->prepare("INSERT INTO users (username, first_name, last_name, email, password, is_active) VALUES (?, ?, ?, ?, ?, 0)");
                 $stmt->execute([$username, $first_name, $last_name, $email, $password_hash]);
-                
-                // Récupérer l'ID de l'utilisateur
                 $user_id = $pdo->lastInsertId();
-                
-                // Connecter automatiquement l'utilisateur
-                $_SESSION['user_id'] = $user_id;
-                $_SESSION['user_email'] = $email;
-                $_SESSION['user_first_name'] = $first_name;
-                $_SESSION['user_last_name'] = $last_name;
-                
-                
-                
-                // Rediriger vers la page de sélection des centres d'intérêt
-                header('Location: ../profile/choose-interests.php');
+
+                // Générer et envoyer le code de confirmation
+                require_once __DIR__ . '/../pages/send-confirmation-mail.php';
+                $code = random_int(100000, 999999);
+                $stmt = $pdo->prepare('INSERT INTO email_confirmations (email, code, created_at, used) VALUES (?, ?, NOW(), 0)');
+                $stmt->execute([$email, $code]);
+                $mailSent = sendConfirmationMail($email, $first_name, $code);
+
+                // Stocker l'ID utilisateur en session pour la validation
+                $_SESSION['pending_user_id'] = $user_id;
+                $_SESSION['pending_user_email'] = $email;
+
+                // Afficher le code à l'écran pour debug (à retirer en prod)
+                if (!$mailSent) {
+                    global $mail_error_debug;
+                    $errors[] = 'Erreur lors de l\'envoi du mail de confirmation.' . (!empty($mail_error_debug) ? ' <br><pre>' . htmlspecialchars($mail_error_debug) . '</pre>' : '');
+                } else {
+                    echo '<div style="background:#e0ffe0;padding:16px;margin:24px 0;border-radius:8px;color:#222;font-size:1.2em;text-align:center;">Code de confirmation pour debug : <b>' . $code . '</b></div>';
+                }
+
+                // Rediriger vers la page de validation du code
+                header('Refresh:2; url=../pages/validate-confirmation-code.php');
                 exit;
             }
         } catch(PDOException $e) {
