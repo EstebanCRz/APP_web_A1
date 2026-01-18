@@ -31,14 +31,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gestion de la saisie clavier
     if (searchBar) {
         searchBar.addEventListener('input', function(e) {
-            currentSearchTerm = e.target.value.toLowerCase().trim();
+            currentSearchTerm = e.target.value.toLowerCase().trim();       // la barre est à l'écoute 
             filterActivities();
         });
     }
 
     // Gestion des boutons de catégories
     filterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function() {              // les filtres sont à l'écoute 
             filterBtns.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             
