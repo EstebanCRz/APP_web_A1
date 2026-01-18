@@ -134,9 +134,9 @@ main {
     font-size: 0.875rem;
 }
 
-/* Forms */
+/* Forms 100 à 600*/
 form {
-    max-width: 500px;
+    max-width: 600px;
     margin: 2rem auto;
 }
 
