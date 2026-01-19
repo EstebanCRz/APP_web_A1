@@ -92,4 +92,5 @@ include '../includes/header.php';
     </div>
 </div>
 
+<script src="js/toggle-password.js"></script>
 <?php include '../includes/footer.php'; ?>

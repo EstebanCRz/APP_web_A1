@@ -7,77 +7,174 @@
 }
 
 .form-container {
-    background: white;
-    border-radius: 12px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fb 100%);
+    border-radius: 16px;
     padding: 40px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(52, 152, 219, 0.1);
+    transition: all 0.3s ease;
+}
+
+.form-container:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .form-container h2 {
     text-align: center;
-    color: #2c3e50;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 30px;
     font-size: 28px;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 .alert {
-    padding: 15px;
-    border-radius: 8px;
+    padding: 16px;
+    border-radius: 10px;
     margin-bottom: 20px;
+    animation: slideIn 0.3s ease;
 }
 
 .alert-error {
-    background-color: #fee;
-    border: 1px solid #fcc;
-    color: #c33;
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+    border: 2px solid #ef5350;
+    color: #c62828;
+    font-weight: 500;
 }
 
 .alert-success {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
+    background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+    border: 2px solid #66bb6a;
+    color: #1b5e20;
+    font-weight: 500;
 }
 
 .alert p {
     margin: 5px 0;
+    font-size: 14px;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 8px;
-    color: #34495e;
-    font-weight: 500;
+    margin-bottom: 10px;
+    color: #2c3e50;
+    font-weight: 600;
     font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-group label .required {
+    color: #ef5350;
+    font-weight: 700;
+    margin-left: 4px;
 }
 
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="password"] {
     width: 100%;
-    padding: 12px 15px;
+    padding: 14px 16px;
     border: 2px solid #e1e8ed;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 15px;
     transition: all 0.3s ease;
     box-sizing: border-box;
+    background: white;
+    font-family: inherit;
 }
 
 .form-group input[type="text"]:focus,
 .form-group input[type="email"]:focus,
 .form-group input[type="password"]:focus {
     outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+    background: #f8fafc;
+    transform: translateY(-2px);
+}
+
+.form-group input::placeholder {
+    color: #b0bcc4;
+    font-style: italic;
+}
+
+.form-group input:invalid:not(:placeholder-shown) {
+    border-color: #ef5350;
+    box-shadow: 0 0 0 4px rgba(239, 83, 80, 0.1);
+}
+
+/* Indicateur de force du mot de passe */
+.password-strength {
+    display: none;
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.password-strength.show {
+    display: block;
+}
+
+.password-strength.weak {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef5350;
+}
+
+.password-strength.medium {
+    background-color: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ffa726;
+}
+
+.password-strength.strong {
+    background-color: #e8f5e9;
+    color: #1b5e20;
+    border: 1px solid #66bb6a;
+}
+
+/* Barre de force */
+.strength-bar {
+    height: 4px;
+    background: #e1e8ed;
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+.strength-bar-fill {
+    height: 100%;
+    width: 0;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    border-radius: 2px;
 }
 
 .form-group input[type="checkbox"] {
     margin-right: 8px;
     width: auto;
+    flex-shrink: 0;
 }
 
 .form-group label:has(input[type="checkbox"]) {
@@ -85,6 +182,13 @@
     align-items: center;
     font-weight: normal;
     cursor: pointer;
+    gap: 8px;
+}
+
+.form-group .cgu-text {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    display: inline;
 }
 
 .form-group a {
@@ -97,13 +201,28 @@
 }
 
 .btn {
-    padding: 12px 24px;
+    padding: 14px 28px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .btn-primary {
@@ -111,9 +230,8 @@
     color: white;
 }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+.btn-primary:hover:not(:disabled) {
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
 .btn-block {
@@ -194,9 +312,59 @@
     
     .form-container {
         padding: 30px 20px;
+        border-radius: 14px;
     }
     
     .form-container h2 {
         font-size: 24px;
+        margin-bottom: 25px;
+    }
+    
+    .form-group {
+        margin-bottom: 18px;
+    }
+    
+    .btn {
+        padding: 12px 24px;
+        font-size: 15px;
     }
 }
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 20px 16px;
+    }
+    
+    .form-container h2 {
+        font-size: 22px;
+    }
+    
+    .form-group label {
+        font-size: 13px;
+    }
+    
+    .btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+    
+    .interests-section .interests-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Wrapper pour le champ password avec bouton œil */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-wrapper input[type="password"],
+.password-input-wrapper input[type="text"] {
+    width: 100%;
+    padding-right: 45px;
+    box-sizing: border-box;
+}
+
+

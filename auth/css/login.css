@@ -186,3 +186,18 @@
         padding: 30px 20px;
     }
 }
+
+/* Wrapper pour le champ password avec bouton œil */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-wrapper input[type="password"],
+.password-input-wrapper input[type="text"] {
+    width: 100%;
+    padding-right: 45px;
+    box-sizing: border-box;
+}
+

@@ -89,27 +89,27 @@ include '../includes/header.php';
         
         <form method="POST">
             <div class="form-group">
-                <label for="nom"><?php echo t('auth.last_name'); ?></label>
+                <label for="nom"><?php echo t('auth.last_name'); ?> <span class="required">*</span></label>
                 <input type="text" id="nom" name="nom" required placeholder="Dupont" value="<?php echo htmlspecialchars($last_name ?? ''); ?>">
             </div>
             <div class="form-group">
-                <label for="prenom"><?php echo t('auth.first_name'); ?></label>
+                <label for="prenom"><?php echo t('auth.first_name'); ?> <span class="required">*</span></label>
                 <input type="text" id="prenom" name="prenom" required placeholder="Jean" value="<?php echo htmlspecialchars($first_name ?? ''); ?>">
             </div>
             <div class="form-group">
-                <label for="email"><?php echo t('auth.email'); ?></label>
+                <label for="email"><?php echo t('auth.email'); ?> <span class="required">*</span></label>
                 <input type="email" id="email" name="email" required placeholder="votre@email.com" value="<?php echo htmlspecialchars($email ?? ''); ?>">
             </div>
             <div class="form-group">
-                <label for="password"><?php echo t('auth.password'); ?></label>
+                <label for="password"><?php echo t('auth.password'); ?> <span class="required">*</span></label>
                 <input type="password" id="password" name="password" required minlength="6" placeholder="<?php echo getCurrentLanguage() === 'fr' ? 'Minimum 6 caractères' : 'Minimum 6 characters'; ?>">
             </div>
             <div class="form-group">
-                <label for="confirm_password"><?php echo t('auth.password_confirm'); ?></label>
+                <label for="confirm_password"><?php echo t('auth.password_confirm'); ?> <span class="required">*</span></label>
                 <input type="password" id="confirm_password" name="confirm_password" required>
             </div>
             <div class="form-group">
-                <label><input type="checkbox" required> <?php echo getCurrentLanguage() === 'fr' ? 'J\'accepte les' : 'I accept the'; ?> <a href="../pages/cgu.php"><?php echo t('footer.cgu'); ?></a></label>
+                <label><input type="checkbox" required> <span class="cgu-text"><?php echo getCurrentLanguage() === 'fr' ? 'J\'accepte les' : 'I accept the'; ?> <a href="../pages/cgu.php"><?php echo t('footer.cgu'); ?></a></span> <span class="required">*</span></label>
             </div>
 
             
@@ -119,4 +119,7 @@ include '../includes/header.php';
     </div>
 </div>
 
+<script src="js/toggle-password.js"></script>
+<script src="js/password-validation.js"></script>
+<script src="js/filter-special-chars.js"></script>
 <?php include '../includes/footer.php'; ?>
