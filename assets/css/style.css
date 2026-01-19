@@ -33,7 +33,7 @@ body {
 /* Header styles are in header.css */
 
 .language-selector {
-    background: #fff;
+    background: #FFF5E8;
     color: #333;
     border: none;
     padding: 0.5rem 1rem;
@@ -77,14 +77,15 @@ main {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--brand-primary-1) 0%, var(--brand-primary-2) 100%);
+    background: linear-gradient(135deg, #6ee0eb 0%, #4a7fad 100%);
     color: #fff;
-    box-shadow: 0 8px 20px rgba(85, 213, 224, 0.25);
+    box-shadow: 0 8px 20px rgba(110, 224, 235, 0.35);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 26px rgba(85, 213, 224, 0.35);
+    box-shadow: 0 12px 26px rgba(110, 224, 235, 0.45);
+    filter: brightness(1.1);
 }
 
 .btn-secondary {
@@ -115,6 +116,22 @@ main {
 
 .btn-success:hover {
     background: #218838;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: #fff;
+}
+
+.btn-info:hover {
+    background: linear-gradient(135deg, #138496 0%, #117a8b 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
 }
 
 /* Forms */

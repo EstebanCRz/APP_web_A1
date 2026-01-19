@@ -18,6 +18,7 @@
                     <ul class="footer-links">
                         <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>index.php">🏠 <?php echo t('footer.home'); ?></a></li>
                         <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>events/events-list.php">🎉 <?php echo t('footer.events'); ?></a></li>
+                        <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>pages/forum.php">💬 <?php echo t('footer.forum'); ?></a></li>
                         <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>pages/faq.php">❓ <?php echo t('footer.faq'); ?></a></li>
                         <li><a href="<?php echo isset($prefix) ? $prefix : '../'; ?>pages/contact.php">✉️ <?php echo t('footer.contact'); ?></a></li>
                     </ul>

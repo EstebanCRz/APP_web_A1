@@ -3,6 +3,13 @@ session_start();
 header('Content-Type: text/html; charset=UTF-8');
 require_once '../includes/config.php';
 require_once '../includes/language.php';
+require_once '../includes/security.php';
+
+// Définir les headers de sécurité
+Security::setSecurityHeaders();
+
+// Valider la session
+Security::validateSession();
 
 // Gérer la déconnexion
 if (isset($_GET['logout'])) {
@@ -21,36 +28,60 @@ $customCSS = [
 
 // Traiter le formulaire de connexion
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-    
-    if (!empty($email) && !empty($password)) {
-        try {
-            $pdo = getDB();
-            
-            // Chercher l'utilisateur par email
-            $stmt = $pdo->prepare("SELECT id, first_name, last_name, email, password FROM users WHERE email = ?");
-            $stmt->execute([$email]);
-            $user = $stmt->fetch();
-            
-            // Vérifier le mot de passe
-            if ($user && password_verify($password, $user['password'])) {
-                // Connexion réussie
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_email'] = $user['email'];
-                $_SESSION['user_first_name'] = $user['first_name'];
-                $_SESSION['user_last_name'] = $user['last_name'];
-                
-                header('Location: ../profile/profile.php');
-                exit;
-            } else {
-                $error = t('auth.invalid_credentials');
-            }
-        } catch(PDOException $e) {
-            $error = t('auth.connection_error') . ": " . $e->getMessage();
-        }
+    // Vérifier le token CSRF
+    if (!isset($_POST['csrf_token']) || !Security::verifyCSRFToken($_POST['csrf_token'])) {
+        $error = "Token de sécurité invalide.";
     } else {
-        $error = t('auth.fill_all_fields');
+        $email = Security::sanitizeSQL($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        
+        // Vérifier le rate limiting
+        if (!Security::checkRateLimit('login', 5, 300)) {
+            $error = "Trop de tentatives. Veuillez réessayer dans 5 minutes.";
+        } else if (!empty($email) && !empty($password)) {
+            // Vérifier la protection brute force
+            $identifier = $email . '|' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+            
+            if (!Security::checkBruteForce($identifier, 5, 900)) {
+                $error = "Trop de tentatives de connexion. Compte temporairement bloqué pour 15 minutes.";
+            } else {
+                try {
+                    $pdo = getDB();
+                    
+                    // Chercher l'utilisateur par email
+                    $stmt = $pdo->prepare("SELECT id, first_name, last_name, email, password FROM users WHERE email = ?");
+                    $stmt->execute([$email]);
+                    $user = $stmt->fetch();
+                    
+                    // Vérifier le mot de passe
+                    if ($user && password_verify($password, $user['password'])) {
+                        // Connexion réussie - Réinitialiser les tentatives
+                        Security::resetLoginAttempts($identifier);
+                        
+                        // Regénérer l'ID de session pour éviter session fixation
+                        session_regenerate_id(true);
+                        
+                        $_SESSION['user_id'] = $user['id'];
+                        $_SESSION['user_email'] = $user['email'];
+                        $_SESSION['user_first_name'] = $user['first_name'];
+                        $_SESSION['user_last_name'] = $user['last_name'];
+                        $_SESSION['fingerprint'] = md5($_SERVER['HTTP_USER_AGENT'] ?? '' . ($_SERVER['REMOTE_ADDR'] ?? ''));
+                        $_SESSION['created'] = time();
+                        
+                        header('Location: ../profile/profile.php');
+                        exit;
+                    } else {
+                        // Enregistrer la tentative échouée
+                        Security::recordLoginAttempt($identifier);
+                        $error = t('auth.invalid_credentials');
+                    }
+                } catch(PDOException $e) {
+                    $error = t('auth.connection_error') . ": " . $e->getMessage();
+                }
+            }
+        } else {
+            $error = t('auth.fill_all_fields');
+        }
     }
 }
 
@@ -66,6 +97,8 @@ include '../includes/header.php';
         <?php endif; ?>
         
         <form method="POST" action="">
+            <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRFToken(); ?>">
+            
             <div class="form-group">
                 <label for="email"><?php echo t('auth.email'); ?></label>
                 <input type="email" id="email" name="email" required placeholder="votre@email.com">
