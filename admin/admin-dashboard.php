@@ -1,7 +1,6 @@
 <?php
-session_start();
+require_once '../includes/session.php';
 require_once '../includes/language.php';
-header('Content-Type: text/html; charset=UTF-8');
 
 $pageTitle = "Tableau de bord Admin - AmiGo";
 $pageDescription = "Administration de la plateforme AmiGo";

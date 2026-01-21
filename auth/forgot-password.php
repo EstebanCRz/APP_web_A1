@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-session_start();
+require_once '../includes/session.php';
 header('Content-Type: text/html; charset=UTF-8');
 require_once '../includes/language.php';
 

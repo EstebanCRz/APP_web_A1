@@ -1,13 +1,7 @@
 <?php
 declare(strict_types=1);
 
-// Configuration de session (AVANT session_start)
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_secure', 0);
-
-session_start();
-header('Content-Type: text/html; charset=UTF-8');
+require_once '../includes/session.php';
 
 require_once '../includes/language.php';
 require_once '../includes/activities_functions.php';

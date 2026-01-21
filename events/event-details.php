@@ -5,17 +5,7 @@ declare(strict_types=1);
    1. CONFIGURATION SESSION & ENCODAGE
    ============================================================ */
 
-// Cookies de session non accessibles en JavaScript (limite XSS sur ID de session)
-ini_set('session.cookie_httponly', '1');
-// La session ne fonctionne que via les cookies (pas d'ID dans l'URL)
-ini_set('session.use_only_cookies', '1');
-// En prod HTTPS : mettre '1' pour forcer le cookie en HTTPS uniquement
-ini_set('session.cookie_secure', '0');
-
-session_start();
-
-// Force la réponse en HTML UTF-8
-header('Content-Type: text/html; charset=UTF-8');
+require_once '../includes/session.php';
 
 // Fichiers d’internationalisation et fonctions liées aux activités
 require_once '../includes/language.php';

@@ -3,21 +3,9 @@
 // error_reporting(E_ALL);
 // ini_set('display_errors', 1);
 
-// Charger la configuration AVANT de démarrer la session
+// Charger la session et configuration
+require_once 'includes/session.php';
 require_once 'includes/config.php';
-
-// Configuration de session (AVANT session_start)
-@ini_set('session.cookie_httponly', 1);
-@ini_set('session.use_only_cookies', 1);
-@ini_set('session.cookie_secure', 0);
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-if (!headers_sent()) {
-    header('Content-Type: text/html; charset=UTF-8');
-}
-
 require_once 'includes/activities_functions.php';
 
 // Récupération des activités depuis la base de données

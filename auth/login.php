@@ -1,6 +1,5 @@
 ﻿<?php
-session_start();
-header('Content-Type: text/html; charset=UTF-8');
+require_once '../includes/session.php';
 require_once '../includes/config.php';
 require_once '../includes/language.php';
 require_once '../includes/security.php';

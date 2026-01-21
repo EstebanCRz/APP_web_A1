@@ -1,7 +1,5 @@
 <?php
-session_start();
-header('Content-Type: text/html; charset=UTF-8');
-
+require_once '../includes/session.php';
 require_once '../includes/language.php';
 
 $pageTitle = t('pages.edit_profile') . " - AmiGo";
