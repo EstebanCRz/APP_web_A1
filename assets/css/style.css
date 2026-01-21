@@ -1,4 +1,4 @@
-/* AmiGo - Styles de base pour structure et organisation */
+/* AmiGo - Styles de base complets */
 
 * {
     margin: 0;
@@ -6,55 +6,76 @@
     box-sizing: border-box;
 }
 
+:root {
+    --accent-fresh: #55D5E0; /* Bleu Turquoise */
+    --accent-warm: #F6B12D;  /* Couleur Or */
+}
+
 body {
     font-family: Arial, sans-serif;
-    line-height: 1.6;
-    color: #333;
     background-color: #f4f4f4;
 }
 
-/* Palette variables (AmiGo) */
-:root {
-    --accent-fresh: #55D5E0; /* fraîcheur */
-    --accent-trust: #335F8A; /* confiance */
-    --accent-structure: #2F4558; /* structure */
-    --accent-warm: #F6B12D; /* chaleur */
-    --accent-energetic: #F26619; /* passion */
-
-    /* Brand gradient (site primary) → fresh → trust */
-    --brand-primary-1: #55D5E0;
-    --brand-primary-2: #335F8A;
-
-    --muted-color: #666;
-    --card-bg: #ffffff;
-    --border-color: #e6e6e6;
+/* --- LOGIQUE DE RECHERCHE --- */
+.hero-content {
+    position: relative;
+    z-index: 5;
 }
 
-/* Header styles are in header.css */
+#searchBar {
+    width: 100%;
+    max-width: 500px;
+    padding: 12px 20px;
+    margin: 20px 0;
+    border: 2px solid #eee;
+    border-radius: 25px;
+    font-size: 1rem;
+    outline: none;
+    position: relative;
+    z-index: 10; /* Assure que l'input est cliquable */
+    background: white;
+}
 
-.language-selector {
-    background: #FFF5E8;
-    color: #333;
+#searchBar:focus {
+    border-color: var(--accent-fresh);
+}
+
+/* --- LOGIQUE DES FILTRES --- */
+.filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+}
+
+.filter-btn {
+    background-color: var(--accent-fresh) !important;
+    color: white !important;
     border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
+    padding: 10px 22px;
+    border-radius: 25px;
+    font-weight: bold;
     cursor: pointer;
+    transition: 0.2s;
 }
 
-/* Navigation */
-nav {
-    background: transparent;
-    padding: 0;
+.filter-btn.active {
+    background-color: var(--accent-warm) !important;
+    color: white !important;
+    box-shadow: 0 4px 10px rgba(246, 177, 45, 0.4);
 }
 
-
-/* Main Content */
+/* --- RESTE DU CONTENU --- */
 main {
     max-width: 1200px;
     margin: 2rem auto;
     padding: 0 2rem;
     background: #fff;
     border-radius: 8px;
+
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     min-height: 60vh;
 }
@@ -164,123 +185,30 @@ select {
     font-size: 1rem;
 }
 
-textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
-.checkbox-group {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.checkbox-group input[type="checkbox"] {
-    width: auto;
-}
-
-
-/* Grid */
-.grid {
+.activities-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
     margin: 2rem 0;
 }
 
-/* Profile */
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    margin-bottom: 2rem;
+/* Style des cartes */
+.activity-item {
+    text-decoration: none;
+    color: inherit;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.profile-pic {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: #ddd;
-}
-
-.profile-info h2 {
-    margin-bottom: 0.5rem;
-}
-
-.profile-stats {
-    display: flex;
-    gap: 2rem;
-    margin-top: 1rem;
-}
-
-.stat {
+.no-result-msg {
+    grid-column: 1 / -1;
     text-align: center;
-}
-
-.stat-number {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--accent-fresh);
-}
-
-.stat-label {
-    font-size: 0.9rem;
+    padding: 40px;
     color: #666;
 }
 
-
-/* Responsive */
 @media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    nav ul {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    main {
-        margin: 1rem;
-        padding: 0;
-    }
-
-    .grid {
-        grid-template-columns: 1fr;
-    }
-
-    .profile-header {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .footer-links {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-}
-
-/* Accessibility */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-}
-
-/* Focus visible for keyboard navigation */
-a:focus,
-button:focus,
-input:focus,
-select:focus,
-textarea:focus {
-    outline: 2px solid var(--accent-fresh);
-    outline-offset: 2px;
+    .activities-grid { grid-template-columns: 1fr; }
 }

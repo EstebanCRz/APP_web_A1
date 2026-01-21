@@ -14,19 +14,13 @@ ini_set('session.cookie_secure', 0);
 session_start();
 header('Content-Type: text/html; charset=UTF-8');
 
-// Charger le système de traduction
-require_once 'includes/language.php';
-
 require_once 'includes/activities_functions.php';
 
-// Récupération des activités depuis la base de données (limitées à 8 pour la page d'accueil)
+// Récupération des activités depuis la base de données
 try {
-    $activitiesFromDB = getAllActivities(['limit' => 8]); // limite d'activités à 8
-    
-    // Récupération de toutes les catégories pour les filtres
+    $activitiesFromDB = getAllActivities(['limit' => 8]);
     $categories = getAllCategories();
     
-    // Transformation des données pour l'affichage
     $activities = [];
     $userId = $_SESSION['user_id'] ?? null;
     
@@ -39,7 +33,7 @@ try {
         $activities[] = [
             'id' => $act['id'],
             'title' => $act['title'],
-            'type' => t('categories.' . $act['category_name']),
+            'type' => $act['category_name'],
             'loc' => $act['location'] . ', ' . $act['city'],
             'date' => formatEventDate($act['event_date']),
             'user' => $act['creator_first_name'] ?? $act['creator_username'],
@@ -50,18 +44,14 @@ try {
         ];
     }
 } catch (Exception $e) {
-    // En cas d'erreur, afficher un message et utiliser des données vides
-    echo "<!-- Erreur de base de données: " . htmlspecialchars($e->getMessage()) . " -->";
+    echo "";
     $activities = [];
     $categories = [];
 }
 
-$pageTitle = "AmiGo - " . t('home.title');
+$pageTitle = "AmiGo - Partage d'activités";
 $assetsDepth = 0;
-$customCSS = [
-    "assets/css/style.css",
-    "assets/css/index.css"
-];
+$customCSS = ["assets/css/style.css", "assets/css/index.css"];
 
 include 'includes/header.php';
 ?>
@@ -69,24 +59,18 @@ include 'includes/header.php';
 <div class="main-container">
     <section class="hero-section">
         <div class="hero-content">
-            <h1><?php echo t('home.subtitle'); ?></h1>
-            <p><?php echo t('home.description'); ?></p>
+            <h1>Partage d'activités entre particuliers</h1>
+            <p>Découvrez, créez et rejoignez des activités près de chez vous.</p>
             
-            <input type="text" id="searchBar" placeholder="<?php echo t('home.search_placeholder'); ?>"> 
+            <input type="text" id="searchBar" placeholder="Chercher une activité (mot-clé, ville, organisateur)">
             
             <div class="filter-tags">
-                <button class="filter-btn active" data-filter="all"><?php echo t('home.filter_all'); ?></button>
+                <button class="filter-btn active" data-filter="all">Tous</button>
                 <?php foreach ($categories as $cat): ?>
                     <button class="filter-btn" data-filter="<?php echo htmlspecialchars($cat['name'], ENT_QUOTES, 'UTF-8'); ?>">
                         <?php echo htmlspecialchars($cat['name'], ENT_QUOTES, 'UTF-8'); ?>
                     </button>
                 <?php endforeach; ?>
-            </div>
-            
-            <div class="hero-badges">
-                <span class="hero-badge badge-local"><?php echo t('home.badge_local'); ?></span>
-                <span class="hero-badge badge-convivial"><?php echo t('home.badge_friendly'); ?></span>
-                <span class="hero-badge badge-gratuit"><?php echo t('home.badge_free'); ?></span>
             </div>
         </div>
         
@@ -100,10 +84,9 @@ include 'includes/header.php';
 
     <div class="section-header">
         <div>
-            <h2><?php echo t('events.title'); ?></h2>
-            <p><?php echo t('home.latest_community'); ?></p>
+            <h2>Activités récentes</h2>
         </div>
-        <a href="events/events-list.php" class="voir-tout"><?php echo t('home.view_all'); ?></a>
+        <a href="events/events-list.php" class="voir-tout">Voir tout</a>
     </div>
     
     <div class="activities-grid" id="activitiesContainer">
@@ -116,20 +99,7 @@ include 'includes/header.php';
                     <h4><?php echo htmlspecialchars($act['title'], ENT_QUOTES, 'UTF-8'); ?></h4>
                     <div class="card-meta">
                         <span class="info">📍 <?php echo htmlspecialchars($act['loc'], ENT_QUOTES, 'UTF-8'); ?></span>
-                        <span class="info">📅 <?php echo htmlspecialchars($act['date'], ENT_QUOTES, 'UTF-8'); ?></span>
                         <span class="info">👤 <?php echo htmlspecialchars($act['user'], ENT_QUOTES, 'UTF-8'); ?></span>
-                    </div>
-                    <div class="card-footer">
-                        <span class="participant-count"><?php echo htmlspecialchars($act['inscrits'], ENT_QUOTES, 'UTF-8'); ?> <?php echo t('home.registered'); ?></span>
-                        <?php if (isset($_SESSION['user_id'])): ?>
-                            <?php if ($act['is_registered']): ?>
-                                <button class="btn-unsubscribe" data-activity-id="<?php echo htmlspecialchars($act['id'], ENT_QUOTES, 'UTF-8'); ?>">\u2713 <?php echo t('home.unregister'); ?></button>
-                            <?php else: ?>
-                                <button class="btn-subscribe" data-activity-id="<?php echo htmlspecialchars($act['id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo t('events.register'); ?></button>
-                            <?php endif; ?>
-                        <?php else: ?>
-                            <a href="auth/login.php" class="btn-subscribe"><?php echo t('header.login'); ?></a>
-                        <?php endif; ?>
                     </div>
                 </div>
             </a>
@@ -137,6 +107,6 @@ include 'includes/header.php';
     </div>
 </div>
 
-<script src="assets/script.js"></script>
+<script src="assets/js/search-filter.js"></script>
 <script src="assets/js/activity-registration.js"></script>
 <?php include 'includes/footer.php'; ?>
