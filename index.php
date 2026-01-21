@@ -7,12 +7,16 @@
 require_once 'includes/config.php';
 
 // Configuration de session (AVANT session_start)
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_secure', 0);
+@ini_set('session.cookie_httponly', 1);
+@ini_set('session.use_only_cookies', 1);
+@ini_set('session.cookie_secure', 0);
 
-session_start();
-header('Content-Type: text/html; charset=UTF-8');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (!headers_sent()) {
+    header('Content-Type: text/html; charset=UTF-8');
+}
 
 require_once 'includes/activities_functions.php';
 

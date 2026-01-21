@@ -43,5 +43,7 @@ function env($key, $default = null) {
     return $value;
 }
 
-// Charger le fichier .env
-loadEnv(__DIR__ . '/../.env');
+// Charger le fichier .env (si disponible)
+if (file_exists(__DIR__ . '/../.env')) {
+    loadEnv(__DIR__ . '/../.env');
+}
