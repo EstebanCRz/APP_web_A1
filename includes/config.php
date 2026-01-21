@@ -3,6 +3,9 @@
  * Configuration générale de l'application
  */
 
+// Charger les variables d'environnement
+require_once __DIR__ . '/env.php';
+
 // Définir les constantes de chemin
 define('BASE_PATH', dirname(__DIR__));
 define('ASSETS_PATH', BASE_PATH . '/assets');
@@ -10,18 +13,18 @@ define('CSS_PATH', ASSETS_PATH . '/css');
 define('JS_PATH', ASSETS_PATH . '/js');
 define('IMAGES_PATH', ASSETS_PATH . '/images');
 
-// URL de base (à adapter selon votre environnement)
-define('BASE_URL', 'http://localhost/APP_web_A1');
+// URL de base (depuis .env)
+define('BASE_URL', env('BASE_URL', 'http://localhost/APP_web_A1'));
 define('ASSETS_URL', BASE_URL . '/assets');
 define('CSS_URL', ASSETS_URL . '/css');
 define('JS_URL', ASSETS_URL . '/js');
 define('IMAGES_URL', ASSETS_URL . '/images');
 
-// Configuration de la base de données MAMP
-define('DB_HOST', 'localhost:3306'); // Port MySQL MAMP
-define('DB_NAME', 'amigo_db');
-define('DB_USER', 'root');
-define('DB_PASS', 'root'); // Mot de passe MAMP
+// Configuration de la base de données (depuis .env)
+define('DB_HOST', env('DB_HOST', 'localhost') . ':' . env('DB_PORT', '3306'));
+define('DB_NAME', env('DB_NAME', 'amigo_db'));
+define('DB_USER', env('DB_USER', 'root'));
+define('DB_PASS', env('DB_PASS', 'root'));
 
 // Fonction de connexion à la base de données
 function getDB() {
@@ -46,5 +49,5 @@ function getDB() {
 // Fuseau horaire
 date_default_timezone_set('Europe/Paris');
 
-// Application name
-define('SITE_NAME', 'AmiGo');
+// Application name (depuis .env)
+define('SITE_NAME', env('APP_NAME', 'AmiGo'));

@@ -1,29 +1,34 @@
 <?php
-// PHPMailer + ZohoMail SMTP configuration example
+// PHPMailer + ZohoMail SMTP configuration
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require '../vendor/autoload.php';
+require_once __DIR__ . '/env.php';
 
-function sendZohoMail($to, $subject, $body, $fromName = 'AmiGo', $fromEmail = 'amigocontact@zohomail.eu') {
+function sendZohoMail($to, $subject, $body, $fromName = null, $fromEmail = null) {
+    $fromName = $fromName ?? env('APP_NAME', 'AmiGo');
+    $fromEmail = $fromEmail ?? env('MAIL_FROM', 'amigocontact@zohomail.eu');
+    $mailFromAddress = env('MAIL_FROM', 'amigocontact@zohomail.eu');
+    
     $mail = new PHPMailer(true);
     try {
         //Server settings
         $mail->isSMTP();
-        $mail->Host       = 'smtp.zoho.eu';
+        $mail->Host       = env('MAIL_HOST', 'smtp.zoho.eu');
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'amigocontact@zohomail.eu'; // Adresse ZohoMail
-        $mail->Password   = '74KV4H9wuzup'; // Mot de passe d'application ZohoMail
+        $mail->Username   = env('MAIL_USERNAME', 'amigocontact@zohomail.eu');
+        $mail->Password   = env('MAIL_PASSWORD', '');
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->Port       = env('MAIL_PORT', 587);
         $mail->CharSet    = 'UTF-8';
 
-        // Expéditeur = TOUJOURS amigocontact@zohomail.eu (obligatoire Zoho)
-        $mail->setFrom('amigocontact@zohomail.eu', 'AmiGo');
+        // Expéditeur = TOUJOURS l'adresse configurée dans .env (obligatoire Zoho)
+        $mail->setFrom($mailFromAddress, $fromName);
         // Destinataire = $to (utilisateur ou admin selon usage)
         $mail->addAddress($to);
         // Répondre à = email de l'utilisateur (pour répondre facilement)
-        if ($fromEmail !== 'amigocontact@zohomail.eu') {
+        if ($fromEmail !== $mailFromAddress) {
             $mail->addReplyTo($fromEmail, $fromName);
         }
 

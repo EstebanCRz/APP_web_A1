@@ -1,0 +1,29 @@
+# Environment files
+.env
+.env.online
+.env.local
+.env.*.local
+
+# Composer
+/vendor/
+composer.lock
+
+# Uploads
+/uploads/messages/*
+!/uploads/messages/.gitkeep
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.swp
+*~
