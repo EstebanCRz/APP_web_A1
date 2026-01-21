@@ -460,5 +460,3 @@ $translations = [
         'tip4_desc' => 'Laissez des avis pour devenir un critique reconnu',
     ],
 ];
-?>
-

@@ -230,4 +230,4 @@ document.querySelectorAll('.conversation-item').forEach(item => {
 });
 </script>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../includes/footer.php';

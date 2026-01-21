@@ -92,4 +92,4 @@ include '../includes/header.php';
     <?php endif; ?>
 </div>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../includes/footer.php';

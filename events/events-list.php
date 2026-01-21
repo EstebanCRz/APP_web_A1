@@ -309,4 +309,4 @@ window.evenementsData = <?php echo json_encode($events, JSON_HEX_TAG | JSON_HEX_
 <script src="js/search.js"></script>
 <script src="js/events-list.js"></script>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../includes/footer.php';

@@ -526,4 +526,4 @@ include '../includes/header.php';
 <!-- Fichier JavaScript séparé -->
 <script src="js/event-details.js"></script>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../includes/footer.php';

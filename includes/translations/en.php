@@ -459,5 +459,3 @@ $translations = [
         'tip4_desc' => 'Leave reviews to become a recognized reviewer',
     ],
 ];
-?>
-

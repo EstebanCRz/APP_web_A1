@@ -112,4 +112,4 @@ window.messagesTranslations = {
 
 <script src="../assets/js/messages.js"></script>
 
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once '../includes/footer.php';

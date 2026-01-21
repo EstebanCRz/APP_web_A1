@@ -48,4 +48,4 @@ include '../includes/header.php';
         <button type="submit" class="btn btn-primary">Valider</button>
     </form>
 </div>
-<?php include '../includes/footer.php'; ?>
+<?php include '../includes/footer.php';

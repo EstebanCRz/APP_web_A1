@@ -278,4 +278,4 @@ function showNotification(message, type) {
 }
 </script>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../includes/footer.php';

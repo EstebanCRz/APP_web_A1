@@ -23,4 +23,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['email'])) {
 </form>
 <?php
 // ...existing code...
-?>

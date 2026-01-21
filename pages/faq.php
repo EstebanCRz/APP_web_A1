@@ -70,5 +70,4 @@ include '../includes/header.php';
 
 <script src="../assets/js/faq.js"></script>
 
-<?php include '../includes/footer.php'; ?>
-
+<?php include '../includes/footer.php';

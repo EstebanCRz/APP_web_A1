@@ -104,4 +104,3 @@ function getLanguageUrl($language) {
     $separator = strpos($url, '?') === false ? '?' : '&';
     return $url . $separator . 'lang=' . $language;
 }
-?>
