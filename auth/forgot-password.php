@@ -36,7 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               . '<p><a href="' . $resetLink . '">Réinitialiser mon mot de passe</a></p>'
               . '<p>Ce lien expirera dans 6 heures.</p>'
               . '<br><div style="color:#888; font-size:0.95em; margin-top:2em;">© 2026 AmiGo - Tous droits réservés</div>';
-        sendZohoMail($email, $subject, $body, 'AmiGo', 'amigocontact@zohomail.eu');
+        
+        try {
+            @sendZohoMail($email, $subject, $body, 'AmiGo', 'amigocontact@zohomail.eu');
+        } catch (Throwable $e) {
+            error_log("Erreur envoi email reset password: " . $e->getMessage());
+        }
         $success = true;
     }
 }

@@ -37,10 +37,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   . "<b>Message :</b><br>" . nl2br(htmlspecialchars($message));
 
         // Envoi via ZohoMail
-        $sent = sendZohoMail($adminEmail, $mailSubject, $mailBody, $name, $email);
-        if ($sent) {
-            $success = true;
-        } else {
+        try {
+            $sent = @sendZohoMail($adminEmail, $mailSubject, $mailBody, $name, $email);
+            if ($sent) {
+                $success = true;
+            } else {
+                $error = "Erreur lors de l'envoi du message. Veuillez réessayer plus tard.";
+            }
+        } catch (Throwable $e) {
+            error_log("Erreur envoi email contact: " . $e->getMessage());
             $error = "Erreur lors de l'envoi du message. Veuillez réessayer plus tard.";
         }
     } else {

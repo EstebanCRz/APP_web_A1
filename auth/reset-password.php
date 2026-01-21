@@ -50,7 +50,12 @@ if ($valid && $_SERVER['REQUEST_METHOD'] === 'POST') {
             . '<p>Nous vous confirmons que votre mot de passe AmiGo a été modifié avec succès.</p>'
             . '<p>Si vous n’êtes pas à l’origine de cette demande, contactez immédiatement le support.</p>'
             . '<br><div style="color:#888; font-size:0.95em; margin-top:2em;">© 2026 AmiGo - Tous droits réservés</div>';
-        sendZohoMail($email, $confirmSubject, $confirmBody, 'AmiGo', 'amigocontact@zohomail.eu');
+        
+        try {
+            @sendZohoMail($email, $confirmSubject, $confirmBody, 'AmiGo', 'amigocontact@zohomail.eu');
+        } catch (Throwable $e) {
+            error_log("Erreur envoi email confirmation: " . $e->getMessage());
+        }
         $success = true;
     }
 }

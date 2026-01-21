@@ -60,7 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     . '<p>Merci de t\'être inscrit sur AmiGo. Nous sommes ravis de t\'accueillir dans la communauté !</p>'
                     . '<p>Tu peux dès maintenant découvrir des activités, rejoindre des groupes et échanger avec d\'autres membres.</p>'
                     . '<br><div style="color:#888; font-size:0.95em; margin-top:2em;">© 2026 AmiGo - Tous droits réservés</div>';
-                sendZohoMail($email, $welcomeSubject, $welcomeBody, 'AmiGo', 'amigocontact@zohomail.eu');
+                
+                // Tentative d'envoi d'email (ne bloque pas l'inscription si ça échoue)
+                try {
+                    @sendZohoMail($email, $welcomeSubject, $welcomeBody, 'AmiGo', 'amigocontact@zohomail.eu');
+                } catch (Throwable $e) {
+                    // Log l'erreur mais continue l'inscription
+                    error_log("Erreur envoi email inscription: " . $e->getMessage());
+                }
                 
                 // Récupérer l'ID de l'utilisateur
                 $user_id = $pdo->lastInsertId();
