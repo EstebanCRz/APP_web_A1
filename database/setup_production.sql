@@ -1,5 +1,8 @@
 -- Script de création de toutes les tables manquantes pour la production
 
+-- Ajouter le champ role à la table users
+ALTER TABLE users ADD COLUMN IF NOT EXISTS role ENUM('user', 'admin') DEFAULT 'user' AFTER password;
+
 -- Table de vérification de connexion
 CREATE TABLE IF NOT EXISTS login_verifications (
     id INT AUTO_INCREMENT PRIMARY KEY,

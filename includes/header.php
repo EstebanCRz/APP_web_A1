@@ -81,6 +81,12 @@ $current_dir = basename(dirname($_SERVER['PHP_SELF']));
                         <li><a href="<?php echo $prefix; ?>pages/messages.php" class="<?php echo ($current_page === 'messages.php') ? 'active' : ''; ?>" id="messages-link"><?php echo t('messages.page_title'); ?></a></li>
                         <li><a href="<?php echo $prefix; ?>profile/profile.php" class="<?php echo ($current_dir === 'profile' || strpos($_SERVER['REQUEST_URI'], 'profile') !== false) ? 'active' : ''; ?>"><?php echo t('header.profile'); ?></a></li>
                         <li><a href="<?php echo $prefix; ?>events/event-create.php" class="<?php echo ($current_page === 'event-create.php' || strpos($_SERVER['REQUEST_URI'], 'event-create.php') !== false) ? 'active' : ''; ?>"><?php echo t('header.create_event'); ?></a></li>
+                        <?php
+                        // Vérifier si l'utilisateur est admin
+                        require_once __DIR__ . '/admin_functions.php';
+                        if (isAdmin()): ?>
+                            <li><a href="<?php echo $prefix; ?>admin/admin-dashboard.php" class="<?php echo ($current_dir === 'admin') ? 'active' : ''; ?>" style="color: #ff6b6b;">🎛️ Admin</a></li>
+                        <?php endif; ?>
                         <li><a href="<?php echo $prefix; ?>auth/login.php?logout=1"><?php echo t('header.logout'); ?></a></li>
                     <?php else: ?>
                         <li><a href="<?php echo $prefix; ?>auth/login.php" class="<?php echo ($current_page === 'login.php') ? 'active' : ''; ?>"><?php echo t('header.login'); ?></a></li>
