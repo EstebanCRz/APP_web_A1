@@ -3,10 +3,23 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '../vendor/autoload.php';
+// Vérifier si le fichier autoload existe
+$autoloadPath = __DIR__ . '/../vendor/autoload.php';
+if (!file_exists($autoloadPath)) {
+    error_log("Composer autoload not found. Please run: composer install");
+    return false;
+}
+
+require $autoloadPath;
 require_once __DIR__ . '/env.php';
 
 function sendZohoMail($to, $subject, $body, $fromName = null, $fromEmail = null) {
+    // Vérifier si PHPMailer est disponible
+    if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+        error_log("PHPMailer not installed. Please run: composer install");
+        return false;
+    }
+    
     $fromName = $fromName ?? env('APP_NAME', 'AmiGo');
     $fromEmail = $fromEmail ?? env('MAIL_FROM', 'amigocontact@zohomail.eu');
     $mailFromAddress = env('MAIL_FROM', 'amigocontact@zohomail.eu');
