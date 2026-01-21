@@ -1,0 +1,12 @@
+.git
+.gitignore
+.env
+.env.*
+*.md
+.vscode
+.idea
+*.log
+fix_*.ps1
+fix_*.php
+remove_*.ps1
+ENV_HANGAR.txt

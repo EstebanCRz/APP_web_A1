@@ -6,7 +6,6 @@
 
 # Composer
 /vendor/
-composer.lock
 
 # Uploads
 /uploads/messages/*
@@ -27,3 +26,8 @@ Thumbs.db
 *.tmp
 *.swp
 *~
+
+# Scripts de nettoyage
+fix_sessions.ps1
+fix_all_sessions.php
+remove_bom.ps1
