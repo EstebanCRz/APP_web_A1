@@ -77,8 +77,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_email'] = $email;
                 $_SESSION['user_first_name'] = $first_name;
                 $_SESSION['user_last_name'] = $last_name;
-                $_SESSION['pending_verif'] = true;
 
+                // TODO: Activer la vérification par code quand la table login_verifications sera créée
+                /*
+                $_SESSION['pending_verif'] = true;
                 // Générer et envoyer le code de vérification
                 require_once '../includes/verification_mail.php';
                 $code = generateVerificationCode();
@@ -89,6 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Rediriger vers la page de vérification du code
                 header('Location: ../auth/verify-login.php');
+                */
+                
+                // Redirection directe vers le profil
+                header('Location: ../profile/choose-interests.php');
                 exit;
             }
         } catch(PDOException $e) {

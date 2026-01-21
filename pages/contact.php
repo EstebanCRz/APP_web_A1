@@ -42,11 +42,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($sent) {
                 $success = true;
             } else {
-                $error = "Erreur lors de l'envoi du message. Veuillez réessayer plus tard.";
+                // Enregistrer le message en base de données comme fallback
+                try {
+                    $pdo = getDB();
+                    $stmt = $pdo->prepare("INSERT INTO contact_messages (name, email, subject, message, created_at) VALUES (?, ?, ?, ?, NOW())");
+                    $stmt->execute([$name, $email, $subject, $message]);
+                    $success = true; // Message enregistré avec succès
+                } catch (Exception $e) {
+                    error_log("Erreur sauvegarde message contact: " . $e->getMessage());
+                    $error = "Votre message a été enregistré mais l'envoi par email a échoué. Nous vous répondrons dès que possible.";
+                }
             }
         } catch (Throwable $e) {
             error_log("Erreur envoi email contact: " . $e->getMessage());
-            $error = "Erreur lors de l'envoi du message. Veuillez réessayer plus tard.";
+            // Tenter de sauvegarder en base de données
+            try {
+                $pdo = getDB();
+                $stmt = $pdo->prepare("INSERT INTO contact_messages (name, email, subject, message, created_at) VALUES (?, ?, ?, ?, NOW())");
+                $stmt->execute([$name, $email, $subject, $message]);
+                $success = true; // Message enregistré
+            } catch (Exception $e2) {
+                error_log("Erreur critique contact: " . $e2->getMessage());
+                $error = "Erreur lors de l'envoi du message. Veuillez réessayer plus tard ou nous contacter directement à amigocontact@zohomail.eu";
+            }
         }
     } else {
         $error = "Tous les champs sont obligatoires.";

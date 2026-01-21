@@ -60,6 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         // Regénérer l'ID de session pour éviter session fixation
                         session_regenerate_id(true);
 
+                        // TODO: Activer la vérification par code quand la table login_verifications sera créée
+                        /*
                         // Générer et envoyer le code de vérification
                         require_once '../includes/verification_mail.php';
                         $code = generateVerificationCode();
@@ -68,13 +70,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $stmt->execute([$user['id'], $code, $expires]);
                         sendVerificationMail($user['email'], $code);
                         $_SESSION['pending_verif'] = true;
+                        */
+                        
+                        // Connexion directe sans vérification
                         $_SESSION['user_id'] = $user['id'];
                         $_SESSION['user_email'] = $user['email'];
                         $_SESSION['user_first_name'] = $user['first_name'];
                         $_SESSION['user_last_name'] = $user['last_name'];
                         $_SESSION['fingerprint'] = md5($_SERVER['HTTP_USER_AGENT'] ?? '' . ($_SERVER['REMOTE_ADDR'] ?? ''));
                         $_SESSION['created'] = time();
-                        header('Location: verify-login.php');
+                        
+                        // Redirection vers l'accueil (pas de vérification pour l'instant)
+                        header('Location: ../index.php');
                         exit;
                     } else {
                         // Enregistrer la tentative échouée
