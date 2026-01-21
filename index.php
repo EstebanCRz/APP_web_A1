@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Mode développement - Commentez ces lignes en production
 // error_reporting(E_ALL);
 // ini_set('display_errors', 1);
