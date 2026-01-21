@@ -103,11 +103,13 @@ class ActivityChat {
     
     async sendMessage() {
         const messageText = this.messageInput.value.trim();
-        
         if (!messageText && !this.uploadedImagePath) {
             return;
         }
-        
+        // Vide le champ immédiatement côté client
+        this.messageInput.value = '';
+        this.uploadedImagePath = null;
+        this.removeImagePreview && this.removeImagePreview();
         try {
             const response = await fetch('api/chat-messages.php', {
                 method: 'POST',
@@ -118,13 +120,8 @@ class ActivityChat {
                     image_path: this.uploadedImagePath
                 })
             });
-            
             const data = await response.json();
-            
             if (data.success) {
-                this.messageInput.value = '';
-                this.uploadedImagePath = null;
-                this.removeImagePreview();
                 this.loadMessages();
             }
         } catch (error) {

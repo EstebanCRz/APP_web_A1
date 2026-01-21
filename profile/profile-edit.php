@@ -33,6 +33,7 @@ include '../includes/header.php';
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Enregistrer</button>
             <a href="profile.php" class="btn btn-secondary">Annuler</a>
+            <a href="../auth/forgot-password.php" class="btn btn-link" style="margin-left:1em; color:#007bff; text-decoration:underline;">Réinitialiser mon mot de passe</a>
         </div>
     </form>
 </div>

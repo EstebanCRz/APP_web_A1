@@ -1,554 +1,608 @@
 <?php
 declare(strict_types=1);
 
-// Configuration de session (AVANT session_start)
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_secure', 0);
+/* ============================================================
+   1. CONFIGURATION SESSION & ENCODAGE
+   ============================================================ */
+
+// Cookies de session non accessibles en JavaScript (limite XSS sur ID de session)
+ini_set('session.cookie_httponly', '1');
+// La session ne fonctionne que via les cookies (pas d'ID dans l'URL)
+ini_set('session.use_only_cookies', '1');
+// En prod HTTPS : mettre '1' pour forcer le cookie en HTTPS uniquement
+ini_set('session.cookie_secure', '0');
 
 session_start();
+
+// Force la réponse en HTML UTF-8
 header('Content-Type: text/html; charset=UTF-8');
 
+// Fichiers d’internationalisation et fonctions liées aux activités
 require_once '../includes/language.php';
 require_once '../includes/activities_functions.php';
 
-$pageTitle = t('event_details.title') . " - AmiGo";
+/* ============================================================
+   2. RÉCUPÉRATION & VALIDATION DE L'ID D'ÉVÉNEMENT
+   ============================================================ */
+
+// On récupère l'id dans l'URL, on cast en entier pour éviter l'injection
+$event_id = (int) ($_GET['id'] ?? 0);
+
+// Si pas d'id valide → retour à la liste
+if ($event_id === 0) {
+    header('Location: events-list.php');
+    exit;
+}
+
+// On charge l'événement correspondant
+$event = getActivityById($event_id);
+
+// Si l'événement n'existe pas → retour à la liste
+if (!$event) {
+    header('Location: events-list.php');
+    exit;
+}
+
+/* ============================================================
+   3. TRAITEMENT DU FORMULAIRE D'AVIS (POST)
+   ============================================================ */
+
+$reviewMessage    = '';    // Message de succès (GET ?review=success)
+$reviewError      = '';    // Message d'erreur (validation serveur)
+$userReview       = null;  // Avis déjà existant de l'utilisateur pour cet event
+$isUserRegistered = false; // L'utilisateur est-il inscrit à cet événement ?
+$isFavorite       = false; // L'événement est-il dans ses favoris ?
+
+// On ne traite avis + favoris que si un utilisateur est connecté
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+
+    // Vérifie si l'utilisateur est inscrit à cet événement
+    $isUserRegistered = isUserRegistered($event_id, $user_id);
+
+    // Connexion BDD
+    $pdo = getDB();
+
+    /* --- Vérification du statut "favori" --- */
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*)
+        FROM user_favorites
+        WHERE user_id = ? AND activity_id = ?
+    ");
+    $stmt->execute([$user_id, $event_id]);
+    $isFavorite = $stmt->fetchColumn() > 0;
+
+    /* --- Récupération d'un éventuel avis existant --- */
+    $stmt = $pdo->prepare("
+        SELECT *
+        FROM activity_reviews
+        WHERE activity_id = ? AND user_id = ?
+    ");
+    $stmt->execute([$event_id, $user_id]);
+    $userReview = $stmt->fetch();
+
+    /* --- Soumission du formulaire d'avis --- */
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review'])) {
+
+        // On n'autorise l'avis que si :
+        // - l'utilisateur est inscrit
+        // - l'événement est déjà passé
+        if ($isUserRegistered && strtotime($event['event_date']) < time()) {
+
+            // Note (1 à 5) et commentaire trimé
+            $rating  = (int)($_POST['rating'] ?? 0);
+            $comment = trim($_POST['comment'] ?? '');
+
+            // 1) Note obligatoire entre 1 et 5
+            if ($rating < 1 || $rating > 5) {
+                $reviewError = 'Veuillez sélectionner une note.';
+
+            // 2) Longueur minimale du commentaire
+            } elseif (strlen($comment) < 10) {
+                $reviewError = '10 caractères minimum requis.';
+
+            // 3) Vérification des caractères non autorisés
+            //
+            // Regex en "whitelist" : on définit ce qui est PERMIS,
+            // tout le reste est refusé.
+            //   \p{L}  : toutes les lettres Unicode (y compris accentuées)
+            //   0-9   : chiffres
+            //   espace + . , ; : ! ? ( ) [ ] { } " ' - : ponctuation autorisée
+            //   \n \r : retours à la ligne
+            // Le ^ au début de la classe [^...] signifie "tout ce qui n'est PAS dans la liste".
+            // Si au moins un caractère interdit est trouvé → preg_match() retourne 1.
+            } elseif (preg_match('/[^\p{L}0-9 .,;:!?()\[\]{}"\'\-\n\r]/u', $comment)) {
+                $reviewError = 'Caractères spéciaux interdits.';
+
+            } else {
+                // À ce stade : note OK, longueur OK, caractères autorisés OK
+
+                if ($userReview) {
+                    // Mise à jour d'un avis existant
+                    $stmt = $pdo->prepare("
+                        UPDATE activity_reviews
+                        SET rating = ?, comment = ?, updated_at = NOW()
+                        WHERE activity_id = ? AND user_id = ?
+                    ");
+                    $stmt->execute([$rating, $comment, $event_id, $user_id]);
+                } else {
+                    // Création d'un nouvel avis
+                    $stmt = $pdo->prepare("
+                        INSERT INTO activity_reviews (activity_id, user_id, rating, comment)
+                        VALUES (?, ?, ?, ?)
+                    ");
+                    $stmt->execute([$event_id, $user_id, $rating, $comment]);
+                }
+
+                // PRG Pattern : redirection après POST pour éviter la double soumission
+                header('Location: event-details.php?id=' . $event_id . '&review=success');
+                exit;
+            }
+        }
+    }
+}
+
+// Message de succès passé en GET
+if (isset($_GET['review']) && $_GET['review'] === 'success') {
+    $reviewMessage = 'Votre avis a été enregistré !';
+}
+
+/* ============================================================
+   4. CHARGEMENT DES LISTES ANNEXES
+   - Participants
+   - Autres activités de la même catégorie
+   - Avis + note moyenne
+   ============================================================ */
+
+// Liste des participants à l'événement
+$participants = getActivityParticipants($event_id);
+
+// Suggestions d'autres activités de la même catégorie
+$otherActivities = getAllActivities([
+    'category' => $event['category_name'],
+    'limit'    => 3
+]);
+
+// Récupération des avis + calcul de la moyenne
+$reviews       = [];
+$averageRating = 0;
+
+$pdo  = getDB();
+$stmt = $pdo->prepare("
+    SELECT r.*, u.first_name, u.last_name
+    FROM activity_reviews r
+    JOIN users u ON r.user_id = u.id
+    WHERE r.activity_id = ?
+    ORDER BY r.created_at DESC
+");
+$stmt->execute([$event_id]);
+$reviews = $stmt->fetchAll();
+
+if (count($reviews) > 0) {
+    $averageRating = round(
+        array_sum(array_column($reviews, 'rating')) / count($reviews),
+        1
+    );
+}
+
+/* ============================================================
+   5. CONFIGURATION PAGE & HEADER
+   ============================================================ */
+
+// Titre de la page (échappé pour éviter XSS dans le <title>)
+$pageTitle       = htmlspecialchars($event['title']) . " - AmiGo";
 $pageDescription = t('event_details.title');
-$assetsDepth = 1;
+$assetsDepth     = 1;
+
+// CSS spécifiques à cette page
 $customCSS = [
     "../assets/css/style.css",
     'css/event-details.css',
     '../assets/css/message-images.css'
 ];
 
-// Récupérer l'ID de l'activité
-$event_id = (int) ($_GET['id'] ?? 0);
-
-if ($event_id === 0) {
-    header('Location: events-list.php');
-    exit;
-}
-
-// Récupérer les détails de l'activité depuis la DB
-$event = getActivityById($event_id);
-
-if (!$event) {
-    header('Location: events-list.php');
-    exit;
-}
-
-// Récupérer la liste des participants
-$participants = getActivityParticipants($event_id);
-
-// Vérifier si l'utilisateur est inscrit
-$isUserRegistered = false;
-$isFavorite = false;
-$userReview = null;
-
-if (isset($_SESSION['user_id'])) {
-    $isUserRegistered = isUserRegistered($event_id, $_SESSION['user_id']);
-    
-    // Obtenir la connexion PDO une seule fois
-    try {
-        $pdo = getDB();
-        
-        // Vérifier si l'activité est dans les favoris
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_favorites WHERE user_id = ? AND activity_id = ?");
-        $stmt->execute([$_SESSION['user_id'], $event_id]);
-        $isFavorite = $stmt->fetchColumn() > 0;
-        
-        // Vérifier si l'utilisateur a déjà un avis
-        $stmt = $pdo->prepare("SELECT * FROM activity_reviews WHERE activity_id = ? AND user_id = ?");
-        $stmt->execute([$event_id, $_SESSION['user_id']]);
-        $userReview = $stmt->fetch();
-        
-    } catch (PDOException $e) {
-        // Silently fail
-    }
-}
-
-// Récupérer d'autres activités de la même catégorie (pour la sidebar)
-$otherActivities = getAllActivities(['category' => $event['category_name'], 'limit' => 3]);
-
-// Traiter la soumission d'avis
-$reviewMessage = '';
-$reviewError = '';
-
-if (isset($_SESSION['user_id'])) {
-    // Traiter le formulaire de soumission d'avis
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review'])) {
-        if ($isUserRegistered && strtotime($event['event_date']) < time()) {
-            $rating = (int)($_POST['rating'] ?? 0);
-            $comment = trim($_POST['comment'] ?? '');
-            
-            if ($rating < 1 || $rating > 5) {
-                $reviewError = 'Veuillez sélectionner une note entre 1 et 5 étoiles';
-            } elseif (empty($comment) || strlen($comment) < 10) {
-                $reviewError = 'Votre commentaire doit contenir au moins 10 caractères';
-            } else {
-                try {
-                    $pdo = getDB();
-                    if ($userReview) {
-                        // Mise à jour
-                        $stmt = $pdo->prepare("UPDATE activity_reviews SET rating = ?, comment = ?, updated_at = NOW() WHERE activity_id = ? AND user_id = ?");
-                        $stmt->execute([$rating, $comment, $event_id, $_SESSION['user_id']]);
-                        $reviewMessage = 'Votre avis a été mis à jour avec succès !';
-                    } else {
-                        // Création
-                        $stmt = $pdo->prepare("INSERT INTO activity_reviews (activity_id, user_id, rating, comment) VALUES (?, ?, ?, ?)");
-                        $stmt->execute([$event_id, $_SESSION['user_id'], $rating, $comment]);
-                        $reviewMessage = 'Merci pour votre retour d\'expérience !';
-                    }
-                    
-                    // Recharger l'avis de l'utilisateur
-                    $stmt = $pdo->prepare("SELECT * FROM activity_reviews WHERE activity_id = ? AND user_id = ?");
-                    $stmt->execute([$event_id, $_SESSION['user_id']]);
-                    $userReview = $stmt->fetch();
-                    
-                    // Rediriger pour éviter la resoumission
-                    header('Location: event-details.php?id=' . $event_id . '&review=success');
-                    exit;
-                } catch (PDOException $e) {
-                    $reviewError = 'Erreur lors de l\'enregistrement de votre avis';
-                }
-            }
-        }
-    }
-    
-    // Afficher le message de succès après redirection
-    if (isset($_GET['review']) && $_GET['review'] === 'success') {
-        $reviewMessage = 'Votre avis a été enregistré avec succès !';
-    }
-}
-
-// Récupérer les avis de l'activité
-$reviews = [];
-$averageRating = 0;
-try {
-    $pdo = getDB();
-    $stmt = $pdo->prepare("
-        SELECT r.*, u.username, u.first_name, u.last_name 
-        FROM activity_reviews r
-        JOIN users u ON u.id = r.user_id
-        WHERE r.activity_id = ?
-        ORDER BY r.created_at DESC
-    ");
-    $stmt->execute([$event_id]);
-    $reviews = $stmt->fetchAll();
-    
-    // Calculer la moyenne des notes
-    if (!empty($reviews)) {
-        $totalRating = array_sum(array_column($reviews, 'rating'));
-        $averageRating = round($totalRating / count($reviews), 1);
-    }
-} catch (PDOException $e) {
-    // Silently fail
-}
-
+// Inclusion du header commun
 include '../includes/header.php';
 ?>
 
 <div class="container">
     <div class="event-details-wrapper">
-        <!-- Main Content -->
-        <div class="event-main">
-            <!-- Event Info -->
-            <div class="event-info">
+        <main class="event-main">
+
+            <!-- ===================== Bloc infos principales ===================== -->
+            <section class="event-info card">
                 <div class="event-title-row">
-                    <h1 class="event-title"><?php echo htmlspecialchars($event['title'], ENT_QUOTES, 'UTF-8'); ?></h1>
+                    <!-- Titre de l'événement protégé XSS -->
+                    <h1><?= htmlspecialchars($event['title']) ?></h1>
+
+                    <!-- Bouton favoris uniquement si utilisateur connecté -->
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <button 
-                            class="favorite-btn-large <?php echo $isFavorite ? 'active' : ''; ?>" 
-                            data-activity-id="<?php echo $event_id; ?>"
-                            title="<?php echo $isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'; ?>"
+                        <button
+                            class="favorite-btn-large <?= $isFavorite ? 'active' : '' ?>"
+                            data-activity-id="<?= $event_id ?>"
                         >
                             <span class="heart-icon">❤️</span>
                         </button>
                     <?php endif; ?>
                 </div>
-                <p class="event-meta">
-                    <span class="badge" style="background-color: <?php echo htmlspecialchars($event['category_color'] ?? '#3498db', ENT_QUOTES, 'UTF-8'); ?>;">
-                        <?php echo htmlspecialchars($event['category_icon'] ?? '📌', ENT_NOQUOTES, 'UTF-8'); ?>
-                        <?php echo htmlspecialchars($event['category_name'], ENT_QUOTES, 'UTF-8'); ?>
-                    </span>
-                    <span class="meta-text">📍 <?php echo htmlspecialchars($event['location'], ENT_QUOTES, 'UTF-8'); ?></span>
-                    <span class="meta-text">📅 <?php echo formatEventDate($event['event_date']); ?> <?php echo formatEventTime($event['event_date']); ?></span>
-                    <span class="meta-text">👤 Hôte: <?php echo htmlspecialchars($event['creator_first_name'] . ' ' . $event['creator_last_name'], ENT_QUOTES, 'UTF-8'); ?></span>
-                </p>
-                <p class="event-description"><?php echo nl2br(htmlspecialchars($event['description'], ENT_QUOTES, 'UTF-8')); ?></p>
-            </div>
 
-            <!-- Discussion Section -->
-            <div class="event-discussion card" id="activity-chat" data-activity-id="<?php echo $event_id; ?>" data-user-id="<?php echo $_SESSION['user_id'] ?? 0; ?>">
-                <h2 class="discussion-title">💬 <?php echo t('event_details.discussion'); ?></h2>
-                
+                <!-- Localisation + date -->
+                <p>
+                    📍 <?= htmlspecialchars($event['location']) ?>
+                    | 📅 <?= formatEventDate($event['event_date']) ?>
+                </p>
+
+                <!-- Description (nl2br + htmlspecialchars pour éviter XSS) -->
+                <div class="event-description">
+                    <?= nl2br(htmlspecialchars($event['description'])) ?>
+                </div>
+            </section>
+
+            <!-- ===================== Discussion (chat) ===================== -->
+            <section
+                class="event-discussion card"
+                id="activity-chat"
+                data-activity-id="<?= $event_id ?>"
+            >
+                <h2 class="discussion-title">💬 Discussion</h2>
+
                 <?php if (!isset($_SESSION['user_id'])): ?>
-                    <div class="chat-login-notice">
-                        <p><?php echo getCurrentLanguage() === 'fr' ? 'Vous devez être connecté pour participer à la discussion.' : 'You must be logged in to participate in the discussion.'; ?></p>
-                        <a href="../auth/login.php" class="btn btn-primary"><?php echo t('header.login'); ?></a>
-                    </div>
+                    <!-- Utilisateur non connecté : incitation à se connecter -->
+                    <p><a href="../auth/login.php">Connectez-vous</a> pour discuter.</p>
                 <?php else: ?>
+                    <!-- Messages du chat, chargés via JS (activity-chat.js) -->
                     <div class="discussion-messages" id="chat-messages">
-                        <div class="loading-messages"><?php echo t('event_details.loading_messages'); ?></div>
+                        <div class="loading-messages">
+                            <?= t('event_details.loading_messages') ?>
+                        </div>
                     </div>
-                    
+
+                    <!-- Formulaire de chat, soumis côté JS (pas de POST PHP classique) -->
                     <form class="discussion-form" id="chat-form" onsubmit="return false;">
-                        <input type="file" id="chat-image-input" accept="image/*" style="display:none" onchange="window.activityChat.handleImageSelect(event)">
-                        <div id="chat-image-preview" style="display:none; margin-bottom:8px;">
-                            <img id="chat-preview-img" src="" alt="Preview" style="max-width:100px; max-height:100px; margin:5px; border-radius:8px;">
-                            <button type="button" onclick="window.activityChat.removeImagePreview()" style="background:#ff4444; color:white; border:none; padding:4px 8px; cursor:pointer; border-radius:4px;">×</button>
-                        </div>
-                        <div style="display:flex; gap:8px; align-items:center;">
-                            <button type="button" class="btn-attach" onclick="document.getElementById('chat-image-input').click()" title="Joindre une image" style="background:#55D5E0; color:white; border:none; padding:8px 12px; cursor:pointer; border-radius:4px; font-size:18px;">
-                                📎
-                            </button>
-                            <input type="text" id="chat-input" placeholder="<?php echo t('event_details.type_message'); ?>" class="message-input" autocomplete="off" style="flex:1;">
-                            <button type="submit" class="btn btn-primary"><?php echo t('event_details.send_button'); ?></button>
-                        </div>
+                        <input
+                            type="text"
+                            id="chat-input"
+                            class="message-input"
+                            placeholder="Votre message..."
+                        >
+                        <button type="submit" class="btn btn-primary">
+                            <?= t('event_details.send_button') ?>
+                        </button>
                     </form>
                 <?php endif; ?>
-            </div>
-            <!-- Reviews Section -->
-            <?php if (!empty($reviews) || (isset($_SESSION['user_id']) && $isUserRegistered && strtotime($event['event_date']) < time())): ?>
-            <div class="event-reviews card">
-                <h2 class="reviews-title">
-                    ⭐ Avis des participants
-                    <?php if (!empty($reviews)): ?>
-                        <span class="average-rating">
-                            <?php echo $averageRating; ?>/5 
-                            <span class="rating-stars">
-                                <?php 
-                                for ($i = 1; $i <= 5; $i++) {
-                                    echo $i <= round($averageRating) ? '★' : '☆';
-                                }
-                                ?>
-                            </span>
-                            <span class="review-count">(<?php echo count($reviews); ?> avis)</span>
-                        </span>
-                    <?php endif; ?>
-                </h2>
+            </section>
 
+            <!-- ===================== Section Avis (si événement passé) ===================== -->
+            <?php if (strtotime($event['event_date']) < time()): ?>
+            <section class="event-reviews card">
+                <h2><span style="margin-right:0.5rem;">⭐</span> Avis (<?= $averageRating ?>/5)</h2>
+
+                <!-- Message de succès (GET &review=success) -->
                 <?php if ($reviewMessage): ?>
-                    <div class="alert alert-success">
-                        <?php echo htmlspecialchars($reviewMessage); ?>
-                    </div>
+                    <div class="alert alert-success"><?= $reviewMessage ?></div>
                 <?php endif; ?>
-                
+
+                <!-- Message d'erreur serveur (validation PHP) -->
                 <?php if ($reviewError): ?>
-                    <div class="alert alert-error">
-                        <?php echo htmlspecialchars($reviewError); ?>
-                    </div>
+                    <div class="alert alert-error"><?= $reviewError ?></div>
                 <?php endif; ?>
 
-                <?php if (isset($_SESSION['user_id']) && $isUserRegistered && strtotime($event['event_date']) < time()): ?>
-                    <div class="add-review-form-container">
-                        <button id="toggleReviewForm" class="btn btn-primary" onclick="document.getElementById('reviewFormContent').classList.toggle('hidden')">
-                            <?php echo $userReview ? '✏️ Modifier mon avis' : '✍️ Laisser un avis'; ?>
-                        </button>
-                        
-                        <div id="reviewFormContent" class="review-form-inline hidden">
-                            <form method="POST" class="review-form-compact">
-                                <div class="form-group">
-                                    <label>Note *</label>
-                                    <div class="star-rating-inline">
-                                        <?php for ($i = 5; $i >= 1; $i--): ?>
-                                            <input 
-                                                type="radio" 
-                                                id="star<?php echo $i; ?>" 
-                                                name="rating" 
-                                                value="<?php echo $i; ?>"
-                                                <?php echo ($userReview && $userReview['rating'] == $i) ? 'checked' : ''; ?>
-                                                required
-                                            >
-                                            <label for="star<?php echo $i; ?>">★</label>
-                                        <?php endfor; ?>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="comment">Votre commentaire *</label>
-                                    <textarea 
-                                        id="comment" 
-                                        name="comment" 
-                                        rows="4" 
-                                        required
-                                        placeholder="Partagez votre expérience..."
-                                    ><?php echo $userReview ? htmlspecialchars($userReview['comment']) : ''; ?></textarea>
-                                    <small>Minimum 10 caractères</small>
-                                </div>
-                                
-                                <div class="form-actions-inline">
-                                    <button type="submit" name="submit_review" class="btn btn-primary">
-                                        <?php echo $userReview ? '✅ Mettre à jour' : '✅ Publier'; ?>
-                                    </button>
-                                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('reviewFormContent').classList.add('hidden')">
-                                        Annuler
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if (empty($reviews)): ?>
-                    <p class="no-reviews">Aucun avis pour le moment. Soyez le premier à partager votre expérience !</p>
-                <?php else: ?>
-                    <div class="reviews-list">
-                        <?php foreach ($reviews as $review): ?>
-                            <div class="review-item">
-                                <div class="review-header">
-                                    <div class="review-author">
-                                        <div class="author-avatar">
-                                            <?php echo strtoupper(substr($review['first_name'], 0, 1) . substr($review['last_name'], 0, 1)); ?>
-                                        </div>
-                                        <div class="author-info">
-                                            <div class="author-name">
-                                                <?php echo htmlspecialchars($review['first_name'] . ' ' . $review['last_name']); ?>
-                                            </div>
-                                            <div class="review-date">
-                                                <?php echo date('d/m/Y', strtotime($review['created_at'])); ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="review-rating">
-                                        <?php 
-                                        for ($i = 1; $i <= 5; $i++) {
-                                            echo $i <= $review['rating'] ? '<span class="star filled">★</span>' : '<span class="star">☆</span>';
+                <!-- Formulaire d'avis uniquement si l'utilisateur est inscrit -->
+                <?php if ($isUserRegistered): ?>
+                    <form method="POST" class="review-form">
+                        <!-- Notation par étoiles -->
+                        <div class="star-rating-inline">
+                            <?php for ($i = 5; $i >= 1; $i--): ?>
+                                <input
+                                    type="radio"
+                                    id="star<?= $i ?>"
+                                    name="rating"
+                                    value="<?= $i ?>"
+                                    <?php
+                                        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $reviewError) {
+                                            
+                                            echo (isset($_POST['rating']) && (int)$_POST['rating'] == $i) ? 'checked' : '';
                                         }
-                                        ?>
-                                    </div>
-                                </div>
-                                <div class="review-comment">
-                                    <?php echo nl2br(htmlspecialchars($review['comment'])); ?>
+                                        
+                                    ?> required>
+                                <label for="star<?= $i ?>">★</label>
+                            <?php endfor; ?>
+                        </div>
+                        
+                        <!-- Commentaire-->
+                        <textarea
+                            id="comment"
+                            name="comment"
+                            required
+                            minlength="10"
+                            placeholder="Donner votre avis... "
+                        ><?php
+                            if ($_SERVER['REQUEST_METHOD'] === 'POST' && $reviewError) {
+                                echo isset($_POST['comment'])
+                                    ? trim(htmlspecialchars($_POST['comment']))
+                                    : '';
+                            }
+                        ?></textarea>
+                        
+                        <!-- Compteur + bouton (JS gère le disabled) -->
+                        <div class="review-actions-row">
+                            <small class="review-counter"></small>
+                            <button
+                                type="submit"
+                                name="submit_review"
+                                class="btn btn-primary"
+                                disabled
+                            >
+                                Publier l'avis
+                            </button>
+                        </div>
+                        
+                        <!-- Erreur inline gérée côté JS -->
+                        <div class="review-error" style="display:none;"></div>
+                    </form>
+                <?php endif; ?>
+
+                <!-- Liste des avis existants -->
+                <div class="reviews-list">
+                    <?php foreach ($reviews as $rev): ?>
+                        <div
+                            class="review-item"
+                            style="
+                                border-left:4px solid #f5f5f5;
+                                background:#fff;
+                                border-radius:10px;
+                                margin-bottom:1.2rem;
+                                padding:1.2rem 1.5rem;
+                                box-shadow:0 2px 8px rgba(0,0,0,0.04);
+                            "
+                        >
+                            <div
+                                style="
+                                    display:flex;
+                                    align-items:center;
+                                    gap:1rem;
+                                    margin-bottom:0.5rem;
+                                "
+                            >
+                                <div>
+                                    <!-- Nom complet de l'auteur de l'avis -->
+                                    <span style="font-weight:700; font-size:1.08rem; color:#222;">
+                                        <?= htmlspecialchars($rev['first_name'] . ' ' . $rev['last_name']) ?>
+                                    </span>
+
+                                    <!-- Note numérique + étoiles -->
+                                    <span style="color:#888; font-size:0.98rem; margin-left:0.5rem;">
+                                        (<?= $rev['rating'] ?>/5)
+                                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                                            <span
+                                                style="
+                                                    color:<?= $i <= $rev['rating'] ? '#deb514':'#ccc' ?>;
+                                                    font-size:1.1em;
+                                                "
+                                            >
+                                                ★
+                                            </span>
+                                        <?php endfor; ?>
+                                    </span>
+
+                                    <!-- Date de l'avis -->
+                                    <span style="color:#aaa; font-size:0.92rem; margin-left:0.7rem;">
+                                        <?= date('d/m/Y', strtotime($rev['created_at'] ?? 'now')) ?>
+                                    </span>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-            <?php endif; ?>
-            <!-- Participants List -->
-            <div class="event-participants card">
-                <h2 class="participants-title">
-                    👥 <?php echo t('event_details.registered_participants'); ?> (<?php echo count($participants); ?>/<?php echo htmlspecialchars($event['max_participants'], ENT_QUOTES, 'UTF-8'); ?>)
-                </h2>
-                <?php if (empty($participants)): ?>
-                    <p class="no-participants"><?php echo getCurrentLanguage() === 'fr' ? 'Aucun participant inscrit pour le moment. Soyez le premier !' : 'No participants registered yet. Be the first!'; ?></p>
-                <?php else: ?>
-                    <div class="participants-list">
-                        <?php foreach ($participants as $participant): ?>
-                            <div class="participant-item">
-                                <div class="participant-avatar">
-                                    <?php if (!empty($participant['avatar'])): ?>
-                                        <img src="<?php echo htmlspecialchars($participant['avatar'], ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($participant['first_name'], ENT_QUOTES, 'UTF-8'); ?>">
-                                    <?php else: ?>
-                                        <div class="avatar-placeholder">
-                                            <?php echo strtoupper(substr($participant['first_name'], 0, 1) . substr($participant['last_name'], 0, 1)); ?>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="participant-info">
-                                    <div class="participant-name"><?php echo htmlspecialchars($participant['first_name'] . ' ' . $participant['last_name'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                    <div class="participant-username">@<?php echo htmlspecialchars($participant['username'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                </div>
-                                <div class="participant-date">
-                                    Inscrit le <?php echo date('d/m/Y', strtotime($participant['registered_at'])); ?>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
 
-        <!-- Sidebar -->
-        <aside class="event-sidebar">
-            <!-- Participate Card -->
-            <div class="participate-card card">
-                <h3 class="sidebar-title"><?php echo getCurrentLanguage() === 'fr' ? 'Participer' : 'Participate'; ?></h3>
-                <div class="capacity-info">
-                    <p class="capacity-text">
-                        <?php echo getCurrentLanguage() === 'fr' ? 'Capacité' : 'Capacity'; ?>: <strong><span id="participant-count"><?php echo count($participants); ?></span>/<?php echo htmlspecialchars($event['max_participants'], ENT_QUOTES, 'UTF-8'); ?></strong>
-                    </p>
-                </div>
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <?php if ($isUserRegistered): ?>
-                        <button class="btn btn-danger btn-block btn-unsubscribe" data-activity-id="<?php echo $event_id; ?>">
-                            ✓ <?php echo t('event_details.unregister_button'); ?>
-                        </button>
-                        <?php
-                        // Vérifier si l'activité est passée pour afficher le bouton d'avis
-                        $eventDate = strtotime($event['event_date']);
-                        $now = time();
-                        if ($eventDate < $now): ?>
-                            <a href="activity-review.php?id=<?php echo $event_id; ?>" class="btn btn-secondary btn-block" style="margin-top: 10px;">
-                                ⭐ Laisser un avis
-                            </a>
-                        <?php endif; ?>
-                    <?php else: ?>
-                        <button class="btn btn-primary btn-block btn-subscribe" data-activity-id="<?php echo $event_id; ?>">
-                            <?php echo t('event_details.register_button'); ?>
-                        </button>
-                    <?php endif; ?>
-                <?php else: ?>
-                    <a href="../auth/login.php" class="btn btn-primary btn-block"><?php echo t('event_details.login_to_register'); ?></a>
-                <?php endif; ?>
-            </div>
-
-            <!-- Other Activities Card -->
-            <div class="other-activities card">
-                <h3 class="sidebar-title"><?php echo t('event_details.other_activities'); ?></h3>
-                <div class="activities-list">
-                    <?php foreach ($otherActivities as $other): ?>
-                        <div class="activity-mini">
-                            <span class="activity-mini-badge" style="background-color: <?php echo htmlspecialchars($other['category_color'] ?? '#3498db', ENT_QUOTES, 'UTF-8'); ?>;">
-                                <?php echo htmlspecialchars($other['category_icon'] ?? '📌', ENT_NOQUOTES, 'UTF-8'); ?>
-                                <?php echo htmlspecialchars($other['category_name'], ENT_QUOTES, 'UTF-8'); ?>
-                            </span>
-                            <h4 class="activity-mini-title"><?php echo htmlspecialchars($other['title'], ENT_QUOTES, 'UTF-8'); ?></h4>
-                            <p class="activity-mini-excerpt"><?php echo htmlspecialchars(substr($other['description'], 0, 60) . '...', ENT_QUOTES, 'UTF-8'); ?></p>
-                            <p class="activity-mini-meta">
-                                📍 <?php echo htmlspecialchars($other['location'], ENT_QUOTES, 'UTF-8'); ?><br>
-                                📅 <?php echo formatEventDate($other['date']); ?><br>
-                                👤 <?php echo htmlspecialchars($other['creator_first_name'] . ' ' . $other['creator_last_name'], ENT_QUOTES, 'UTF-8'); ?>
-                            </p>
-                            <div class="activity-mini-footer">
-                                <span class="places"><?php echo htmlspecialchars($other['current_participants'], ENT_QUOTES, 'UTF-8'); ?>/<?php echo htmlspecialchars($other['max_participants'], ENT_QUOTES, 'UTF-8'); ?> inscrits</span>
-                                <a href="event-details.php?id=<?php echo htmlspecialchars($other['id'], ENT_QUOTES, 'UTF-8'); ?>" class="btn-mini">Voir</a>
+                            <!-- Commentaire (affiché multi-lignes, protégé XSS) -->
+                            <div
+                                style="
+                                    font-size:1.05rem;
+                                    color:#222;
+                                    margin-left:2.5rem;
+                                    white-space:pre-line;
+                                "
+                            >
+                                <?= nl2br(htmlspecialchars($rev['comment'])) ?>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
+            </section>
+            <?php endif; ?> 
+        </main>
+
+        <!-- ===================== Sidebar (participants + suggestions) ===================== -->
+        <aside class="event-sidebar">
+            <!-- Bloc participants -->
+            <div class="card">
+                <h3>Participants (<?= count($participants) ?>/<?= $event['max_participants'] ?>)</h3>
+
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <button class="btn <?= $isUserRegistered ? 'btn-danger' : 'btn-primary' ?> btn-block">
+                        <?= $isUserRegistered ? 'Se désinscrire' : 'S\'inscrire' ?>
+                    </button>
+                <?php endif; ?>
             </div>
+
+            <!-- Suggestions d'activités similaires -->
+            <?php if (!empty($otherActivities)): ?>
+            <div class="card" style="margin-top:2rem;">
+                <h3 style="margin-bottom:1rem;">Autres activités à découvrir</h3>
+
+                <div class="events-grid" style="grid-template-columns:1fr; gap:1rem;">
+                <?php foreach ($otherActivities as $act): ?>
+                    <a
+                        href="event-details.php?id=<?= (int)$act['id'] ?>"
+                        class="event-card"
+                        style="text-decoration:none; color:inherit;"
+                    >
+                        <!-- Illustration / image de l'activité -->
+                        <div
+                            class="card-media"
+                            style="
+                                background-image:url('<?= htmlspecialchars($act['image'] ?? 'https://picsum.photos/800/600', ENT_QUOTES) ?>');
+                                height:80px;
+                                background-size:cover;
+                                background-position:center;
+                                border-radius:12px 12px 0 0;
+                                display:flex;
+                                align-items:flex-start;
+                                justify-content:space-between;
+                                padding:0.75rem;
+                                position:relative;
+                            "
+                        >
+                            <!-- Badge catégorie -->
+                            <span
+                                class="badge"
+                                style="
+                                    background:rgba(255,255,255,0.95);
+                                    color:var(--accent-structure);
+                                    padding:0.4rem 0.75rem;
+                                    border-radius:999px;
+                                    font-weight:600;
+                                    font-size:0.8rem;
+                                    box-shadow:0 2px 6px rgba(47,69,88,0.1);
+                                    display:inline-block;
+                                "
+                            >
+                                <?= htmlspecialchars($act['category_name']) ?>
+                            </span>
+                        </div>
+
+                        <!-- Contenu texte de la carte -->
+                        <div
+                            class="card-body"
+                            style="padding:1rem; display:flex; flex-direction:column; gap:0.6rem;"
+                        >
+                            <h3
+                                class="card-title"
+                                style="
+                                    font-size:1.05rem;
+                                    margin:0;
+                                    color:var(--accent-structure);
+                                    font-weight:700;
+                                    line-height:1.3;
+                                "
+                            >
+                                <?= htmlspecialchars($act['title']) ?>
+                            </h3>
+
+                            <p
+                                class="card-excerpt"
+                                style="margin:0; color:#666; font-size:0.9rem; line-height:1.4;"
+                            >
+                                <?= htmlspecialchars($act['excerpt']) ?>
+                            </p>
+
+                            <div
+                                class="card-meta"
+                                style="
+                                    font-size:0.85rem;
+                                    color:var(--muted-color);
+                                    display:flex;
+                                    flex-direction:column;
+                                    gap:0.3rem;
+                                    margin-top:0.5rem;
+                                "
+                            >
+                                <span
+                                    class="meta-item"
+                                    style="display:flex; align-items:center; gap:0.4rem;"
+                                >
+                                    📍 <?= htmlspecialchars($act['location']) ?>
+                                </span>
+                                <span
+                                    class="meta-item"
+                                    style="display:flex; align-items:center; gap:0.4rem;"
+                                >
+                                    📅 <?= formatEventDate($act['event_date']) ?>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
         </aside>
     </div>
 </div>
 
+<!-- Scripts JS de la page -->
 <script src="../assets/js/activity-registration.js"></script>
 <script src="../assets/js/activity-chat.js"></script>
+<script src="../assets/js/review-form-validation.js"></script>
 
 <script>
-// Fonction pour afficher des notifications
-function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.textContent = message;
-    notification.style.cssText = `
-        position: fixed;
-        top: 80px;
-        right: 20px;
-        background: ${type === 'success' ? '#4caf50' : '#2196F3'};
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        z-index: 9999;
-        animation: slideInRight 0.3s ease, slideOutRight 0.3s ease 2.7s;
-        font-weight: 500;
-    `;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
-}
-
-// Ajouter les animations CSS si elles n'existent pas
-if (!document.querySelector('#notification-styles')) {
-    const style = document.createElement('style');
-    style.id = 'notification-styles';
-    style.textContent = `
-        @keyframes slideInRight {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// Gestion du bouton favoris
-document.addEventListener('DOMContentLoaded', function() {
-    const favoriteBtn = document.querySelector('.favorite-btn-large');
-    
-    console.log('Bouton favori trouvé:', favoriteBtn);
-    
-    if (favoriteBtn) {
-        console.log('État initial du bouton:', favoriteBtn.classList.contains('active') ? 'actif' : 'inactif');
-        
-        favoriteBtn.addEventListener('click', function() {
-            const activityId = this.dataset.activityId;
-            const isActive = this.classList.contains('active');
-            const action = isActive ? 'remove' : 'add';
-            
-            console.log('Clic sur le bouton favori - Activity ID:', activityId, 'Action:', action);
-            
-            // Demander confirmation pour la suppression
-            if (isActive && !confirm('Retirer cette activité de vos favoris ?')) {
-                console.log('Suppression annulée par l\'utilisateur');
-                return;
-            }
-            
-            const apiUrl = 'api/favorite-toggle.php';
-            console.log('Appel API:', apiUrl);
-            
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `activity_id=${activityId}&action=${action}`
-            })
-            .then(response => {
-                console.log('Réponse HTTP:', response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('Données reçues:', data);
-                
-                if (data.success) {
-                    this.classList.toggle('active');
-                    this.title = this.classList.contains('active') ? 'Retirer des favoris' : 'Ajouter aux favoris';
-                    
-                    console.log('Nouveau statut:', this.classList.contains('active') ? 'actif' : 'inactif');
-                    
-                    // Animation
-                    const heartIcon = this.querySelector('.heart-icon');
-                    if (this.classList.contains('active')) {
-                        heartIcon.style.animation = 'heartBeat 0.3s ease';
-                        setTimeout(() => {
-                            heartIcon.style.animation = '';
-                        }, 300);
-                        // Message de succès pour l'ajout
-                        showNotification('❤️ Ajouté aux favoris', 'success');
-                    } else {
-                        // Message pour la suppression
-                        showNotification('Retiré des favoris', 'info');
-                    }
-                } else {
-                    console.error('Erreur API:', data.message);
-                    alert('Erreur: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Erreur complète:', error);
-                alert('Erreur de connexion. Vérifiez la console pour plus de détails.');
-            });
-        });
+/**
+ * Gestion du bouton favoris (AJAX)
+ * - Toggle visuel (.active)
+ * - Appel à api/favorite-toggle.php
+ * - Affichage d'un petit message inline
+ */
+(function() {
+  const favoriteBtn = document.querySelector('.favorite-btn-large');
+  if (favoriteBtn) {
+    let favMsg = document.querySelector('.favorite-message');
+    if (!favMsg) {
+      favMsg = document.createElement('div');
+      favMsg.className = 'favorite-message';
+      favMsg.style.display = 'none';
+      document.body.appendChild(favMsg);
     }
+
+    function showFavMsg(txt) {
+      favMsg.textContent = txt;
+      favMsg.style.display = 'block';
+      setTimeout(() => { favMsg.style.display = 'none'; }, 2200);
+    }
+
+    favoriteBtn.addEventListener('click', function() {
+      const activityId = this.dataset.activityId;
+      const isActive   = this.classList.contains('active');
+      const action     = isActive ? 'remove' : 'add';
+
+      fetch('api/favorite-toggle.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `activity_id=${activityId}&action=${action}`
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          this.classList.toggle('active');
+          this.title = this.classList.contains('active')
+            ? 'Retirer des favoris'
+            : 'Ajouter aux favoris';
+
+          const heartIcon = this.querySelector('.heart-icon');
+          if (this.classList.contains('active')) {
+            if (heartIcon) {
+              heartIcon.style.animation = 'heartBeat 0.3s ease';
+              setTimeout(() => { heartIcon.style.animation = ''; }, 300);
+            }
+            showFavMsg('❤️ Ajouté aux favoris');
+          } else {
+            showFavMsg('Retiré des favoris');
+          }
+        } else {
+          showFavMsg('Erreur: ' + data.message);
+        }
+      })
+      .catch(() => showFavMsg('Erreur de connexion.'));
+    });
+  }
+})();
+</script>
+
+<?php if (isset($_GET['review']) && $_GET['review'] === 'success'): ?>
+<!-- Après un succès, on vide le textarea commentaire au chargement -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var comment = document.getElementById('comment');
+  if (comment) comment.value = '';
 });
 </script>
+<?php endif; ?>
 
 <?php include '../includes/footer.php'; ?>

@@ -10,6 +10,11 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: ../auth/login.php');
     exit;
 }
+// Vérification du code obligatoire avant accès
+if (isset($_SESSION['pending_verif']) && $_SESSION['pending_verif'] === true) {
+    header('Location: ../auth/verify-login.php');
+    exit;
+}
 
 $pageTitle = t('profile.choose_interests_title') . " - AmiGo";
 $pageDescription = t('profile.choose_interests_subtitle');

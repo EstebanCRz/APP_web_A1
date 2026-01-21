@@ -78,8 +78,7 @@ include 'includes/header.php';
             <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=400" alt="Running">
             <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400" alt="Nature">
             <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400" alt="Yoga">
-            <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400" alt="Cuisine">
-        </div>
+            <img src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=400" alt="Music">
         </div>
     </section>
 
