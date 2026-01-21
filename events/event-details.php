@@ -533,76 +533,7 @@ include '../includes/header.php';
 <script src="../assets/js/activity-chat.js"></script>
 <script src="../assets/js/review-form-validation.js"></script>
 
-<script>
-/**
- * Gestion du bouton favoris (AJAX)
- * - Toggle visuel (.active)
- * - Appel à api/favorite-toggle.php
- * - Affichage d'un petit message inline
- */
-(function() {
-  const favoriteBtn = document.querySelector('.favorite-btn-large');
-  if (favoriteBtn) {
-    let favMsg = document.querySelector('.favorite-message');
-    if (!favMsg) {
-      favMsg = document.createElement('div');
-      favMsg.className = 'favorite-message';
-      favMsg.style.display = 'none';
-      document.body.appendChild(favMsg);
-    }
-
-    function showFavMsg(txt) {
-      favMsg.textContent = txt;
-      favMsg.style.display = 'block';
-      setTimeout(() => { favMsg.style.display = 'none'; }, 2200);
-    }
-
-    favoriteBtn.addEventListener('click', function() {
-      const activityId = this.dataset.activityId;
-      const isActive   = this.classList.contains('active');
-      const action     = isActive ? 'remove' : 'add';
-
-      fetch('api/favorite-toggle.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `activity_id=${activityId}&action=${action}`
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          this.classList.toggle('active');
-          this.title = this.classList.contains('active')
-            ? 'Retirer des favoris'
-            : 'Ajouter aux favoris';
-
-          const heartIcon = this.querySelector('.heart-icon');
-          if (this.classList.contains('active')) {
-            if (heartIcon) {
-              heartIcon.style.animation = 'heartBeat 0.3s ease';
-              setTimeout(() => { heartIcon.style.animation = ''; }, 300);
-            }
-            showFavMsg('❤️ Ajouté aux favoris');
-          } else {
-            showFavMsg('Retiré des favoris');
-          }
-        } else {
-          showFavMsg('Erreur: ' + data.message);
-        }
-      })
-      .catch(() => showFavMsg('Erreur de connexion.'));
-    });
-  }
-})();
-</script>
-
-<?php if (isset($_GET['review']) && $_GET['review'] === 'success'): ?>
-<!-- Après un succès, on vide le textarea commentaire au chargement -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  var comment = document.getElementById('comment');
-  if (comment) comment.value = '';
-});
-</script>
-<?php endif; ?>
+<!-- Fichier JavaScript séparé -->
+<script src="js/event-details.js"></script>
 
 <?php include '../includes/footer.php'; ?>

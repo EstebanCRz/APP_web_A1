@@ -17,8 +17,7 @@ $current_dir = basename(dirname($_SERVER['PHP_SELF']));
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="<?php echo isset($pageDescription) ? htmlspecialchars($pageDescription) : 'AmiGo - Plateforme de rencontre et d\'événements'; ?>">
-    <title><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) : 'AmiGo'; ?></title>
+    <meta name="description" content="<?php echo isset($pageDescription) ? htmlspecialchars($pageDescription) : 'AmiGo - Plateforme de rencontre et d\'événements'; ?>">    <link rel="icon" type="image/png" href="<?php echo $prefix; ?>assets/images/cap.png">    <title><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) : 'AmiGo'; ?></title>
     
     <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/header.css">
     <link rel="stylesheet" href="<?php echo $prefix; ?>assets/css/footer.css">
@@ -103,40 +102,64 @@ $current_dir = basename(dirname($_SERVER['PHP_SELF']));
     </header>
     
     <script>
-        // Menu burger toggle
-        const burgerMenu = document.getElementById('burgerMenu');
-        const mainNav = document.getElementById('mainNav');
-        const menuOverlay = document.getElementById('menuOverlay');
-        
-        if (burgerMenu && mainNav) {
-            burgerMenu.addEventListener('click', function() {
-                this.classList.toggle('active');
-                mainNav.classList.toggle('active');
-                menuOverlay.classList.toggle('active');
-                document.body.classList.toggle('menu-open');
-            });
+        // Menu burger toggle - Version améliorée
+        document.addEventListener('DOMContentLoaded', function() {
+            const burgerMenu = document.getElementById('burgerMenu');
+            const mainNav = document.getElementById('mainNav');
+            const menuOverlay = document.getElementById('menuOverlay');
             
-            // Fermer le menu en cliquant sur l'overlay
-            if (menuOverlay) {
-                menuOverlay.addEventListener('click', () => {
+            if (burgerMenu && mainNav && menuOverlay) {
+                // Toggle menu
+                burgerMenu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleMenu();
+                });
+                
+                // Fermer le menu en cliquant sur l'overlay
+                menuOverlay.addEventListener('click', function() {
+                    closeMenu();
+                });
+                
+                // Fermer le menu en cliquant sur un lien
+                const navLinks = mainNav.querySelectorAll('a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        closeMenu();
+                    });
+                });
+                
+                // Fermer le menu avec la touche Échap
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && mainNav.classList.contains('active')) {
+                        closeMenu();
+                    }
+                });
+                
+                // Fonctions helper
+                function toggleMenu() {
+                    const isActive = mainNav.classList.contains('active');
+                    if (isActive) {
+                        closeMenu();
+                    } else {
+                        openMenu();
+                    }
+                }
+                
+                function openMenu() {
+                    burgerMenu.classList.add('active');
+                    mainNav.classList.add('active');
+                    menuOverlay.classList.add('active');
+                    document.body.classList.add('menu-open');
+                }
+                
+                function closeMenu() {
                     burgerMenu.classList.remove('active');
                     mainNav.classList.remove('active');
                     menuOverlay.classList.remove('active');
                     document.body.classList.remove('menu-open');
-                });
+                }
             }
-            
-            // Fermer le menu en cliquant sur un lien
-            const navLinks = mainNav.querySelectorAll('a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    burgerMenu.classList.remove('active');
-                    mainNav.classList.remove('active');
-                    menuOverlay.classList.remove('active');
-                    document.body.classList.remove('menu-open');
-                });
-            });
-        }
+        });
     </script>
     
     <?php if (isset($_SESSION['user_id'])): ?>

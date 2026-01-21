@@ -17,7 +17,8 @@ $pageDescription = t('events.all_events');
 $assetsDepth = 1;
 $customCSS = [
     "../assets/css/style.css",
-    "css/events-list.css"
+    "css/events-list.css",
+    "css/search-bar.css"
 ];
 
 // Récupération des filtres depuis l'URL
@@ -27,6 +28,30 @@ $filters = [
     'time_filter' => (string) ($_GET['time'] ?? ''),
     'date_filter' => (string) ($_GET['date'] ?? '')
 ];
+
+// Fonction pour nettoyer les entrées utilisateur
+function cleanInput($input) {
+    // Supprimer les caractères null (byte 0x00)
+    $input = str_replace(chr(0), '', $input);
+    $input = str_replace("\0", '', $input);
+    $input = str_replace("\\0", '', $input);
+    
+    // Supprimer les caractères de contrôle (0x00-0x1F sauf espaces/tabs/retours)
+    $input = preg_replace('/[\x00-\x08\x0B-\x0C\x0E-\x1F]/', '', $input);
+    
+    // Supprimer les backslashes et astérisques
+    $input = str_replace('\\', '', $input);
+    $input = str_replace('*', '', $input);
+    
+    return trim($input);
+}
+
+// Nettoyer et valider les filtres
+$filters['search'] = cleanInput($filters['search']);
+$filters['search'] = mb_substr($filters['search'], 0, 50); // Limiter à 50 caractères
+$filters['category'] = cleanInput($filters['category']);
+$filters['time_filter'] = cleanInput($filters['time_filter']);
+$filters['date_filter'] = cleanInput($filters['date_filter']);
 
 // Variables pour faciliter l'accès
 $filterDate = $filters['date_filter'];
@@ -120,20 +145,62 @@ include '../includes/header.php';
 
         <!-- Contenu principal -->
         <div class="main-content">
+            <!-- Barre de recherche -->
             <div class="search-section">
-                <form method="GET" class="search-form">
-                    <input type="search" name="search" placeholder="<?php echo t('events.search_placeholder'); ?>" value="<?php echo htmlspecialchars($filters['search'], ENT_QUOTES, 'UTF-8'); ?>">
-                    <button type="submit" class="btn btn-primary"><?php echo t('events.search_button'); ?></button>
+                <form method="GET" class="search-form" role="search" aria-label="Rechercher des événements">
+                    <input 
+                        type="search" 
+                        name="search" 
+                        placeholder="<?php echo t('events.search_placeholder'); ?>" 
+                        value="<?php echo htmlspecialchars($filters['search'], ENT_QUOTES, 'UTF-8'); ?>"
+                        aria-label="Terme de recherche"
+                        autocomplete="off"
+                        maxlength="50"
+                        pattern="[a-zA-Z0-9\s\-'àâäéèêëïîôùûüÿçÀÂÄÉÈÊËÏÎÔÙÛÜŸÇ]*"
+                        title="Recherche limitée à 50 caractères (lettres, chiffres, espaces et tirets uniquement)"
+                    >
+                    <button type="submit" class="btn btn-primary">
+                        <span>🔍</span> <?php echo t('events.search_button'); ?>
+                    </button>
                 </form>
+                
+                <?php if (!empty($filters['search'])): ?>
+                <div class="search-results-meta">
+                    <div class="search-results-count">
+                        <strong><?php echo count($events); ?></strong> 
+                        <?php echo count($events) > 1 ? 'événements trouvés' : 'événement trouvé'; ?>
+                    </div>
+                    <div class="search-results-term">
+                        pour <strong>"<?php echo htmlspecialchars($filters['search'], ENT_QUOTES, 'UTF-8'); ?>"</strong>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
 
-            <!-- Carte Google Maps -->
-            <div class="map-section">
+            <!-- Carte Maps -->
+            <div class="map-section" id="mapSection">
+                <button class="map-toggle-btn" id="mapToggleBtn" onclick="toggleMap()" aria-label="Toggle map visibility">
+                    <span id="mapToggleIcon">🗺️</span> <span id="mapToggleText">Masquer la carte</span>
+                </button>
                 <div id="events-map" class="events-map"></div>
             </div>
 
     <?php if (empty($events)): ?>
-        <p>Aucun événement trouvé.</p>
+        <div class="no-results-message">
+            <h3>🔍 Aucun événement trouvé</h3>
+            <p>Nous n'avons trouvé aucun événement correspondant à vos critères de recherche.</p>
+            <?php if (!empty($filters['search'])): ?>
+            <p>Essayez avec un terme différent ou <a href="events-list.php">réinitialisez la recherche</a>.</p>
+            <?php endif; ?>
+            <div class="search-suggestions">
+                <strong>Suggestions :</strong>
+                <ul>
+                    <li>Vérifiez l'orthographe de vos mots-clés</li>
+                    <li>Utilisez des termes plus généraux</li>
+                    <li>Essayez d'autres filtres</li>
+                </ul>
+            </div>
+        </div>
     <?php else: ?>
         <div class="events-grid">
             <?php foreach ($events as $event):
@@ -194,218 +261,52 @@ include '../includes/header.php';
 
 <script src="../assets/js/activity-registration.js"></script>
 
+<!-- Fonction pour toggle la carte sur mobile -->
+<script>
+function toggleMap() {
+    const mapSection = document.getElementById('mapSection');
+    const toggleText = document.getElementById('mapToggleText');
+    const toggleIcon = document.getElementById('mapToggleIcon');
+    
+    if (mapSection && toggleText && toggleIcon) {
+        mapSection.classList.toggle('collapsed');
+        
+        if (mapSection.classList.contains('collapsed')) {
+            toggleText.textContent = 'Afficher la carte';
+            toggleIcon.textContent = '📍';
+        } else {
+            toggleText.textContent = 'Masquer la carte';
+            toggleIcon.textContent = '🗺️';
+        }
+    }
+}
+
+// Par défaut, masquer la carte sur mobile au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth <= 768) {
+        const mapSection = document.getElementById('mapSection');
+        const toggleText = document.getElementById('mapToggleText');
+        const toggleIcon = document.getElementById('mapToggleIcon');
+        if (mapSection && toggleText && toggleIcon) {
+            mapSection.classList.add('collapsed');
+            toggleText.textContent = 'Afficher la carte';
+            toggleIcon.textContent = '📍';
+        }
+    }
+});
+</script>
+
 <!-- Leaflet CSS et JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<!-- Passer les données PHP au JavaScript -->
 <script>
-// Initialiser la carte au chargement
-document.addEventListener('DOMContentLoaded', function() {
-    // Centre par défaut (France)
-    const defaultCenter = [46.603354, 1.888334];
-    
-    // Création de la carte Leaflet
-    const map = L.map('events-map').setView(defaultCenter, 6);
-    
-    // Ajouter la couche de tuiles OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19,
-        minZoom: 3
-    }).addTo(map);
-    
-    // Données des événements
-    const events = <?php echo json_encode($events, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
-    
-    // Groupe de marqueurs pour ajuster les bounds
-    const markers = [];
-    
-    // Icône personnalisée ROUGE pour les marqueurs
-    const redIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-    });
-    
-    // Coordonnées par défaut des villes françaises
-    const cityCoordinates = {
-        'Paris': [48.8566, 2.3522],
-        'Lyon': [45.7640, 4.8357],
-        'Marseille': [43.2965, 5.3698],
-        'Toulouse': [43.6047, 1.4442],
-        'Nice': [43.7102, 7.2620],
-        'Nantes': [47.2184, -1.5536],
-        'Strasbourg': [48.5734, 7.7521],
-        'Montpellier': [43.6108, 3.8767],
-        'Bordeaux': [44.8378, -0.5792],
-        'Lille': [50.6292, 3.0573],
-        'Rennes': [48.1173, -1.6778],
-        'Reims': [49.2583, 4.0317],
-        'Le Havre': [49.4944, 0.1079],
-        'Saint-Étienne': [45.4397, 4.3872],
-        'Toulon': [43.1242, 5.9280],
-        'Grenoble': [45.1885, 5.7245],
-        'Dijon': [47.3220, 5.0415],
-        'Angers': [47.4784, -0.5632],
-        'Nîmes': [43.8367, 4.3601],
-        'Villeurbanne': [45.7667, 4.8833],
-        'Clermont-Ferrand': [45.7772, 3.0870],
-        'Le Mans': [48.0077, 0.1984],
-        'Aix-en-Provence': [43.5297, 5.4474],
-        'Brest': [48.3904, -4.4861],
-        'Tours': [47.3941, 0.6848],
-        'Amiens': [49.8942, 2.2957],
-        'Limoges': [45.8336, 1.2611],
-        'Annecy': [45.8992, 6.1294],
-        'Perpignan': [42.6886, 2.8948],
-        'Besançon': [47.2380, 6.0243],
-        'Orléans': [47.9029, 1.9093],
-        'Metz': [49.1193, 6.1757],
-        'Rouen': [49.4431, 1.0993],
-        'Mulhouse': [47.7508, 7.3359],
-        'Caen': [49.1829, -0.3707],
-        'Nancy': [48.6921, 6.1844],
-        'Argenteuil': [48.9475, 2.2466],
-        'Saint-Denis': [48.9362, 2.3574],
-        'Montreuil': [48.8636, 2.4436],
-        'Roubaix': [50.6942, 3.1746],
-        'Tourcoing': [50.7236, 3.1609],
-        'Nanterre': [48.8925, 2.2069],
-        'Avignon': [43.9493, 4.8055],
-        'Poitiers': [46.5802, 0.3404],
-        'Versailles': [48.8014, 2.1301],
-        'Courbevoie': [48.8976, 2.2532],
-        'Créteil': [48.7903, 2.4555],
-        'Pau': [43.2951, -0.3708],
-        'Vitry-sur-Seine': [48.7873, 2.3937],
-        'Calais': [50.9513, 1.8587],
-        'La Rochelle': [46.1591, -1.1520],
-        'Cannes': [43.5528, 7.0174],
-        'Antibes': [43.5808, 7.1239],
-        'Ajaccio': [41.9270, 8.7369],
-        'Bastia': [42.7028, 9.4503]
-    };
-    
-    // Fonction pour obtenir les coordonnées d'une ville depuis le mapping
-    function getCityCoordinates(location) {
-        for (const [city, coords] of Object.entries(cityCoordinates)) {
-            if (location.includes(city)) {
-                return coords;
-            }
-        }
-        return null;
-    }
-    
-    // Fonction pour géocoder une adresse avec Nominatim (avec fallback)
-    async function geocodeAddress(address) {
-        // D'abord essayer de trouver la ville dans notre mapping
-        const cityCoords = getCityCoordinates(address);
-        if (cityCoords) {
-            return cityCoords;
-        }
-        
-        // Sinon essayer le géocodage Nominatim
-        try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}, France&limit=1`);
-            const data = await response.json();
-            if (data && data.length > 0) {
-                return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-            }
-        } catch (error) {
-            console.error('Erreur de géocodage:', error);
-        }
-        
-        return null;
-    }
-    
-    // Créer les marqueurs pour chaque événement
-    let processedCount = 0;
-    
-    events.forEach(async (event) => {
-        const coords = await geocodeAddress(event.location);
-        
-        if (coords) {
-            // Créer le marqueur ROUGE
-            const marker = L.marker(coords, { icon: redIcon }).addTo(map);
-            
-            // Contenu du popup
-            const popupContent = `
-                <div class="leaflet-popup-custom" style="min-width: 200px;">
-                    <h3 style="margin: 0 0 10px 0; color: #2F4558; font-size: 16px; font-weight: 600;">${event.title}</h3>
-                    <div style="margin: 8px 0; color: #666; font-size: 14px; line-height: 1.8;">
-                        <div style="margin: 5px 0;"><strong>📍</strong> ${event.location}</div>
-                        <div style="margin: 5px 0;"><strong>📅</strong> ${event.date} ${event.time}</div>
-                        <div style="margin: 5px 0;"><strong>👥</strong> ${event.taken}/${event.places} inscrits</div>
-                        <div style="margin: 5px 0;"><strong>🎯</strong> ${event.category}</div>
-                    </div>
-                    <a href="event-details.php?id=${event.id}" 
-                       style="display: inline-block; margin-top: 10px; padding: 8px 16px; background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%); color: white; text-decoration: none; border-radius: 20px; font-size: 14px; font-weight: 500; text-align: center; box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3); transition: all 0.3s ease;">
-                        Voir les détails →
-                    </a>
-                </div>
-            `;
-            
-            marker.bindPopup(popupContent, {
-                maxWidth: 300,
-                className: 'custom-popup'
-            });
-            
-            markers.push(marker);
-        }
-        
-        processedCount++;
-        
-        // Ajuster la vue quand tous les marqueurs sont ajoutés
-        if (processedCount === events.length && markers.length > 0) {
-            const group = L.featureGroup(markers);
-            map.fitBounds(group.getBounds().pad(0.1));
-        }
-    });
-    
-    // Si aucun événement, garder la vue par défaut
-    if (events.length === 0) {
-        map.setView(defaultCenter, 6);
-    }
-});
-
-// Gestion des favoris
-function toggleFavorite(button) {
-    const activityId = button.dataset.activityId;
-    const isActive = button.classList.contains('active');
-    const action = isActive ? 'remove' : 'add';
-    
-    fetch('api/favorite-toggle.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `activity_id=${activityId}&action=${action}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            button.classList.toggle('active');
-            button.title = button.classList.contains('active') ? 'Retirer des favoris' : 'Ajouter aux favoris';
-            
-            // Animation
-            if (button.classList.contains('active')) {
-                button.style.animation = 'heartBeat 0.3s ease';
-                setTimeout(() => {
-                    button.style.animation = '';
-                }, 300);
-            }
-        } else {
-            alert('Erreur: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        alert('Erreur de connexion. Vérifiez la console pour plus de détails.');
-    });
-}
+window.evenementsData = <?php echo json_encode($events, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 </script>
+
+<!-- Fichiers JavaScript séparés -->
+<script src="js/search.js"></script>
+<script src="js/events-list.js"></script>
 
 <?php include '../includes/footer.php'; ?>
