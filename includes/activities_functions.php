@@ -11,6 +11,21 @@ require_once __DIR__ . '/config.php';
 function getAllActivities($filters = []) {
     $pdo = getDB();
     
+    // Nettoyer les filtres pour éviter les caractères null et autres problèmes
+    $filters = array_map(function($value) {
+        if (is_string($value)) {
+            // Supprimer tous les types de caractères null et de contrôle
+            $value = str_replace(chr(0), '', $value);
+            $value = str_replace("\0", '', $value);
+            $value = str_replace("\\0", '', $value);
+            $value = preg_replace('/[\x00-\x08\x0B-\x0C\x0E-\x1F]/', '', $value);
+            // Supprimer backslashes et astérisques
+            $value = str_replace('\\', '', $value);
+            $value = str_replace('*', '', $value);
+        }
+        return $value;
+    }, $filters);
+    
     $sql = "SELECT 
                 a.id,
                 a.title,
