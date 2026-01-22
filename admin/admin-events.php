@@ -1,12 +1,80 @@
 <?php
-session_start();
-require_once '../includes/language.php';
-header('Content-Type: text/html; charset=UTF-8');
+require_once '../includes/session.php';
+require_once '../includes/config.php';
+require_once '../includes/admin_functions.php';
 
-$pageTitle = "Gestion des Événements - Admin AmiGo";
-$pageDescription = "Gérer les événements de la plateforme";
+// Vérifier que l'utilisateur est admin
+requireAdmin();
+
+// Gérer la suppression d'une activité
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_activity'])) {
+    try {
+        $stmt = $pdo->prepare('DELETE FROM activities WHERE id = ?');
+        $stmt->execute([$_POST['activity_id']]);
+        $successMsg = "Activité supprimée avec succès.";
+    } catch (Exception $e) {
+        $errorMsg = "Erreur lors de la suppression: " . $e->getMessage();
+    }
+}
+
+// Récupérer les statistiques et activités
+$search = $_GET['search'] ?? '';
+try {
+    // Statistiques par catégorie
+    $stmt = $pdo->prepare('
+        SELECT ac.name as category, COUNT(a.id) as total
+        FROM activity_categories ac
+        LEFT JOIN activities a ON ac.id = a.category_id
+        GROUP BY ac.id, ac.name
+        ORDER BY total DESC
+    ');
+    $stmt->execute();
+    $statsByCategory = $stmt->fetchAll();
+
+    // Statistiques par date (30 derniers jours)
+    $stmt = $pdo->prepare('
+        SELECT DATE(created_at) as date, COUNT(*) as total
+        FROM activities
+        WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        GROUP BY DATE(created_at)
+        ORDER BY date DESC
+    ');
+    $stmt->execute();
+    $statsByDate = $stmt->fetchAll();
+
+    // Liste des activités
+    if ($search) {
+        $stmt = $pdo->prepare('
+            SELECT a.*, ac.name as category_name, u.username as creator_name
+            FROM activities a
+            LEFT JOIN activity_categories ac ON a.category_id = ac.id
+            LEFT JOIN users u ON a.creator_id = u.id
+            WHERE a.title LIKE ? OR a.description LIKE ?
+            ORDER BY a.created_at DESC
+        ');
+        $searchTerm = "%$search%";
+        $stmt->execute([$searchTerm, $searchTerm]);
+    } else {
+        $stmt = $pdo->prepare('
+            SELECT a.*, ac.name as category_name, u.username as creator_name
+            FROM activities a
+            LEFT JOIN activity_categories ac ON a.category_id = ac.id
+            LEFT JOIN users u ON a.creator_id = u.id
+            ORDER BY a.created_at DESC
+        ');
+        $stmt->execute();
+    }
+    $activities = $stmt->fetchAll();
+} catch (Exception $e) {
+    $activities = [];
+    $statsByCategory = [];
+    $statsByDate = [];
+    $errorMsg = "Erreur de chargement: " . $e->getMessage();
+}
+
+$pageTitle = "Gestion des Événements - Admin";
 $assetsDepth = 1;
-$customCSS = "../assets/css/index.css";
+$customCSS = ["css/admin-dashboard.css"];
 
 include '../includes/header.php';
             </select>

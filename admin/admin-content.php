@@ -1,14 +1,39 @@
 <?php
-session_start();
-require_once '../includes/language.php';
-header('Content-Type: text/html; charset=UTF-8');
+require_once '../includes/session.php';
+require_once '../includes/config.php';
+require_once '../includes/admin_functions.php';
 
-$pageTitle = "Gestion du Contenu - Admin AmiGo";
-$pageDescription = "Gérer le contenu de la plateforme";
+// Vérifier que l'utilisateur est admin
+requireAdmin();
+
+$pageTitle = "Gestion du Contenu - Admin";
 $assetsDepth = 1;
-$customCSS = "../assets/css/index.css";
+$customCSS = ["css/admin-dashboard.css"];
 
 include '../includes/header.php';
+?>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>📝 Gestion du Contenu</h1>
+    </div>
+
+    <div class="admin-nav">
+        <a href="admin-dashboard.php">📊 Dashboard</a>
+        <a href="admin-users.php">👥 Utilisateurs</a>
+        <a href="admin-events.php">🎉 Événements</a>
+        <a href="admin-forum.php">💬 Forum</a>
+        <a href="admin-messages.php">✉️ Messages</a>
+        <a href="admin-content.php" class="active">📝 Contenu</a>
+    </div>
+
+    <div class="admin-section">
+        <h2>Gestion du contenu</h2>
+        <p>Cette section est en cours de développement.</p>
+    </div>
+</div>
+
+<?php include '../includes/footer.php';
             </select>
         </div>
     </header>
