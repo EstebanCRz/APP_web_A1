@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once '../includes/session.php';
+session_start();
 header('Content-Type: text/html; charset=UTF-8');
 require_once '../includes/language.php';
 
@@ -29,19 +29,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Envoyer l'email de réinitialisation
         require_once '../includes/send_zoho_mail.php';
-        $resetLink = 'http://localhost/APP_web_A1/auth/reset-password.php?token=' . $token;
+        $resetLink = 'http://localhost/auth/reset-password.php?token=' . $token;
         $subject = 'Réinitialisation de votre mot de passe AmiGo';
         $body = '<h2>Réinitialisation de mot de passe</h2>'
               . '<p>Pour réinitialiser votre mot de passe, cliquez sur le lien ci-dessous&nbsp;:</p>'
-              . '<p><a href="' . $resetLink . '">Réinitialiser mon mot de passe</a></p>'
+              . '<p><a href="' . $resetLink . '" style="display:inline-block; padding:12px 24px; background:#667eea; color:#fff; text-decoration:none; border-radius:6px; margin:1em 0;">Réinitialiser mon mot de passe</a></p>'
               . '<p>Ce lien expirera dans 6 heures.</p>'
+              . '<p>Si vous n\'avez pas demandé cette réinitialisation, ignorez cet email.</p>'
               . '<br><div style="color:#888; font-size:0.95em; margin-top:2em;">© 2026 AmiGo - Tous droits réservés</div>';
         
         try {
-            @sendZohoMail($email, $subject, $body, 'AmiGo', 'amigocontact@zohomail.eu');
+            sendZohoMail($email, $subject, $body, 'AmiGo', 'amigocontact@zohomail.eu');
         } catch (Throwable $e) {
             error_log("Erreur envoi email reset password: " . $e->getMessage());
         }
+        
         $success = true;
     }
 }

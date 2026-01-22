@@ -163,10 +163,14 @@ include '../includes/header.php';
 
     <!-- Onglet Modifier profil -->
     <section class="tab-content active" id="tab-modifier">
-        <div style="padding: 2rem; background: #f9f9f9; border-radius: 8px; text-align: center;">
-            <h3><?php echo t('profile.edit'); ?></h3>
-            <p><?php echo t('profile.upcoming_feature'); ?></p>
-            <a href="profile-edit.php" class="btn btn-primary"><?php echo t('profile.access_settings'); ?></a>
+        <div class="edit-profile-card">
+            <div class="edit-profile-icon">✏️</div>
+            <h3>Modifier mon profil</h3>
+            <p>Personnalisez vos informations, votre photo de profil et vos préférences</p>
+            <a href="profile-edit.php" class="btn-edit-profile">
+                <span>🛠️</span>
+                <span>Accéder aux paramètres</span>
+            </a>
         </div>
     </section>
 

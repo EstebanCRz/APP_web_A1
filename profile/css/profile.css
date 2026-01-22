@@ -1,15 +1,200 @@
 /* Styles spécifiques pour profile */
 
-@import 'style.css';
+/* Amélioration de la lisibilité */
+body {
+    background: #f5f7fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* Carte d'édition de profil */
+.edit-profile-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 3rem 2rem;
+    border-radius: 15px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.edit-profile-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: float 15s ease-in-out infinite;
+}
+
+.edit-profile-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.edit-profile-card h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.edit-profile-card p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.btn-edit-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: white;
+    color: #667eea;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.btn-edit-profile:hover {
+    background: #f6b12d;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(246, 177, 45, 0.5);
+}
+
+.btn-edit-profile span:first-child {
+    font-size: 1.5rem;
+}
+
+/* Onglets du profil - Amélioration */
+.profile-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.tab-btn,
+.tab-btn.btn,
+.profile-tabs .btn {
+    padding: 0.875rem 1.75rem;
+    border: 2px solid #cbd5e0;
+    background: #ffffff;
+    color: #2d3748;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.tab-btn:hover,
+.profile-tabs .btn:hover {
+    background: #f6b12d;
+    border-color: #f6b12d;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(246, 177, 45, 0.3);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Bouton de déconnexion spécifique */
+.profile-tabs .btn-secondary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+}
+
+.profile-tabs .btn-secondary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    border-color: #764ba2;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Amélioration du header de profil */
+.profile-header {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.profile-header h2 {
+    font-size: 2.25rem;
+    color: #1a202c;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+}
+
+.profile-header > p {
+    font-size: 1.15rem;
+    color: #4a5568;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+/* Contenu des onglets - Amélioration */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 /* Bannière de gamification */
 .gamification-banner {
-    background: linear-gradient(135deg, var(--accent-fresh) 0%, var(--accent-trust) 100%);
+    background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
     border-radius: 15px;
-    padding: 25px;
+    padding: 30px;
     margin-bottom: 30px;
     color: white;
-    box-shadow: 0 10px 30px rgba(85, 213, 224, 0.3);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
     position: relative;
     overflow: hidden;
 }
@@ -21,7 +206,7 @@
     right: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
     animation: float 15s ease-in-out infinite;
 }
 
@@ -40,51 +225,57 @@
 }
 
 .level-display, .points-display, .rank-display, .badges-display {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.95);
     backdrop-filter: blur(10px);
-    padding: 20px;
+    padding: 25px 20px;
     border-radius: 12px;
     text-align: center;
-    border: 2px solid rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,1);
     transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .level-display:hover, .points-display:hover, .rank-display:hover, .badges-display:hover {
-    background: rgba(255,255,255,0.25);
-    border-color: var(--accent-warm);
+    background: rgba(255,255,255,1);
+    border-color: #f6b12d;
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(246, 177, 45, 0.3);
+    box-shadow: 0 8px 20px rgba(246, 177, 45, 0.4);
 }
 
 .level-display {
-    border: 3px solid var(--accent-warm);
-    background: rgba(246, 177, 45, 0.15);
+    border: 3px solid #f6b12d;
+    background: rgba(246, 177, 45, 0.95);
+    color: white;
 }
 
 .level-number {
-    font-size: 2.5em;
-    font-weight: bold;
+    font-size: 3em;
+    font-weight: 800;
     margin-bottom: 5px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    color: white;
 }
 
 .level-name {
-    font-size: 0.9em;
-    opacity: 0.95;
-    font-weight: 600;
+    font-size: 1em;
+    opacity: 1;
+    font-weight: 700;
+    color: white;
 }
 
 .points-value, .rank-value {
-    font-size: 2em;
-    font-weight: bold;
-    margin-bottom: 5px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    font-size: 2.5em;
+    font-weight: 800;
+    margin-bottom: 8px;
+    text-shadow: none;
+    color: #2d3748;
 }
 
 .points-label, .rank-label {
-    font-size: 0.85em;
-    opacity: 0.95;
-    font-weight: 500;
+    font-size: 0.9em;
+    opacity: 1;
+    font-weight: 600;
+    color: #4a5568;
 }
 
 .badges-preview {
@@ -106,47 +297,55 @@
 }
 
 .more-badges {
-    background: rgba(255,255,255,0.3);
+    background: rgba(47, 69, 88, 0.8);
+    color: white;
     padding: 5px 10px;
     border-radius: 15px;
     font-size: 0.9em;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .btn-view-badges {
-    background: white;
-    color: var(--accent-structure);
-    padding: 10px 20px;
+    background: #f6b12d;
+    color: white;
+    padding: 12px 24px;
     border-radius: 25px;
     text-decoration: none;
     display: inline-block;
-    font-size: 0.95em;
+    font-size: 1rem;
     font-weight: 700;
     transition: all 0.3s;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    border: 2px solid white;
+    border: 2px solid #f6b12d;
 }
 
 .btn-view-badges:hover {
-    background: var(--accent-warm);
+    background: #e09d1f;
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(246, 177, 45, 0.5);
-    border-color: var(--accent-warm);
+    box-shadow: 0 6px 16px rgba(246, 177, 45, 0.6);
+    border-color: #e09d1f;
 }
 
 .progress-section {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.95);
     backdrop-filter: blur(10px);
-    padding: 15px;
+    padding: 20px;
     border-radius: 10px;
-    border: 2px solid rgba(246, 177, 45, 0.3);
+    border: 2px solid #f6b12d;
     position: relative;
     z-index: 1;
-    box-shadow: 0 4px 12px rgba(246, 177, 45, 0.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2d3748;
+}
     display: flex;
     justify-content: space-between;
     margin-bottom: 8px;

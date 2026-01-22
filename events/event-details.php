@@ -34,7 +34,7 @@ if (!$event) {
 }
 
 /* ============================================================
-   3. TRAITEMENT DU FORMULAIRE D'AVIS (POST)
+   3. TRAITEMENT DES FORMULAIRES (POST)
    ============================================================ */
 
 $reviewMessage    = '';    // Message de succès (GET ?review=success)
@@ -42,16 +42,49 @@ $reviewError      = '';    // Message d'erreur (validation serveur)
 $userReview       = null;  // Avis déjà existant de l'utilisateur pour cet event
 $isUserRegistered = false; // L'utilisateur est-il inscrit à cet événement ?
 $isFavorite       = false; // L'événement est-il dans ses favoris ?
+$registrationMessage = ''; // Message de succès/erreur inscription
 
 // On ne traite avis + favoris que si un utilisateur est connecté
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
 
-    // Vérifie si l'utilisateur est inscrit à cet événement
-    $isUserRegistered = isUserRegistered($event_id, $user_id);
-
     // Connexion BDD
     $pdo = getDB();
+
+    // Vérifie si l'utilisateur est inscrit à cet événement
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM activity_participants WHERE activity_id = ? AND user_id = ?");
+    $stmt->execute([$event_id, $user_id]);
+    $isUserRegistered = $stmt->fetchColumn() > 0;
+
+    /* --- Traitement inscription/désinscription --- */
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_registration'])) {
+        try {
+            if ($isUserRegistered) {
+                // Désinscription
+                $stmt = $pdo->prepare("DELETE FROM activity_participants WHERE activity_id = ? AND user_id = ?");
+                $stmt->execute([$event_id, $user_id]);
+                $registrationMessage = 'Vous êtes désinscrit de cette activité.';
+                $isUserRegistered = false;
+            } else {
+                // Vérifier s'il reste de la place
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM activity_participants WHERE activity_id = ?");
+                $stmt->execute([$event_id]);
+                $currentCount = $stmt->fetchColumn();
+                
+                if ($currentCount < $event['max_participants']) {
+                    // Inscription
+                    $stmt = $pdo->prepare("INSERT INTO activity_participants (activity_id, user_id) VALUES (?, ?)");
+                    $stmt->execute([$event_id, $user_id]);
+                    $registrationMessage = 'Vous êtes inscrit à cette activité !';
+                    $isUserRegistered = true;
+                } else {
+                    $registrationMessage = 'Désolé, cette activité est complète.';
+                }
+            }
+        } catch (Exception $e) {
+            $registrationMessage = 'Erreur lors de l\'opération : ' . $e->getMessage();
+        }
+    }
 
     /* --- Vérification du statut "favori" --- */
     $stmt = $pdo->prepare("
@@ -228,40 +261,6 @@ include '../includes/header.php';
                 </div>
             </section>
 
-            <!-- ===================== Discussion (chat) ===================== -->
-            <section
-                class="event-discussion card"
-                id="activity-chat"
-                data-activity-id="<?= $event_id ?>"
-            >
-                <h2 class="discussion-title">💬 Discussion</h2>
-
-                <?php if (!isset($_SESSION['user_id'])): ?>
-                    <!-- Utilisateur non connecté : incitation à se connecter -->
-                    <p><a href="../auth/login.php">Connectez-vous</a> pour discuter.</p>
-                <?php else: ?>
-                    <!-- Messages du chat, chargés via JS (activity-chat.js) -->
-                    <div class="discussion-messages" id="chat-messages">
-                        <div class="loading-messages">
-                            <?= t('event_details.loading_messages') ?>
-                        </div>
-                    </div>
-
-                    <!-- Formulaire de chat, soumis côté JS (pas de POST PHP classique) -->
-                    <form class="discussion-form" id="chat-form" onsubmit="return false;">
-                        <input
-                            type="text"
-                            id="chat-input"
-                            class="message-input"
-                            placeholder="Votre message..."
-                        >
-                        <button type="submit" class="btn btn-primary">
-                            <?= t('event_details.send_button') ?>
-                        </button>
-                    </form>
-                <?php endif; ?>
-            </section>
-
             <!-- ===================== Section Avis (si événement passé) ===================== -->
             <?php if (strtotime($event['event_date']) < time()): ?>
             <section class="event-reviews card">
@@ -406,10 +405,18 @@ include '../includes/header.php';
             <div class="card">
                 <h3>Participants (<?= count($participants) ?>/<?= $event['max_participants'] ?>)</h3>
 
+                <?php if ($registrationMessage): ?>
+                    <div class="alert <?= $isUserRegistered ? 'alert-success' : 'alert-info' ?>" style="margin:1rem 0;">
+                        <?= htmlspecialchars($registrationMessage) ?>
+                    </div>
+                <?php endif; ?>
+
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <button class="btn <?= $isUserRegistered ? 'btn-danger' : 'btn-primary' ?> btn-block">
-                        <?= $isUserRegistered ? 'Se désinscrire' : 'S\'inscrire' ?>
-                    </button>
+                    <form method="POST">
+                        <button type="submit" name="toggle_registration" class="btn <?= $isUserRegistered ? 'btn-danger' : 'btn-primary' ?> btn-block">
+                            <?= $isUserRegistered ? 'Se désinscrire' : 'S\'inscrire' ?>
+                        </button>
+                    </form>
                 <?php endif; ?>
             </div>
 

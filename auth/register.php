@@ -77,25 +77,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_email'] = $email;
                 $_SESSION['user_first_name'] = $first_name;
                 $_SESSION['user_last_name'] = $last_name;
-
-                // TODO: Activer la vérification par code quand la table login_verifications sera créée
-                /*
-                $_SESSION['pending_verif'] = true;
+                $_SESSION['pending_email_verification'] = true;
+                
                 // Générer et envoyer le code de vérification
                 require_once '../includes/verification_mail.php';
                 $code = generateVerificationCode();
                 $expires = date('Y-m-d H:i:s', strtotime('+10 minutes'));
-                $stmt = $pdo->prepare('INSERT INTO login_verifications (user_id, code, expires_at) VALUES (?, ?, ?)');
-                $stmt->execute([$user_id, $code, $expires]);
-                sendVerificationMail($email, $code);
-
-                // Rediriger vers la page de vérification du code
-                header('Location: ../auth/verify-login.php');
-                */
                 
-                // Redirection directe vers le profil
-                header('Location: ../profile/choose-interests.php');
-                exit;
+                try {
+                    $stmt = $pdo->prepare('INSERT INTO login_verifications (user_id, code, expires_at) VALUES (?, ?, ?)');
+                    $stmt->execute([$user_id, $code, $expires]);
+                    sendVerificationMail($email, $code);
+                    
+                    // Rediriger vers la page de vérification email
+                    header('Location: verify-email.php');
+                    exit;
+                } catch (Exception $e) {
+                    error_log("Erreur envoi code vérification: " . $e->getMessage());
+                    // En cas d'erreur, redirection directe vers les intérêts
+                    unset($_SESSION['pending_email_verification']);
+                    header('Location: ../profile/choose-interests.php');
+                    exit;
+                }
             }
         } catch(PDOException $e) {
             $errors[] = t('auth.registration_error') . ": " . $e->getMessage();

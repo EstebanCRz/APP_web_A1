@@ -161,12 +161,25 @@ try {
                 throw new Exception('Accès refusé');
             }
             
-            // Envoyer le message
-            $stmt = $pdo->prepare("
-                INSERT INTO group_messages (group_id, user_id, message, image_path)
-                VALUES (?, ?, ?, ?)
-            ");
-            $stmt->execute([$group_id, $user_id, $message, $image_path]);
+            // Envoyer le message (avec ou sans image selon la structure de la table)
+            try {
+                $stmt = $pdo->prepare("
+                    INSERT INTO group_messages (group_id, user_id, message, image_path)
+                    VALUES (?, ?, ?, ?)
+                ");
+                $stmt->execute([$group_id, $user_id, $message, $image_path]);
+            } catch (PDOException $e) {
+                // Si la colonne image_path n'existe pas, essayer sans
+                if (strpos($e->getMessage(), 'image_path') !== false) {
+                    $stmt = $pdo->prepare("
+                        INSERT INTO group_messages (group_id, user_id, message)
+                        VALUES (?, ?, ?)
+                    ");
+                    $stmt->execute([$group_id, $user_id, $message]);
+                } else {
+                    throw $e;
+                }
+            }
             
             echo json_encode(['success' => true]);
             

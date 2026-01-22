@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($name && $email && $subject && $message) {
         require_once '../includes/send_zoho_mail.php';
-        $adminEmail = 'amigo.contact@zohomail.com'; // À personnaliser
+        $adminEmail = 'amigocontact@zohomail.eu';
         $mailSubject = "Contact AmiGo : " . $subject;
         $mailBody = "<h3>Nouveau message de contact</h3>"
                   . "<b>Nom :</b> " . htmlspecialchars($name) . "<br>"
@@ -38,32 +38,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Envoi via ZohoMail
         try {
-            $sent = @sendZohoMail($adminEmail, $mailSubject, $mailBody, $name, $email);
+            $sent = sendZohoMail($adminEmail, $mailSubject, $mailBody, $name, $email);
             if ($sent) {
                 $success = true;
+                $successMessage = "Votre message a été envoyé avec succès ! Nous vous répondrons rapidement.";
             } else {
                 // Enregistrer le message en base de données comme fallback
                 try {
                     $pdo = getDB();
                     $stmt = $pdo->prepare("INSERT INTO contact_messages (name, email, subject, message, created_at) VALUES (?, ?, ?, ?, NOW())");
                     $stmt->execute([$name, $email, $subject, $message]);
-                    $success = true; // Message enregistré avec succès
+                    $success = true;
+                    $successMessage = "Votre message a été enregistré. L'envoi par email a échoué mais nous avons bien reçu votre demande.";
                 } catch (Exception $e) {
                     error_log("Erreur sauvegarde message contact: " . $e->getMessage());
-                    $error = "Votre message a été enregistré mais l'envoi par email a échoué. Nous vous répondrons dès que possible.";
+                    $error = "Erreur lors de l'enregistrement du message.";
                 }
             }
         } catch (Throwable $e) {
-            error_log("Erreur envoi email contact: " . $e->getMessage());
+            $errorDetails = $e->getMessage();
+            error_log("Erreur envoi email contact: " . $errorDetails);
             // Tenter de sauvegarder en base de données
             try {
                 $pdo = getDB();
                 $stmt = $pdo->prepare("INSERT INTO contact_messages (name, email, subject, message, created_at) VALUES (?, ?, ?, ?, NOW())");
                 $stmt->execute([$name, $email, $subject, $message]);
-                $success = true; // Message enregistré
+                $success = true;
+                $successMessage = "Votre message a été enregistré (erreur email: " . htmlspecialchars($errorDetails) . ")";
             } catch (Exception $e2) {
                 error_log("Erreur critique contact: " . $e2->getMessage());
-                $error = "Erreur lors de l'envoi du message. Veuillez réessayer plus tard ou nous contacter directement à amigocontact@zohomail.eu";
+                $error = "Erreur: " . htmlspecialchars($errorDetails);
             }
         }
     } else {
@@ -80,7 +84,7 @@ include '../includes/header.php';
 
     <?php if ($success): ?>
         <div class="alert alert-success" style="color:green; background:#eaffea; padding:15px; border-radius:8px;">
-            Votre message a bien été envoyé !
+            <?php echo $successMessage ?? 'Votre message a bien été envoyé !'; ?>
         </div>
     <?php elseif ($error): ?>
         <div class="alert alert-danger" style="color:red; background:#ffeaea; padding:15px; border-radius:8px;">
