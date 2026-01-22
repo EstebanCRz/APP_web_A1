@@ -13,6 +13,15 @@ function isAdmin() {
         return false;
     }
     
+    // Si $pdo n'est pas défini, essayer de l'obtenir
+    if (!isset($pdo)) {
+        try {
+            $pdo = getDB();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    
     try {
         $stmt = $pdo->prepare('SELECT role FROM users WHERE id = ?');
         $stmt->execute([$_SESSION['user_id']]);

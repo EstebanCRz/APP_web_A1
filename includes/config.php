@@ -46,6 +46,9 @@ function getDB() {
     }
 }
 
+// Initialiser la connexion PDO globale
+$pdo = getDB();
+
 // Fuseau horaire
 date_default_timezone_set('Europe/Paris');
 
