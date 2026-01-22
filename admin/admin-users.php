@@ -1,99 +1,158 @@
 <?php
-session_start();
-require_once '../includes/language.php';
-header('Content-Type: text/html; charset=UTF-8');
+require_once '../includes/session.php';
+require_once '../includes/config.php';
+require_once '../includes/admin_functions.php';
 
-$pageTitle = "Gestion des Utilisateurs - Admin AmiGo";
-$pageDescription = "Gérer les utilisateurs de la plateforme";
+// Vérifier que l'utilisateur est admin
+requireAdmin();
+
+// Gérer les actions POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['ban_user'])) {
+        try {
+            $stmt = $pdo->prepare('UPDATE users SET banned = 1 WHERE id = ? AND role != "admin"');
+            $stmt->execute([$_POST['user_id']]);
+            $successMsg = "Utilisateur banni avec succès.";
+        } catch (Exception $e) {
+            $errorMsg = "Erreur: " . $e->getMessage();
+        }
+    } elseif (isset($_POST['unban_user'])) {
+        try {
+            $stmt = $pdo->prepare('UPDATE users SET banned = 0 WHERE id = ?');
+            $stmt->execute([$_POST['user_id']]);
+            $successMsg = "Utilisateur débanni avec succès.";
+        } catch (Exception $e) {
+            $errorMsg = "Erreur: " . $e->getMessage();
+        }
+    } elseif (isset($_POST['delete_user'])) {
+        try {
+            $stmt = $pdo->prepare('DELETE FROM users WHERE id = ? AND role != "admin"');
+            $stmt->execute([$_POST['user_id']]);
+            $successMsg = "Utilisateur supprimé avec succès.";
+        } catch (Exception $e) {
+            $errorMsg = "Erreur: " . $e->getMessage();
+        }
+    }
+}
+
+// Récupérer la liste des utilisateurs
+$search = $_GET['search'] ?? '';
+try {
+    if ($search) {
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE username LIKE ? OR email LIKE ? ORDER BY created_at DESC');
+        $searchTerm = "%$search%";
+        $stmt->execute([$searchTerm, $searchTerm]);
+    } else {
+        $stmt = $pdo->query('SELECT * FROM users ORDER BY created_at DESC');
+    }
+    $users = $stmt->fetchAll();
+} catch (Exception $e) {
+    $users = [];
+    $errorMsg = "Erreur de chargement: " . $e->getMessage();
+}
+
+$pageTitle = "Gestion des Utilisateurs - Admin";
 $assetsDepth = 1;
-$customCSS = "../assets/css/index.css";
+$customCSS = ["css/admin-dashboard.css"];
 
 include '../includes/header.php';
-            </select>
+?>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>👥 Gestion des Utilisateurs</h1>
+    </div>
+
+    <div class="admin-nav">
+        <a href="admin-dashboard.php">📊 Dashboard</a>
+        <a href="admin-users.php" class="active">👥 Utilisateurs</a>
+        <a href="admin-events.php">🎉 Événements</a>
+        <a href="admin-forum.php">💬 Forum</a>
+        <a href="admin-messages.php">✉️ Messages</a>
+        <a href="admin-content.php">📝 Contenu</a>
+    </div>
+
+    <?php if (isset($successMsg)): ?>
+        <div class="alert alert-success"><?php echo $successMsg; ?></div>
+    <?php endif; ?>
+    <?php if (isset($errorMsg)): ?>
+        <div class="alert alert-danger"><?php echo $errorMsg; ?></div>
+    <?php endif; ?>
+
+    <div class="admin-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2>Liste des utilisateurs (<?php echo count($users); ?>)</h2>
+            <form method="GET" style="display: flex; gap: 0.5rem;">
+                <input type="text" name="search" placeholder="Rechercher..." value="<?php echo htmlspecialchars($search); ?>" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
+                <button type="submit" style="padding: 0.5rem 1rem; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">🔍</button>
+            </form>
         </div>
-    </header>
 
-    <nav>
-        <ul>
-            <li><a href="index.php">Accueil</a></li>
-            <li><a href="../events/events-list.php">Événements</a></li>
-            <li><a href="../auth/login.php">Connexion</a></li>
-            <li><a href="../auth/register.php">Inscription</a></li>
-        </ul>
-    </nav>
-
-    <main>
-        <div class="container">
-            <section>
-                <h2>Bienvenue sur AmiGo</h2>
-                <p>Découvrez et participez à des événements proches de vous. Rencontrez de nouvelles personnes et partagez des moments inoubliables !</p>
-                
-                <div style="margin: 2rem 0;">
-                    <a href="../auth/register.php" class="btn btn-primary">S'inscrire</a>
-                    <a href="../auth/login.php" class="btn btn-secondary">Se connecter</a>
-                </div>
-            </section>
-
-            <section>
-                <h3>Événements tendance</h3>
-                <!-- TODO: Charger les événements depuis la base de données avec PHP -->
-                <div class="grid">
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Concert Rock en plein air</h4>
-                            <p class="event-details">📅 25/11/2025 - 20h00</p>
-                            <p class="event-details">📍 Paris, France</p>
-                            <p class="event-details">👥 50 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Match de Football</h4>
-                            <p class="event-details">📅 28/11/2025 - 15h00</p>
-                            <p class="event-details">📍 Lyon, France</p>
-                            <p class="event-details">👥 20 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Soirée Cinéma</h4>
-                            <p class="event-details">📅 30/11/2025 - 19h30</p>
-                            <p class="event-details">📍 Marseille, France</p>
-                            <p class="event-details">👥 30 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section>
-                <h3>Rechercher un événement</h3>
-                <form action="events-list.php" method="get">
-                    <!-- TODO: Implémenter la recherche avec PHP/MySQL -->
-                    <div class="form-group">
-                        <input type="text" name="search" placeholder="Rechercher par mots-clés..." aria-label="Rechercher un événement">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Rechercher</button>
-                </form>
-            </section>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom d'utilisateur</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Statut</th>
+                        <th>Inscription</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($users as $user): ?>
+                        <tr>
+                            <td><?php echo $user['id']; ?></td>
+                            <td><?php echo htmlspecialchars($user['username']); ?></td>
+                            <td><?php echo htmlspecialchars($user['email']); ?></td>
+                            <td>
+                                <?php if ($user['role'] === 'admin'): ?>
+                                    <span class="badge badge-danger">Admin</span>
+                                <?php else: ?>
+                                    <span class="badge badge-success">User</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if (isset($user['banned']) && $user['banned']): ?>
+                                    <span class="badge badge-danger">Banni</span>
+                                <?php else: ?>
+                                    <span class="badge badge-success">Actif</span>
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo date('d/m/Y', strtotime($user['created_at'])); ?></td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a href="../profile/profile-other.php?id=<?php echo $user['id']; ?>" target="_blank" class="btn btn-info">Voir</a>
+                                    <?php if ($user['role'] !== 'admin'): ?>
+                                        <?php if (isset($user['banned']) && $user['banned']): ?>
+                                            <form method="POST" style="display: inline;">
+                                                <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                                <input type="hidden" name="unban_user" value="1">
+                                                <button type="submit" class="btn btn-success">Débannir</button>
+                                            </form>
+                                        <?php else: ?>
+                                            <form method="POST" onsubmit="return confirm('Bannir cet utilisateur ?');" style="display: inline;">
+                                                <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                                <input type="hidden" name="ban_user" value="1">
+                                                <button type="submit" class="btn btn-danger">Bannir</button>
+                                            </form>
+                                        <?php endif; ?>
+                                        <form method="POST" onsubmit="return confirm('Supprimer définitivement cet utilisateur ?');" style="display: inline;">
+                                            <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                            <input type="hidden" name="delete_user" value="1">
+                                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                                        </form>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
-    </main>
+    </div>
+</div>
 
-    <footer>
-        <ul class="footer-links">
-            <li><a href="../pages/contact.php">Contact</a></li>
-            <li><a href="../pages/faq.php">FAQ</a></li>
-            <li><a href="../pages/cgu.php">CGU</a></li>
-            <li><a href="../pages/mentions-legales.php">Mentions légales</a></li>
-        </ul>
-        <p>&copy; 2025 AmiGo - Tous droits réservés</p>
-    </footer>
-</body>
-</html>
+<?php include '../includes/footer.php';

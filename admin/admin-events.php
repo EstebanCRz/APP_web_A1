@@ -77,91 +77,121 @@ $assetsDepth = 1;
 $customCSS = ["css/admin-dashboard.css"];
 
 include '../includes/header.php';
-            </select>
+?>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>🎉 Gestion des Événements</h1>
+    </div>
+
+    <div class="admin-nav">
+        <a href="admin-dashboard.php">📊 Dashboard</a>
+        <a href="admin-users.php">👥 Utilisateurs</a>
+        <a href="admin-events.php" class="active">🎉 Événements</a>
+        <a href="admin-forum.php">💬 Forum</a>
+        <a href="admin-messages.php">✉️ Messages</a>
+        <a href="admin-content.php">📝 Contenu</a>
+    </div>
+
+    <?php if (isset($successMsg)): ?>
+        <div class="alert alert-success"><?php echo $successMsg; ?></div>
+    <?php endif; ?>
+    <?php if (isset($errorMsg)): ?>
+        <div class="alert alert-danger"><?php echo $errorMsg; ?></div>
+    <?php endif; ?>
+
+    <!-- Statistiques -->
+    <div class="stats-grid" style="margin-bottom: 2rem;">
+        <div class="admin-section">
+            <h3>📊 Activités par catégorie</h3>
+            <div style="margin-top: 1rem;">
+                <?php foreach ($statsByCategory as $stat): ?>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem; border-bottom: 1px solid #e9ecef;">
+                        <strong><?php echo htmlspecialchars($stat['category']); ?></strong>
+                        <span style="background: #667eea; color: white; padding: 0.25rem 0.75rem; border-radius: 20px;"><?php echo $stat['total']; ?></span>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         </div>
-    </header>
 
-    <nav>
-        <ul>
-            <li><a href="index.php">Accueil</a></li>
-            <li><a href="../events/events-list.php">Événements</a></li>
-            <li><a href="../auth/login.php">Connexion</a></li>
-            <li><a href="../auth/register.php">Inscription</a></li>
-        </ul>
-    </nav>
-
-    <main>
-        <div class="container">
-            <section>
-                <h2>Bienvenue sur AmiGo</h2>
-                <p>Découvrez et participez à des événements proches de vous. Rencontrez de nouvelles personnes et partagez des moments inoubliables !</p>
-                
-                <div style="margin: 2rem 0;">
-                    <a href="../auth/register.php" class="btn btn-primary">S'inscrire</a>
-                    <a href="../auth/login.php" class="btn btn-secondary">Se connecter</a>
-                </div>
-            </section>
-
-            <section>
-                <h3>Événements tendance</h3>
-                <!-- TODO: Charger les événements depuis la base de données avec PHP -->
-                <div class="grid">
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Concert Rock en plein air</h4>
-                            <p class="event-details">📅 25/11/2025 - 20h00</p>
-                            <p class="event-details">📍 Paris, France</p>
-                            <p class="event-details">👥 50 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
+        <div class="admin-section">
+            <h3>📅 Créations (30 derniers jours)</h3>
+            <div style="margin-top: 1rem;">
+                <?php foreach (array_slice($statsByDate, 0, 10) as $stat): ?>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem; border-bottom: 1px solid #e9ecef;">
+                        <strong><?php echo date('d/m/Y', strtotime($stat['date'])); ?></strong>
+                        <span style="background: #28a745; color: white; padding: 0.25rem 0.75rem; border-radius: 20px;">+<?php echo $stat['total']; ?></span>
                     </div>
-
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Match de Football</h4>
-                            <p class="event-details">📅 28/11/2025 - 15h00</p>
-                            <p class="event-details">📍 Lyon, France</p>
-                            <p class="event-details">👥 20 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
-                    </div>
-
-                    <div class="event-card">
-                        <div class="event-banner" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
-                        <div class="event-info">
-                            <h4 class="event-title">Soirée Cinéma</h4>
-                            <p class="event-details">📅 30/11/2025 - 19h30</p>
-                            <p class="event-details">📍 Marseille, France</p>
-                            <p class="event-details">👥 30 places disponibles</p>
-                            <a href="../events/event-details.php" class="btn btn-primary">Voir plus</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section>
-                <h3>Rechercher un événement</h3>
-                <form action="events-list.php" method="get">
-                    <!-- TODO: Implémenter la recherche avec PHP/MySQL -->
-                    <div class="form-group">
-                        <input type="text" name="search" placeholder="Rechercher par mots-clés..." aria-label="Rechercher un événement">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Rechercher</button>
-                </form>
-            </section>
+                <?php endforeach; ?>
+            </div>
         </div>
-    </main>
+    </div>
 
-    <footer>
-        <ul class="footer-links">
-            <li><a href="../pages/contact.php">Contact</a></li>
-            <li><a href="../pages/faq.php">FAQ</a></li>
-            <li><a href="../pages/cgu.php">CGU</a></li>
-            <li><a href="../pages/mentions-legales.php">Mentions légales</a></li>
-        </ul>
-        <p>&copy; 2025 AmiGo - Tous droits réservés</p>
-    </footer>
-</body>
-</html>
+    <div class="admin-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2>Liste des activités (<?php echo count($activities); ?>)</h2>
+            <form method="GET" style="display: flex; gap: 0.5rem;">
+                <input type="text" name="search" placeholder="Rechercher..." value="<?php echo htmlspecialchars($search); ?>" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
+                <button type="submit" style="padding: 0.5rem 1rem; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">🔍</button>
+            </form>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6;">ID</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6;">Titre</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6;">Catégorie</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6;">Créateur</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6;">Date</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6;">Participants</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #dee2e6;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($activities as $activity): ?>
+                        <tr style="border-bottom: 1px solid #dee2e6;">
+                            <td style="padding: 1rem;"><?php echo $activity['id']; ?></td>
+                            <td style="padding: 1rem;">
+                                <strong><?php echo htmlspecialchars($activity['title']); ?></strong><br>
+                                <small style="color: #6c757d;"><?php echo htmlspecialchars(substr($activity['description'], 0, 50)); ?>...</small>
+                            </td>
+                            <td style="padding: 1rem;">
+                                <span style="background: #e9ecef; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.875rem;">
+                                    <?php echo htmlspecialchars($activity['category_name']); ?>
+                                </span>
+                            </td>
+                            <td style="padding: 1rem;"><?php echo htmlspecialchars($activity['creator_name']); ?></td>
+                            <td style="padding: 1rem;"><?php echo date('d/m/Y H:i', strtotime($activity['event_date'])); ?></td>
+                            <td style="padding: 1rem;">
+                                <?php
+                                try {
+                                    $stmt = $pdo->prepare('SELECT COUNT(*) as count FROM activity_registrations WHERE activity_id = ?');
+                                    $stmt->execute([$activity['id']]);
+                                    $participants = $stmt->fetch()['count'];
+                                    echo "$participants / " . $activity['max_participants'];
+                                } catch (Exception $e) {
+                                    echo "-";
+                                }
+                                ?>
+                            </td>
+                            <td style="padding: 1rem;">
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a href="../events/event-details.php?id=<?php echo $activity['id']; ?>" target="_blank" style="padding: 0.5rem 1rem; background: #17a2b8; color: white; border: none; border-radius: 5px; text-decoration: none; font-size: 0.875rem;">Voir</a>
+                                    <form method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette activité ?');" style="display: inline;">
+                                        <input type="hidden" name="activity_id" value="<?php echo $activity['id']; ?>">
+                                        <input type="hidden" name="delete_activity" value="1">
+                                        <button type="submit" style="padding: 0.5rem 1rem; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.875rem;">Supprimer</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<?php include '../includes/footer.php';
