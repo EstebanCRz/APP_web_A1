@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $reset) {
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $reset) {
         }
         input[type="password"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #55D5E0;
         }
         .btn {
             display: inline-block;
@@ -152,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $reset) {
             font-size: 1rem;
         }
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
             color: white;
         }
         .btn-primary:hover {
@@ -169,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $reset) {
             margin-top: 1.5rem;
         }
         .form-links a {
-            color: #667eea;
+            color: #55D5E0;
             text-decoration: none;
         }
         .form-links a:hover {

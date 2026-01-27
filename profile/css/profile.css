@@ -13,7 +13,7 @@ body {
 
 /* Carte d'édition de profil */
 .edit-profile-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     padding: 3rem 2rem;
     border-radius: 15px;
     text-align: center;
@@ -62,7 +62,7 @@ body {
     align-items: center;
     gap: 0.75rem;
     background: white;
-    color: #667eea;
+    color: #55D5E0;
     padding: 1rem 2.5rem;
     border-radius: 50px;
     text-decoration: none;
@@ -75,7 +75,7 @@ body {
 }
 
 .btn-edit-profile:hover {
-    background: #f6b12d;
+    background: #F6B12D;
     color: white;
     transform: translateY(-3px);
     box-shadow: 0 8px 25px rgba(246, 177, 45, 0.5);
@@ -114,30 +114,30 @@ body {
 
 .tab-btn:hover,
 .profile-tabs .btn:hover {
-    background: #f6b12d;
-    border-color: #f6b12d;
+    background: #F6B12D;
+    border-color: #F6B12D;
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(246, 177, 45, 0.3);
 }
 
 .tab-btn.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     color: white;
-    border-color: #667eea;
+    border-color: #55D5E0;
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 /* Bouton de déconnexion spécifique */
 .profile-tabs .btn-secondary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     color: white;
-    border-color: #667eea;
+    border-color: #55D5E0;
 }
 
 .profile-tabs .btn-secondary:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    border-color: #764ba2;
+    background: linear-gradient(135deg, #335F8A 0%, #55D5E0 100%);
+    border-color: #F6B12D;
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
@@ -189,7 +189,7 @@ body {
 
 /* Bannière de gamification */
 .gamification-banner {
-    background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     border-radius: 15px;
     padding: 30px;
     margin-bottom: 30px;
@@ -630,6 +630,36 @@ section h3 {
     gap: 12px;
 }
 
+.choose-interests .btn,
+.choose-interests .btn-primary,
+.choose-interests .btn-secondary {
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.choose-interests .btn-primary {
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
+    color: white !important;
+    border: none;
+}
+
+.choose-interests .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(85, 213, 224, 0.4);
+}
+
+.choose-interests .btn-secondary {
+    background: white;
+    color: #335F8A;
+    border: 2px solid #55D5E0;
+}
+
+.choose-interests .btn-secondary:hover {
+    background: #55D5E0;
+    color: white;
+}
+
 /* Chips (recommendations page) */
 .chip {
     display: inline-block;
@@ -640,6 +670,41 @@ section h3 {
     color: #34495e;
     margin-right: 10px;
     margin-bottom: 10px;
+}
+
+/* Styles pour les cartes d'événements dans recommendations */
+.event-card {
+    display: block;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-decoration: none;
+    color: inherit;
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(85, 213, 224, 0.25);
+}
+
+.event-card .btn-primary {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
+    color: white !important;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.event-card .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(85, 213, 224, 0.35);
 }
 
 @media (max-width: 600px) {

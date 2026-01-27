@@ -41,12 +41,12 @@
 }
 
 .tab-btn:hover {
-    color: #007bff;
+    color: #55D5E0;
 }
 
 .tab-btn.active {
-    color: #007bff;
-    border-bottom-color: #007bff;
+    color: #55D5E0;
+    border-bottom-color: #55D5E0;
 }
 
 .tab-btn svg {
@@ -86,9 +86,10 @@
     color: #333;
 }
 
-.btn-primary {
+.messages-container .btn-primary,
+.section-header .btn-primary {
     padding: 10px 20px;
-    background: #007bff;
+    background: #55D5E0;
     color: white;
     border: none;
     border-radius: 5px;
@@ -97,8 +98,9 @@
     transition: background 0.3s;
 }
 
-.btn-primary:hover {
-    background: #0056b3;
+.messages-container .btn-primary:hover,
+.section-header .btn-primary:hover {
+    background: #335F8A;
 }
 
 /* Liste des groupes */
@@ -273,7 +275,7 @@
 
 .search-users input:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: #55D5E0;
 }
 
 .search-results {
@@ -496,7 +498,7 @@
 }
 
 .message.own-message {
-    background: #007bff;
+    background: #55D5E0;
     color: white;
     margin-left: auto;
     border-bottom-right-radius: 4px;
@@ -527,7 +529,7 @@
 }
 
 .message.other-message .message-author {
-    color: #007bff;
+    color: #55D5E0;
 }
 
 .message-time {
@@ -567,7 +569,7 @@
 
 .chat-form button {
     padding: 10px 20px;
-    background: #007bff;
+    background: #55D5E0;
     color: white;
     border: none;
     border-radius: 5px;
@@ -575,7 +577,7 @@
 }
 
 .chat-form button:hover {
-    background: #0056b3;
+    background: #335F8A;
 }
 
 /* Members */

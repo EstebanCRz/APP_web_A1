@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $subject = 'Réinitialisation de votre mot de passe AmiGo';
         $body = '<h2>Réinitialisation de mot de passe</h2>'
               . '<p>Pour réinitialiser votre mot de passe, cliquez sur le lien ci-dessous&nbsp;:</p>'
-              . '<p><a href="' . $resetLink . '" style="display:inline-block; padding:12px 24px; background:#667eea; color:#fff; text-decoration:none; border-radius:6px; margin:1em 0;">Réinitialiser mon mot de passe</a></p>'
+              . '<p><a href="' . $resetLink . '" style="display:inline-block; padding:12px 24px; background:#55D5E0; color:#fff; text-decoration:none; border-radius:6px; margin:1em 0;">Réinitialiser mon mot de passe</a></p>'
               . '<p>Ce lien expirera dans 6 heures.</p>'
               . '<p>Si vous n\'avez pas demandé cette réinitialisation, ignorez cet email.</p>'
               . '<br><div style="color:#888; font-size:0.95em; margin-top:2em;">© 2026 AmiGo - Tous droits réservés</div>';

@@ -47,7 +47,7 @@ body {
 
 .last-updated-badge {
     display: inline-block;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     color: white;
     padding: 8px 16px;
     border-radius: 20px;
@@ -133,7 +133,7 @@ body {
     bottom: 0;
     width: 60px;
     height: 3px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     border-radius: 2px;
 }
 
@@ -186,7 +186,7 @@ body {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     color: white;
     width: 50px;
     height: 50px;

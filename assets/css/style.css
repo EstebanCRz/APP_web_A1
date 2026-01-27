@@ -7,8 +7,13 @@
 }
 
 :root {
+    --primary-color: #55D5E0; /* Bleu Turquoise */
+    --secondary-color: #F6B12D;  /* Couleur Or */
+    --primary-dark: #335F8A; /* Bleu foncé pour gradients */
     --accent-fresh: #55D5E0; /* Bleu Turquoise */
     --accent-warm: #F6B12D;  /* Couleur Or */
+    --gradient-primary: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
+    --gradient-warm: linear-gradient(135deg, #F6B12D 0%, #e89b1f 100%);
 }
 
 body {
@@ -98,14 +103,14 @@ main {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #6ee0eb 0%, #4a7fad 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     color: #fff;
-    box-shadow: 0 8px 20px rgba(110, 224, 235, 0.35);
+    box-shadow: 0 8px 20px rgba(85, 213, 224, 0.35);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 26px rgba(110, 224, 235, 0.45);
+    box-shadow: 0 12px 26px rgba(85, 213, 224, 0.45);
     filter: brightness(1.1);
 }
 

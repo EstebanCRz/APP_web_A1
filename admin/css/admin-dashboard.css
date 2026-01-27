@@ -19,7 +19,7 @@ body {
 }
 
 .admin-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     color: white;
     padding: 2rem;
     border-radius: 10px;
@@ -54,11 +54,11 @@ body {
 
 .admin-nav a:hover {
     background: #f7fafc;
-    color: #667eea;
+    color: #55D5E0;
 }
 
 .admin-nav a.active {
-    background: #667eea;
+    background: #55D5E0;
     color: white;
 }
 
@@ -176,12 +176,12 @@ table tr:hover {
 }
 
 .btn-primary {
-    background: #667eea;
+    background: #55D5E0;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #5568d3;
+    background: #4ab3bf;
 }
 
 .btn-danger {
@@ -203,12 +203,12 @@ table tr:hover {
 }
 
 .btn-info {
-    background: #17a2b8;
+    background: #55D5E0;
     color: white;
 }
 
 .btn-info:hover {
-    background: #138496;
+    background: #335F8A;
 }
 
 .alert {
@@ -257,14 +257,14 @@ table tr:hover {
 
 .activity-item {
     padding: 1rem;
-    border-left: 3px solid #667eea;
+    border-left: 3px solid #55D5E0;
     margin-bottom: 1rem;
     background: #f7fafc;
     border-radius: 5px;
 }
 
 .activity-item strong {
-    color: #667eea;
+    color: #55D5E0;
 }
 
 .activity-item .time {

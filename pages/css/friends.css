@@ -31,7 +31,7 @@
 }
 
 .stat-card {
-    background: linear-gradient(135deg, #6ee0eb 0%, #4a7fad 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     color: white;
     padding: 2rem;
     border-radius: 12px;
@@ -77,7 +77,7 @@
 
 .tab-btn.active {
     color: var(--accent-structure);
-    border-bottom-color: #6ee0eb;
+    border-bottom-color: #55D5E0;
 }
 
 .tab-btn .badge {
@@ -120,13 +120,13 @@
 
 .search-input:focus {
     outline: none;
-    border-color: #6ee0eb;
+    border-color: #55D5E0;
     box-shadow: 0 0 0 3px rgba(110, 224, 235, 0.1);
 }
 
 .search-btn {
     padding: 1rem 2rem;
-    background: linear-gradient(135deg, #6ee0eb 0%, #4a7fad 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     color: white;
     border: none;
     border-radius: 10px;
@@ -168,7 +168,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #6ee0eb 0%, #4a7fad 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     color: white;
     display: flex;
     align-items: center;
@@ -212,7 +212,7 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #6ee0eb 0%, #4a7fad 100%);
+    background: linear-gradient(135deg, #55D5E0 0%, #335F8A 100%);
     color: white;
 }
 
